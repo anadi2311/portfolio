@@ -1,93 +1,147 @@
-# Product spec (v1)
+# Product spec
 
 Improve this as we go. This is the source of truth until it is replaced.
 
-## Audience
+## How we work (the method we also teach)
 
-Amateur PMs who want technical knowledge. Not a course for engineers, and not a generic “how to be a PM” MBA track.
+We do **not** start from auth, Kubernetes, or a price. We start like a PM:
 
-They should leave able to:
+1. Hypothesis (business case)
+2. Who it is for
+3. What we assume we learned from tests
+4. MVP we will actually ship
+5. Experiments we will run on that MVP
+6. Only then: more product, then tech depth
 
-- Do the PM job: strategy, prioritization, GTM, experimentation
-- Ship the product: frontend, APIs, databases, auth
-- Host it: Vercel first, then real platform engineering (Kubernetes, Helm, Ansible)
-- Measure it: product/GTM metrics from events, not from slides
+This website is the running example of that loop. **Product-led growth (PLG):** the product (free lessons) is the motion. Pricing is a later lesson and a later business decision — `$20/year` was a placeholder, not the answer.
 
-## Thesis
+## Dual audience
 
-The site is the case study. Every PM idea (a bet, a GTM motion, an experiment) is tied to something running in this repo: a page, an API, a deploy, or a metric.
-
-Two rails, one journey:
-
-| Rail | What they learn | Where it lives in this product |
+| Persona | They already know | They need |
 |---|---|---|
-| **PM craft** | Strategy, prioritization, GTM, experiments, pricing | How we choose what to build, how we package $20/year, how we read activation/retention |
-| **Technical craft** | FE, backend (API + DB), identity, hosting, data | The actual Next.js app, Postgres, later Kafka → ClickHouse → an open-source dashboard |
+| **PM without tech depth** | Strategy, stakeholders, “the roadmap” | How FE, APIs, data, identity, and hosting actually work, so they can talk to Engineering |
+| **Tech person new to PM** | Code, systems | How PMs decide, prioritize, price, run experiments, and brief design |
 
-A lesson is never “Kafka in the abstract.” It is “here is the GTM funnel we care about, here is the event, here is where it lands, here is the chart.”
+One journey. Two entry points. Same case study: this app.
 
-## North-star analytics (later, not v1)
+## Hypothesis (business case #1)
 
-Product and GTM metrics should eventually flow like this:
+**Assumption:** Many PMs did not come from engineering, want to understand how tech works, and will follow an unstructured, cheap (or free) path if it is tied to a *real* product being built — not a slide deck. Separately, engineers who want to become (or partner with) PMs will follow the same path from the other direction.
 
-**App events → stream (Kafka) → warehouse (ClickHouse, with explicit models) → open-source dashboard**
+**Offer:** Free PM lessons that aggregate how good PMs actually work (discovery, strategy, PLG, experiments), using this site as the specimen. Tech lessons come after the PM spine exists. Paid packaging is undecided; we will write the pricing lesson by building a real business case, not by picking `$20`.
 
-That stack is the teaching lab for growth, activation, retention, and GTM — not a bolt-on “analytics vendor” forever. PostHog (or similar) is allowed as a **temporary** Phase 3 shortcut so we can teach funnels before we operate Kafka/ClickHouse.
+**We pretend the discovery work is done** (Talking to Humans–style interviews, etc.) and that the insight is: “teach both sides through one live product, start with how PM begins, keep early lessons readable, keep the skeleton public.”
 
-## v1 scope (Phase 1)
+## v1 (this week’s MVP)
 
-- Public portfolio shell
-- Learn shell
-- Passwordless (or magic-link) auth
-- Two free lessons in MDX (one PM, one technical — see below)
-- Postgres for users and lesson progress
-- One boring deploy + custom domain when we get there
+- Public home + Learn list (already scaffolded)
+- **No auth, no payments**
+- Learn renders markdown through Fumadocs (themeable later)
+- First lessons are **free reading guides** (how to read, what to extract), not a video platform
+- Lesson 1 is live: **How product management begins?** (`/learn/product/how-pm-begins`)
+- Product lessons stay free (synthesized from public PM practice / books, not a paywall of other people’s chapters)
 
-**Not in v1:** Stripe, crypto, PostHog, Kafka, ClickHouse, SAML, SCIM, MFA, Kubernetes, Helm, Ansible, cloud terminal, Higgsfield videos.
+**Not in v1:** Stripe, login, Kafka, Kubernetes, Figma production files, Higgsfield.
 
-## Curriculum map (full course)
+## Home (v1 IA)
 
-Order is how a beginner PM should meet the stack: decide → UI → API → data → identity → monetize → measure → host simply → host for real → stream events.
+Teaching first, bio second. Minimal hero, then two track columns.
 
-| # | Title | Access | Rail | Teaches |
+1. **Hero** — “Everything I know, you know now.” One line on the four disciplines working in tandem.
+2. **Tracks** — two columns (reference: tier/pricing layout):
+   - **Product management** — free; PM spine bullets; engineers and PM newcomers; CTA to lesson 1.
+   - **Product engineering** — paid at cost only (not live); full-stack and platform curriculum; opens after PM spine.
+3. **About** (`#about`) — two sentences max.
+
+No duplicate lesson cards on home. Link to full catalog. Header: name, Learn, About.
+
+## Tracks (packaging)
+
+| Track | Audience | Price (intent) | Status |
+|---|---|---|---|
+| Product management | Engineers, PM fundamentals | Free | Live (PM spine) |
+| Product engineering | PMs needing technical depth | Paid, cost-only (hosting) | After PM spine; no Stripe in v1 |
+
+## Curriculum (brainstorm — PM spine first)
+
+Early lessons = reading + a short “what we did on this site” note. **Read time** on each lesson page is computed from word count (250–150 wpm range), not hand-entered.
+
+| # | Lesson | Est. | What they leave able to do | How this site is the example |
 |---|---|---|---|---|
-| 1 | How this site is structured | Free | Both | Repo map; what “full stack” means for a PM |
-| 2 | Strategy and prioritization on a real backlog | Free | PM | Why v1 is small; how we say no to Kafka/kube today |
-| 3 | Frontend: the Learn UI | Paid | Tech | Pages, state, what a PM is looking at in the DOM |
-| 4 | Backend: APIs and Postgres | Paid | Tech | Request/response, tables, why the API exists |
-| 5 | Auth and the user lifecycle | Paid | Tech | Passwordless, session vs identity vs authorization |
-| 6 | GTM and packaging the $20/year plan | Paid | PM | Positioning, free vs paid, pricing (fill in Anadi’s numbers) |
-| 7 | Entitlements: who can see a paid lesson | Paid | Both | RBAC vs entitlement; Stripe later wires this |
-| 8 | Experiments: what we would A/B and why | Paid | PM | Hypothesis, metric, what we would instrument |
-| 9 | Events, activation, funnels | Paid | Both | Event taxonomy this app will emit |
-| 10 | Deploy on Vercel | Paid | Tech | Domain, serverless, env vars, what “prod” means |
-| 11 | Platform engineering: Kubernetes, Helm, Ansible | Paid | Tech | Same app, “grown-up” hosting; tradeoffs vs Vercel |
-| 12 | Streaming to ClickHouse (Kafka) | Paid | Tech | Why a stream; models for GTM metrics |
-| 13 | GTM dashboard (open source) | Paid | Both | Charts PMs actually use; wired to ClickHouse |
-| 14 | Identity depth (OIDC, then SAML/SCIM) | Paid | Tech | Standards a PM sets with Engineering |
-| 15 | AI-native building (Cursor, Figma, Higgsfield) | Paid | Both | How this repo was built; skills and rules |
+| 1 | How PM begins | 60m | Name the PM loop and the scoreboard | This document |
+| 2 | The business objective | 60m | Full business case (market, persona, beachhead); Moore | Amazon books beachhead |
+| 3 | Product strategy | 75m | Strategy = choices of *what we will not do* | Free PM spine before paid depth |
+| 4 | Experiments | 75m | Hypothesis, metric, sample, ship/kill | Weekly MVP bets |
+| 5 | From MVP to weekly scope | 45m | A week’s slice, not a year roadmap | Next code we actually write |
+| 6 | Product leadership | 60m | Stakeholders, influence without authority | Room skills |
+| 7 | Product-led growth | 75m | Free product as the loop; activation as the metric | Learn is the wedge |
+| 8 | Pricing as a PM (business case) | 90m | Willingness to pay, packaging, unit economics | Price is TBD on purpose |
+| 9 | Product sense, taste, and AI | 60m | Judgment when the model drafts first | Product sense over tool fluency |
+| 10 | Product analytics and GTM | 60m | Funnels, cohorts, launch metrics | Measure the wedge, not pageviews |
+| 11 | Briefing design: vision and branding | 60m | A one-page brand/vision a designer can use | Branding brainstorm below |
+| 12 | Figma for PMs | 60m | File structure, components, what to comment on | We will do this when we design |
 
-Lessons 1–2 ship with Phase 1. The rest are stubs until their phase.
+PM spine totals ~10+ hours (planned). Lessons live under `content/lessons/product/` and `content/lessons/engineering/`.
 
-## Gating
+### Product management (12 lessons)
 
-- Free lessons: anyone
-- Paid lessons: logged-in user with active yearly entitlement
-- Account required for paid, even if we later add crypto
+| # | Slug | Title |
+|---|---|---|
+| 1 | `product/how-pm-begins` | How product management begins? |
+| 2 | `product/business-objective` | The business objective |
+| 3 | `product/product-strategy` | Product strategy: what you will not do |
+| 4 | `product/experiments` | Experiments: hypothesis, metric, ship or kill |
+| 5 | `product/mvp-weekly-scope` | From MVP to weekly scope |
+| 6 | `product/product-leadership` | Product leadership and stakeholders |
+| 7 | `product/product-led-growth` | Product-led growth vs sales-led |
+| 8 | `product/product-analytics-gtm` | Product analytics and go-to-market |
+| 9 | `product/pricing-business-case` | Pricing as a business case |
+| 10 | `product/product-sense-and-ai` | Product sense, taste, and AI |
+| 11 | `product/design-vision-branding` | Briefing design: vision and branding |
+| 12 | `product/figma-for-pms` | Figma for PMs: files and front-end lingo |
 
-## Phases after v1
+### Product engineering (12 lessons, paid later)
 
-2. Stripe $20/year + entitlements  
-3. Event taxonomy + a temporary analytics tool (funnels before Kafka)  
-4. Identity depth (SSO, MFA, then SAML/SCIM)  
-5. Vercel production + domain  
-6. Platform engineering track (Kubernetes, Helm, Ansible)  
-7. Kafka → ClickHouse models → OSS dashboard  
-8. Videos, quizzes, optional cloud terminal  
+| # | Slug | Title |
+|---|---|---|
+| 1 | `engineering/why-this-stack` | Why we picked this stack |
+| 2 | `engineering/frontend` | Frontend: how apps are built |
+| 3 | `engineering/apis` | APIs and how services talk |
+| 4 | `engineering/auth-identity` | Auth, SSL/TLS, and identity |
+| 5 | `engineering/data-and-databases` | Data and databases |
+| 6 | `engineering/platform-gcp` | Platform engineering: deploy on GCP |
+| 7 | `engineering/docker` | Docker and containers |
+| 8 | `engineering/kubernetes-networking` | Kubernetes and VPC networking |
+| 9 | `engineering/kafka` | Kafka for event streams |
+| 10 | `engineering/clickhouse-analytics` | ClickHouse for product analytics |
+| 11 | `engineering/terraform` | Terraform and infrastructure as code |
+| 12 | `engineering/helm-git-cicd` | Helm, Git, and CI/CD |
+
+**Then** the tech rail (still taught on this site): how the page is a frontend, what an API is, what a database is, then hosting, then identity when paid exists. Include **why we picked this stack** (Next.js, Fumadocs) as a specimen, not a shopping list. Auth is a *later* tech lesson, not the start.
+
+## Branding vision (PM brief, not pixels yet)
+
+PMs do not pick hex codes first. They write the vision designers execute.
+
+**Working name:** TBD (site can stay “Anadi / Learn” until we name the course).
+
+**Feeling:** a lab notebook, not a bootcamp landing page. Serious, calm, two-way (PM and eng). Not purple “AI SaaS,” not corporate navy deck.
+
+**Principles to brief a designer (or Figma later):**
+
+1. **Specimen, not school** — you are looking at the product you are learning
+2. **Two audiences, one UI** — no “PM track / Eng track” split in the chrome; the lesson says who it is for
+3. **Readable first** — type and spacing over illustration
+4. **Open pieces, then tweak** — how real product design often starts (Fumadocs, a typeface), which we will show in the Figma lesson
+
+Type on the site is **Poppins** (Latin + Devanagari). Color system and a component kit wait for Figma. Font choice, Hindi, and a later **obol-packages-style** component repo + Storybook (taught to PMs) live in [LATER.md](LATER.md).
 
 ## Open
 
-- Pricing metrics and unit economics (not provided yet)
-- Visual design (Figma later)
-- Which IdP/library for passwordless (decide at first auth stage)
-- Which OSS dashboard (e.g. Metabase/Grafana) — decide when ClickHouse exists
+Decisions still unset. Scheduled work is in [LATER.md](LATER.md).
+
+- Course name
+- Price (business case, not a guess)
+- Exact reading list order for lesson 2
+- Visual system in Figma
+- Lesson reactions (like / clap / heart) — see [LATER.md](LATER.md)

@@ -1,0 +1,449 @@
+---
+title: "Experiments: hypothesis, metric, ship or kill"
+summary: Design a lean test you can finish in a week. Ways to run it, who owns what, and when to stop.
+audience: Both
+status: published
+order: 4
+---
+
+[Lesson 3](/learn/product/product-strategy) narrowed the field: where you play, how you win, what you refuse. Experiments turn those choices into claims you can kill. You write a <Key>hypothesis</Key>, pick a metric and a stop rule, run the cheapest test that could prove you wrong, then ship, pivot, or stop.
+
+Sprints came next in most companies' history. The trap is treating every sprint as a **feature factory**. A cadence can finish an experiment or a build slice. Discovery decides **what belongs on the backlog** before you burn a quarter polishing the wrong catalog. The week itself is taught in [From MVP to weekly scope](/learn/product/mvp-weekly-scope).
+
+## Iteration got stuck in the sprint
+
+Scrum and adjacent Agile practices solved a real problem. Ken Schwaber and Jeff Sutherland's [Scrum Guide](https://scrumguides.org/) and the [Agile Manifesto](https://agilemanifesto.org/) (2001) pushed teams to ship working software in short cycles, inspect the result, and adapt. The point of a sprint was a shippable increment on a fixed cadence so risk showed up early.
+
+Teams adopted the ceremony and lost the learning. The backlog filled with features stakeholders believed in. Standups tracked velocity. Retrospectives debated process. The product shipped outputs that missed the scoreboard.
+
+Melissa Perri's [*Escaping the Build Trap*](https://www.melissaperri.com/escaping-the-build-trap) names that pattern. Her **Product Kata** is the corrective loop: grasp the direction (the outcome), see the current condition, set the next target condition, then run **one experiment** toward it and compare expected vs actual. The kata sits **before** you treat the roadmap as settled.
+
+Marty Cagan's [*Inspired*](https://www.svpg.com/books/) draws the same line as **discovery** vs **delivery**. Delivery teams iterate the build. Discovery teams iterate the risk: value, usability, feasibility, viability. This lesson covers the tests that decide whether a slice deserves time. [From MVP to weekly scope](/learn/product/mvp-weekly-scope) covers the MVP list, the thin spec, and how the same weekly clock runs a **learning week** or a **build week**.
+
+Good PMs protect learning time before the sprint commits the team. Bad PMs call every backlog item an experiment because it ships in two weeks.
+
+## Three maps: loop, kata, tree
+
+Same job, three pictures. Use all three without turning them into competing religions.
+
+1. **Hypothesis before build** — discovery loop, then delivery loop.
+2. **Product Kata** (Perri) — the inner rhythm of the next experiment.
+3. **Opportunity Solution Tree** (Torres) — which opportunity and solution the experiment sits under.
+
+<HypothesisBeforeBuildDiagram />
+
+<ProductKataDiagram />
+
+### Opportunity Solution Tree
+
+Teresa Torres's [*Continuous Discovery Habits*](https://www.producttalk.org/continuous-discovery-habits/) draws a tree: **outcome** at the top, **opportunities** (customer needs) below, **solutions** under an opportunity, **experiments** under a solution. You do not brainstorm features into a backlog. You climb down the tree until the next test is obvious.
+
+<OpportunitySolutionTreeDiagram />
+
+**How they sit together:** the tree picks *what* to test next. The Kata runs *how* you test it this week. The hypothesis-before-build loop keeps that work **above** the sprint until a card passes. Strategy and OKRs sit above the tree as the outcome. The six-line hypothesis card is the experiment node written so you can kill it.
+
+## Strategy and OKRs set the direction
+
+Experiments without a strategy wander. Strategy without experiments is a memo.
+
+[Product strategy](/learn/product/product-strategy) asked you to refuse work that fights the beachhead. Your experiments should test the bets inside that strategy, not reopen every refused idea as a "quick test."
+
+OKRs fit as the **direction** in the Product Kata, not as the experiment itself.
+
+| Layer | Job | Example |
+|---|---|---|
+| **Objective** | Outcome the company funds | Earn repeat learners on the free PM spine |
+| **Key result** | Scoreboard movement | Lesson 1→2 completion rises from X% to Y% in a quarter |
+| **Hypothesis** | Falsifiable cause | Readers finish more when the product in front of them is the teaching specimen |
+| **Experiment** | Cheapest test of that cause | Rewrite one lesson around the live product; measure completion vs the prior version on a named cohort |
+
+A key result is not a success rule for a single test. A KR can move for many reasons. The experiment isolates one belief. Do not write "run twelve experiments" as a KR. That is an output. Put the outcome on the KR and put the learning plan under it.
+
+## When the feature list and roadmap show up
+
+**<Key>Hypotheses and cheap tests come before a feature roadmap.</Key>** The MVP list is what **survives** those tests. A roadmap of untested features is a stakeholder wish list with dates.
+
+### The order this track teaches
+
+| Step | What you produce | Lesson |
+|---|---|---|
+| 1. Business case / objective | Who, why now, scoreboard | [Business objective](/learn/product/business-objective) |
+| 2. Strategy | Where to play, how to win, refusals, sequence | [Product strategy](/learn/product/product-strategy) |
+| 3. Hypotheses + experiments | Kill or keep the bets | **This lesson** |
+| 4. MVP scope + weekly slice | Smallest build that continues the proof | [From MVP to weekly scope](/learn/product/mvp-weekly-scope) |
+
+You may keep a **parking lot** of ideas during discovery. That is not a roadmap. A roadmap (or now / next / later board) appears when enough bets have evidence that engineering time is justified. Near-term columns name outcomes and the thin scope that tests them. Feature laundry lists belong only in the committed near term, after the card passed.
+
+### Do you experiment on features?
+
+You experiment on **beliefs**, not on a backlog row for its own sake.
+
+- Weak: "Experiment on the dashboard feature."
+- Strong: "We believe mid-market admins will open daily revenue 4+ days a week if we show X; cheapest test is a prototype before we build the dashboard."
+
+If the belief dies, the feature never enters the MVP list. If the belief holds, the feature (or a thinner version of it) enters MVP scope in the next lesson.
+
+### Which risk first: business or tech?
+
+Marty Cagan's four risks in [*Inspired*](https://www.svpg.com/books/): **value**, **usability**, **feasibility**, **viability**. You do not have to run them as four formal phases. You do have to know which risk can kill the bet cheapest.
+
+Default order for most product bets:
+
+1. **Value + viability (business):** Will the beachhead care? Can the company afford this motion, price, and risk? Interviews, fake doors, waitlists, concierge, pricing probes.
+2. **Usability:** Can they get the job done in the thin experience? Prototype, observed task.
+3. **Feasibility (tech):** Can we build and operate it at the fidelity the bet needs? Spike, prototype with real APIs, load check, security review.
+
+Run tech feasibility **earlier** when the product is the hard technology (new model, new protocol, hardware). Run it **after** a value signal when the risk is "wrong problem, beautiful engineering." Parallelize when two risks sit on the critical path and the tests are both lean.
+
+Business viability failed → no roadmap. Tech feasibility failed → pivot the solution or kill the bet; do not publish a feature roadmap that assumes a miracle.
+
+### What "roadmap" means after experiments
+
+After cards pass, the PM writes a short **now / next / later**:
+
+- **Now:** the MVP slice that continues the proof (one outcome, thin scope).
+- **Next:** bets with evidence, not yet committed to a date.
+- **Later:** parking lot and refused items from strategy (so sales cannot resurrect them quietly).
+
+[From MVP to weekly scope](/learn/product/mvp-weekly-scope) teaches how to cut **Now** into a week of delivery. This lesson stops at: do not invent that list until the hypothesis earned it.
+
+### This site
+
+You do not start with "auth, Stripe, certificates, twelve engineering lessons" as the roadmap. Strategy refused most of that for now. Experiments test the free PM spine and demand signals (waitlist) first. The MVP list for v1 is whatever keeps Lesson 1→2 learning moving: readable lessons, thin waitlist if Card 3 runs, instrumentation. Payment and a full tech rail enter the roadmap only after those bets pass.
+
+## Form the hypothesis
+
+A hypothesis is a claim specific enough that evidence can kill it. [Lesson 1](/learn/product/how-pm-begins) named the step. [Lesson 2](/learn/product/business-objective) put **hypothesis seeds** in the business case. Here you finish the seed into a testable card.
+
+### Template
+
+Write all six lines:
+
+1. **We believe** ___ (who: user or buyer in the beachhead).
+2. **will** ___ (behavior change you can observe).
+3. **because** ___ (reason rooted in a job or constraint).
+4. **We will know we are right when** ___ (metric) **moves by** ___ **within** ___ (time box) **for** ___ (sample).
+5. **The cheapest test is** ___ (interview, survey, prototype, fake door, concierge, A/B, waitlist).
+6. **If we are wrong we will** ___ (stop, pivot the claim, or change the beachhead).
+
+If line 4 has no number and no time box, you wrote a slogan. If line 6 is missing, you wrote a plan to confirm yourself.
+
+### Strong vs weak
+
+| Weak | Strong |
+|---|---|
+| Users will love the new dashboard | Mid-market admins will open the daily revenue view 4+ days in a week within 14 days of invite |
+| AI will improve engagement | Beachhead PMs will finish Lesson 1 at a higher rate when the lesson uses this product as the specimen |
+| Enterprises want security | Security reviewers at 200–500 person B2B SaaS will pass us in under 10 days if we ship SOC2 docs in the trial |
+
+Perri's seller-portal vignette in *Escaping the Build Trap* is the classic miss: a team ships dashboards and workflows while the outcome (daily revenue the seller can act on) does not move. The weak hypothesis was "sellers need more tools." The strong one names the behavior and the scoreboard.
+
+### Cases
+
+**Dropbox**, early: Drew Houston's demo video tested demand for sync before the full product existed. Signups answered the belief "people will want this enough to join a waitlist." Production sync followed the signal.
+
+**Superhuman**: Rahul Vohra charged early, ran a waitlist, and tuned onboarding until daily use moved. Giff Constable's [*Talking to Humans*](https://www.talkingtohumans.com/) is the qualitative twin of that discipline: talk to specific humans before you scale the story.
+
+**Instagram** began as Burbn. Too many features, flat usage. The team cut to photos. The hypothesis about a kitchen-sink check-in app died; the photo hypothesis lived.
+
+## Lean enough to decide
+
+Product experiments are <Key>decision tools</Key>, not science-fair proofs. You need enough signal to choose ship, pivot, or kill inside a short time box. You do not need academic certainty.
+
+Perri's Product Kata asks for the **next** experiment toward a target condition, then a comparison of expected vs actual. The test earns its keep when it changes what the team does next week.
+
+### Bar for a good experiment
+
+Write yes on every line before you start:
+
+1. **Lean:** one person-week or less of team time, including analysis.
+2. **Fast to read:** you can interpret the result inside the time box (days or two weeks, not a quarter).
+3. **Least effort that can kill the claim:** interviews before prototypes, prototypes before production, fake door before a full surface.
+4. **Just enough data:** a sample and a threshold you named in advance, not "as many as we can get."
+5. **Tied to a decision:** if the result cannot change the roadmap or the strategy memo, skip the test.
+
+An underpowered A/B that "looked positive" creates false confidence. Five beachhead interviews with a written coding sheet beat a dashboard nobody defined. Kohavi's [*Trustworthy Online Controlled Experiments*](https://experimentguide.com/) matters when you have traffic and need causal proof on a live surface. Early bets die in cheaper designs first.
+
+### Intuition vs proof
+
+Qualitative work (interviews, open surveys, diary notes) builds **intuition** about the job and the language people use. Behavioral work (clicks, completion, waitlist, A/B) shows whether people **act**. You need both over a quarter. One interview series without a behavior check leaves you with stories. One click metric without interviews leaves you guessing why.
+
+The goal of week-one discovery is direction. The goal of a later A/B is confidence on a specific change. Do not demand lab-grade p-values for a beachhead you have not talked to.
+
+## What you run at each product stage
+
+The same company uses different experiments at different stages. <Key>Stage picks the instrument</Key>. A 0→1 bet needs viability and value tests. A live product with traffic can run A/B and data-science-grade experiments. Copying Booking.com's experimentation stack onto a twelve-person startup burns months. Running only coffee chats when you have millions of weekly users leaves causal questions on the table.
+
+### Stage map
+
+| Stage | What you are unsure about | Experiments that fit | Experiments that waste time |
+|---|---|---|---|
+| **Pre-product / 0→1** | Does anyone care? Will they pay or adopt? Is the motion viable? | Problem interviews, concept tests, fake door, waitlist, concierge, landing-page demand, pricing probes | Underpowered A/B, multi-variate tests, "data science" with no events |
+| **Early product (thin usage)** | Does the beachhead return? Which job is real? | Mixed: interviews + completion/retention on a small cohort, prototype tests, Wizard of Oz | Treating n=30 as a platform experiment; hiring an experimentation team before instrumentation exists |
+| **PMF pursuit / expanding beachhead** | Can we repeat acquisition and retention? | Cohort retention, activation funnels, qualitative on churn, thin A/B on onboarding if traffic allows | Feature roadmaps with no cards; fake doors for surfaces you shipped |
+| **Continuous product (steady traffic)** | Which change moves the scoreboard? | Online A/B, staged rollouts, holdouts, funnel experiments, experiment design with power analysis ([Kohavi](https://experimentguide.com/)) | Skipping discovery on a **new** problem space because "we only do A/B here" |
+| **New line inside a mature company** | Same as 0→1 for the **new** bet | Start with value/viability for the new beachhead; use the company's traffic only when the question is causal on a live surface | Assuming parent-company scale makes the new idea proven |
+
+### Early stage: viability and value first
+
+At 0→1 you lack events, sample size, and a stable funnel. Your job is to kill wrong problems and wrong motions cheap.
+
+- **Business viability:** Can this company run this motion (PLG vs sales, price band, support load)? Strategy memo + pricing probes + "who pays" interviews.
+- **Value:** Does the beachhead feel the job hard enough to act (waitlist, prepaid, weekly return to a concierge)?
+- **Usability / feasibility:** Thin spikes once value is plausible; not a six-month platform before the first conversation.
+
+Dropbox's video and Superhuman's waitlist belong here. So do the open interviews and tech-track waitlist cards for this site.
+
+### Continuous product: data-backed experiments
+
+Once people use the product every week and you can count them, you earn **behavioral and causal** instruments:
+
+- **Instrumentation first:** events for start, activation, retention, revenue. No clean events → no trustworthy A/B.
+- **A/B and staged rollout:** pre-register the metric, check power, ship with a kill switch. Kohavi's guide is the reference when this is your main factory.
+- **Funnel and cohort analysis:** where the beachhead drops; which week-1 behavior predicts retention. Feeds the next hypothesis card.
+- **Holdouts:** measure long-term harm of a "winning" short-term metric.
+- **Data science / causal work:** uplift models, heterogeneous treatment effects, when the team has volume and a defined decision. Still starts from a hypothesis card. A model without a stop rule is a science project.
+
+Growth and analytics PMs live here most of the week. They return to interviews when the metric moves and nobody can explain why, or when the bet is a new segment the funnel does not describe.
+
+### Same product, two clocks
+
+A mature app can run **platform A/B** on checkout and **0→1 discovery** on a new persona in the same quarter. Do not force one instrument on both clocks. Tag the card with the stage of **the bet**, not the age of the company.
+
+### This site today
+
+This product is early: public lessons, thin traffic, no login wall on the PM spine. Fit: interviews, completion on the free spine, waitlist fake door. Not fit yet: multi-variate pricing A/B or a data-science experimentation platform. When Lesson 1→2 volume is steady and events are clean, A/B on lesson structure becomes honest. Until then, lean cards beat fake rigor.
+
+## Ways to run the experiment
+
+Pick the design that matches the risk. Perri (build trap / Product Kata), Constable (talk to humans), Torres (continuous discovery), Ries (build-measure-learn), and Kohavi (online controlled experiments) describe overlapping toolkits. Same job: cheapest evidence that can kill the claim.
+
+### Subjective: interviews and open questions
+
+**Problem interviews** (Constable, Torres): ask about the last time the job failed. "Walk me through the last eng review that went badly." Do not pitch your solution in the first pass. Do not ask "would you use a course that teaches APIs?" Lead questions invent demand.
+
+**Solution interviews / concept tests:** after you have a problem pattern, show a sketch or one-pager and watch where they lean in or freeze.
+
+**Surveys with open text:** useful for breadth after you know what to ask. Weak as the first instrument. Multiple-choice "how interested are you on a scale of 1–5" flatters the product.
+
+**Who:** PM leads the guide and the synthesis. Designer joins when the risk is comprehension or workflow. Engineer joins when the risk is feasibility or when findings must stick in the sprint. Record with permission. Code themes on a shared sheet.
+
+**Metric:** count of interviews in the beachhead; share of interviewees who name the same top job unprompted; willingness to take a follow-up or join a waitlist.
+
+### Behavioral: product and frontend
+
+**Fake door / "coming soon" CTA:** a button or track on the live site for a surface you have not built. Click and waitlist email are the signals. Label it honestly (waitlist, not "buy now" for a product that does not exist).
+
+**Prototype / clickable flow:** Figma or a thin frontend path. Measures completion of a job, confusion points, time on step.
+
+**Concierge / Wizard of Oz:** you deliver the outcome by hand (office hours, manual onboarding, curated reading list) while the UI pretends or stays minimal.
+
+**Instrumented lesson or feature:** completion, scroll depth, Lesson 1→2 continuation, self-tag (PM vs eng).
+
+**A/B or staged rollout:** two variants on a live surface with a pre-registered success metric. Use when traffic exists and cheaper tests pointed one way.
+
+**Who:** PM owns the hypothesis and the success rule. Designer owns the door copy, empty states, and prototype fidelity. Engineer owns the route, event, waitlist store, and feature flag. Data owns the event name and whether the sample is valid.
+
+**Metric:** CTR on the door, waitlist starts, activation inside the prototype, completion delta, retention to the next lesson.
+
+### Mixed: learn then measure
+
+Common sequence for a new bet:
+
+1. Open interviews until a job theme repeats.
+2. One fake door or waitlist on the site to see if behavior matches the stories.
+3. Concierge or thin MVP for the people who raised their hand.
+4. A/B only when the surface is live and the question is which variant wins.
+
+That order keeps you lean. Reversing it (ship a full track, then ask why nobody cares) is the build trap.
+
+## Who does what
+
+Roles below assume a small product team. Titles vary. The ownership does not.
+
+### Product manager
+
+- Writes the six-line hypothesis card and the decision the test will unlock.
+- Names sample, success, and stop **before** kickoff.
+- Builds the interview guide or the experiment brief (one page).
+- Recruits beachhead participants (or briefs the founder on who counts).
+- Runs or co-runs interviews; stops leading questions.
+- Reads qualitative themes with the designer; does not hide disconfirming quotes.
+- Calls ship / pivot / kill in writing when the time box ends.
+- Protects the team from turning every stakeholder request into a parallel "experiment."
+- Escalates to the GM when a popular idea fails the stop rule.
+
+### Designer
+
+- Turns the belief into something a human can react to: script prompts, prototype frames, fake-door label, empty state, waitlist confirmation.
+- Keeps fidelity matched to the risk (ugly sketch for problem fit; clearer UI for usability).
+- Joins interviews when the question is "do they understand this flow?"
+- Flags when the CTA over-promises (ethics and trust).
+- Hands engineering a thin, buildable path, not a vision deck.
+
+### Engineer
+
+- Builds the **smallest** instrumentation or path that makes the metric real: route, click event, waitlist form, feature flag, cohort tag.
+- Estimates honestly whether the "one week" test fits; pushes back when the brief is a quarter of platform work in disguise.
+- Sits in at least one discovery session per primary bet so findings do not die at the sprint boundary.
+- Owns data quality at the event layer (no duplicate fires, no lost waitlist rows).
+- Implements the kill switch: turn the fake door off, remove the flag, archive the prototype.
+
+### Data / analytics (or the PM wearing that hat)
+
+- Defines the metric in one sentence and where it is counted.
+- Checks sample validity (friends vs beachhead, bots, internal traffic).
+- Says when an A/B is underpowered and recommends a cheaper design instead.
+- Delivers a one-pager at the time box: expected vs actual, decision options.
+
+### Founder / GM
+
+- Sets the objective / OKR the kata serves.
+- Gives air cover to kill a loud idea.
+- Does not override a failed stop rule with "ship it anyway" without rewriting the strategy memo.
+
+### Who does not own the experiment
+
+Sales does not redefine success mid-test to protect a deal. Marketing does not change the CTA copy without updating the hypothesis card. Engineering does not expand scope into a platform rewrite "while we are here."
+
+## Sample, success, stop, and how many
+
+Write three numbers before you start:
+
+- **Sample:** who counts (beachhead only, first 50 readers, waitlist from the tech-track door).
+- **Success:** the threshold that means the belief held.
+- **Stop:** the threshold or date when you kill or pivot.
+
+Product Kata asks for the **next** experiment toward the target condition, then another after you learn. A small team runs **one primary learning bet at a time** on the critical path. Parallel tests work when they answer independent risks and you have capacity to instrument and read them.
+
+A portfolio of bets belongs at the strategy layer (pin one vs pin two, free spine vs later packaging). Inside the team week, prefer three finished cards over twelve open "experiments" in Jira.
+
+## Run, read, decide
+
+Run the time box. Compare expected vs actual the way the Product Kata requires. Write the learning in one paragraph the team can quote next week.
+
+Three honest endings:
+
+1. **Ship / scale the build:** the belief held; [MVP and weekly scope](/learn/product/mvp-weekly-scope) slices the delivery.
+2. **Pivot the claim:** the job was real, the cause was wrong; rewrite lines 2–3 of the template.
+3. **Kill:** the beachhead does not care; return to strategy before you invent a new feature list.
+
+Hastings reversed Qwikster in public when subscribers left. The scoreboard overruled the plan. Experiments fail on purpose so the company fails cheap.
+
+## Specimen: experiments for this site
+
+Strategy for this product ([Lesson 3](/learn/product/product-strategy)): beachhead is **PMs without engineering depth** who need to sound credible with engineers; win by teaching on the live product; free PM spine first; Lesson 1→2 completion as capture metric; engineers as pin two on the **same** home page; refuse login wall on the PM spine, paid eng track before retention, ads, and course-platform sprawl.
+
+The pain underneath that beachhead sounds like "I cannot follow the eng conversation or judge the timeline." Experiments should test that job and the free-spine wedge first. Paid packaging and a deep tech rail are **later** hypotheses. You may run **cheap demand signals** for them. You do not ship Stripe or a login wall on the PM spine to "test" them.
+
+### Card 1: open interviews on the biggest issue
+
+**Hypothesis seed:** Beachhead PMs (beginner, growth/GTM, and non-technical product PMs) struggle in eng conversations and timeline judgment because they lack a working mental model of how the stack fits together. In the age of AI they feel pressure to learn, and they lack a structure to do it.
+
+**Experiment (lean, qualitative):**
+
+1. **We believe** PMs without eng depth
+2. **will** name engineering literacy / eng-review fear as a top issue in their week
+3. **because** they cannot approximate timelines or challenge estimates without a model of how the system works
+4. **Right when** in 12 interviews across beginner, growth/GTM, and generalist PMs (exclude people who work as technical PMs today), at least 8 unprompted top-three issues include eng communication, stack literacy, or timeline judgment
+5. **Cheapest test:** 30-minute problem interviews. Ask "what failed last week in your product job?" and "where do you feel least credible with eng?" Do **not** open with "would you pay to learn tech?" or "do you want an engineering track?"
+6. **If wrong:** the beachhead pain is elsewhere (stakeholder chaos, discovery skill, analytics). Revisit strategy before you build a tech curriculum.
+
+**Who:** PM writes the guide and synthesizes themes. Designer joins three sessions if workflow stories appear. Engineer joins two sessions so findings stick. Founder helps recruit non-friends in the beachhead.
+
+**Intuition you want:** a coded list of top jobs. If "lack eng knowledge" is the common thread **without you planting it**, the free PM spine and a later tech rail both have a problem worth solving. If the common thread is "my CEO changes priority every Monday," you are solving the wrong product.
+
+### Card 2: specimen teaching on the free PM spine
+
+1. **We believe** PMs without eng depth
+2. **will** finish Lesson 1 at a higher rate
+3. **because** the method is easier to trust when the product in front of them is the example
+4. **Right when** Lesson 1 completion rises by 10 points within 30 days for readers who land from the public URL
+5. **Cheapest test:** one lesson rewritten around this site as specimen vs the prior abstract version; same distribution channel
+6. **If wrong:** stop claiming "teach on the product" as the edge; revisit positioning
+
+**Who:** PM owns the rewrite brief and the completion definition. Designer owns lesson layout clarity. Engineer owns analytics events for start and finish.
+
+### Card 3: fake door on the tech track (demand only)
+
+**Later packaging hypothesis (not v1 GTM):** PMs who finish (or start) the free spine will raise their hand for a structured tech-depth rail, cheap enough to feel like a tool (illustrative ask: on the order of **$50 for long-lived access**), so they can communicate with eng, judge timelines, and build more themselves with AI. Strategy keeps the rule: **no paid eng track until PM retention proves out.** This card tests interest. It does not ship payment.
+
+1. **We believe** beachhead PMs who hit the Learn home page
+2. **will** click into the product-engineering track and join a waitlist
+3. **because** they want a structure for technical depth after (or beside) the free PM spine
+4. **Right when** within 30 days, at least N waitlist emails from non-friend PMs (set N from your traffic; example bar: 40), and waitlist → reply rate on a one-question follow-up is ≥25%
+5. **Cheapest test:** tech-track entry is clickable; CTA is "Join the waitlist" (honest). Confirmation page may ask one optional question: "What would you pay for once, for long-lived access to the tech rail?" with ranges that include a ~$50 band. No login wall on the PM spine. No Stripe.
+6. **If wrong:** interest in paid tech depth is weak or only friends clicked. Keep the PM spine free; delay the eng rail; do not invent pricing in [Pricing as a business case](/learn/product/pricing-business-case) from vanity clicks.
+
+**Who:** PM owns the hypothesis, the N threshold, and the follow-up question. Designer owns the track card and waitlist states. Engineer owns the route, form, store, and "friends vs public" tag. Data validates bots and duplicates.
+
+### Card 4: channel
+
+1. **We believe** beachhead PMs
+2. **will** arrive and start Lesson 1
+3. **because** founder network plus public URL reach people who fear the eng review
+4. **Right when** 40 beachhead starters in 30 days who are not personal friends
+5. **Cheapest test:** publish Lesson 1, post to founder channels, tag traffic; count starters who are not personal friends
+6. **If wrong:** the channel hypothesis fails before the product hypothesis; change channel work, keep the spine free
+
+### Card 5: pin two on the same home page
+
+1. **We believe** engineers learning PM
+2. **will** find the PM spine credible without a second site
+3. **because** dual-audience lessons with concrete examples travel across both roles
+4. **Right when** eng-tagged readers complete Lesson 1 within 10 points of PM-tagged readers over 30 days
+5. **Cheapest test:** one home page, one spine, optional track choice; measure completion by self-tagged audience
+6. **If wrong:** revisit dual-audience copy before you split products
+
+### Order for this product
+
+Run **Card 1** and **Card 2** on the critical path first (pain + free spine). Run **Card 3** as a demand signal in parallel only if the fake door is truly thin. **Card 4** and **Card 5** check capture and pin two. Pricing depth stays in the pricing lesson after waitlist and retention data exist.
+
+## Common mistakes
+
+| Mistake | What is happening |
+|---|---|
+| Feature roadmap before any hypothesis | Wish list with dates; build trap |
+| "Experiment on ticket ENG-4412" | Testing a backlog row, not a belief |
+| A/B theater at 0→1 with no traffic | Fake rigor; underpowered "wins" |
+| Interviews only after you have millions of users and a clear metric | Causal questions left unanswered |
+| Tech spikes for every idea before value tests | Feasibility theater on the wrong problem |
+| Sprint = experiment | Delivery iteration with no falsifiable claim |
+| Lab-grade proof on day one | Overbuilt test; no decision in the time box |
+| Leading interviews ("would you buy our tech course?") | Invented demand |
+| "We believe users want X" | No metric, sample, or stop rule |
+| KR listed as the experiment | Direction confused with a single test |
+| Fifteen open A/Bs | No primary learning bet; underpowered reads |
+| PM owns interviews; eng skips discovery | Findings die at the sprint boundary |
+| Designer polish before the belief is clear | Fidelity ahead of risk |
+| Success = we shipped | Output celebrated; outcome unread |
+| Fake door that charges money on the free spine | Strategy refusal broken |
+| Testing a refused strategy as a side quest | Strategy and discovery fighting each other |
+
+## Before you go on
+
+Pick one belief inside a product you know. Fill the six-line card. Then answer:
+
+1. Is this testing a **strategic** bet or a random feature request?
+2. Which OKR or objective does it serve?
+3. Is the test lean, fast to read, and least effort for a real decision?
+4. Which **product stage** is this bet in, and does the instrument match (interview vs A/B vs waitlist)?
+5. Who owns PM, design, and engineering rows this week?
+6. Can you finish in one week with the sample you named?
+7. If this card passes, what thin scope would enter **Now** on a now/next/later board (not a twelve-feature roadmap)?
+
+If you cannot name the stop rule, you are not ready to ask engineering for time. If you hold a dated feature roadmap and no hypothesis cards, start by turning each near-term feature into a belief or deleting it.
+
+## References
+
+- Melissa Perri, [*Escaping the Build Trap*](https://www.melissaperri.com/escaping-the-build-trap) (Product Kata; outputs vs outcomes; build trap; experiment as next step toward a target condition)
+- Teresa Torres, [*Continuous Discovery Habits*](https://www.producttalk.org/continuous-discovery-habits/) (weekly discovery cadence; Opportunity Solution Tree)
+- Marty Cagan, [*Inspired*](https://www.svpg.com/books/) (discovery vs delivery)
+- Giff Constable, [*Talking to Humans*](https://www.talkingtohumans.com/) (problem interviews; avoid leading pitches)
+- Ron Kohavi, Diane Tang, Ya Xu, [*Trustworthy Online Controlled Experiments*](https://experimentguide.com/) (online A/B at scale)
+- Eric Ries, [*The Lean Startup*](http://theleanstartup.com/) (build-measure-learn; concierge and early demand tests)
+- Ken Schwaber & Jeff Sutherland, [The Scrum Guide](https://scrumguides.org/) (sprint as inspect-and-adapt on a shippable increment)
+- [Manifesto for Agile Software Development](https://agilemanifesto.org/) (2001)
+- John Doerr, [*Measure What Matters*](https://www.whatmatters.com/get-books) (OKRs as direction; pair with hypotheses above)
+
+Previous: [Product strategy](/learn/product/product-strategy). Next: [From MVP to weekly scope](/learn/product/mvp-weekly-scope).

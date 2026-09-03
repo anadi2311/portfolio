@@ -1,0 +1,243 @@
+---
+title: From MVP to weekly scope
+summary: After a hypothesis passes, write a thin Now list, a one-page spec, and one week of work. The same cadence runs learning weeks and build weeks.
+audience: Both
+status: published
+order: 5
+---
+
+[Lesson 4](/learn/product/experiments) decided whether a bet deserves time. This lesson is what you cut once a card passes: the <Key>smallest product that continues the proof</Key>, then one week of work the team can finish.
+
+You do not write a year of features here. You do not declare product-market fit because the MVP shipped. Fit keeps getting tested as people use what you shipped. Activation and retention live in [Product-led growth](/learn/product/product-led-growth) and [Product analytics and GTM](/learn/product/product-analytics-gtm).
+
+This lesson runs in order:
+
+1. How the MVP appears (survivors of tests, not a dream list)
+2. How discovery feeds build (and keeps feeding it)
+3. Now / Next / Later
+4. One-page spec and how you slice
+5. The week: learn or build, prioritize, plan / standup / retro
+6. After ship: fit remains a test
+7. Specimen on this site
+
+## 1. How the MVP appears
+
+You do not start with a finished feature list and "MVP it."
+
+| Step | You have |
+|---|---|
+| Case + strategy | Who, scoreboard, refusals (Lessons 2–3) |
+| Hypothesis seeds | Beliefs that could be wrong (Lesson 2 case; Lesson 4 cards) |
+| Cheap tests | Interviews, fake doors, concierge (Lesson 4) |
+| Survivors | Thin **Now** list = the MVP |
+
+At day one the parking lot can be long. The **MVP** is only what survived enough tests that the beachhead can do one job and you can measure it. Everything else stays Next or Later until a card earns it.
+
+### MVP is not v1
+
+Eric Ries's [*The Lean Startup*](http://theleanstartup.com/) treats MVP as the smallest thing that produces a learning. Teams hear "minimum" and ship a sloppy demo. Geoffrey Moore's whole product (Lesson 2) applies: the beachhead needs enough to say yes. Thin enough to learn, complete enough that they can say yes.
+
+Marty Cagan writes about the smallest valuable product: one audience, one job, enough quality that you can believe the metric. Henrik Kniberg's [MVP sketches](https://blog.crisp.se/2016/01/25/henrikkniberg/making-sense-of-mvp) make the same cut: a skateboard that moves, not a car with no wheels.
+
+**Dropbox** shipped a video before full sync. That was an experiment (Lesson 4). The MVP that followed was working sync for the waitlist, not every platform and every enterprise admin feature.
+
+**Instagram** cut Burbn to photos. The MVP was the photo loop people used, not the kitchen sink on the whiteboard.
+
+If the list includes every layer of the dream architecture, you wrote v1 and called it MVP.
+
+**This site at the start:** the dream list could include auth, Stripe, twelve eng lessons, certificates. Strategy refused most of that. Early tests (specimen teaching, completion, waitlist) decide what enters Now. The MVP is the free spine that can move Lesson 1→2, not the full course platform.
+
+## 2. Discovery feeds build
+
+Discovery does not invent a feature catalog and "seep" tickets into engineering. <Key>A passed hypothesis earns thin scope on Now</Key>. Build ships that scope. Learning continues for confusion in the build and for the next bet toward the outcome.
+
+### What passes from discovery to build
+
+1. Live hypothesis (six-line card)
+2. Decision: ship / scale this thin scope
+3. Now bullets + one-page spec
+4. Done and metric
+
+Opportunities and solutions on Torres's tree stay under test until a card passes. "We liked this idea in a workshop" is not a handoff.
+
+### How the clock is staffed
+
+| Pattern | Who | How it runs |
+|---|---|---|
+| **One team, alternating** | Same PM, design, eng | Learning week, then build week (or a named mixed week). Common at 0→1 and on this site. |
+| **Dual track** | Discovery and delivery in parallel | Cagan-style: discovery stays a little ahead, feeding the next Now slice while eng builds the last passed bet. Same outcome and strategy. Two increments, two done definitions. |
+
+In both patterns, build **lags** discovery on a given bet: you do not start a full build week on a claim that has no card and no stop rule. Dual track is not a feature factory with a research department. If discovery only fills Jira and never kills bets, you are back in the build trap.
+
+### Learning after build starts
+
+Build does not end discovery.
+
+- **Confusion in the slice:** usability, unclear copy, broken instrumentation → a short learning loop (prototype, interview, spike) before you widen the build.
+- **Next bet toward the outcome:** climb the Opportunity Solution Tree again (Lesson 4). New card. May become the next learning week while the previous slice is in production.
+
+The outcome (OKR / Product Kata direction) stays fixed longer than any one feature. Features are how you chase the outcome, not the roadmap's purpose.
+
+## 3. Now, Next, Later
+
+This is the roadmap you write after experiments. Dates on a twelve-feature slide are theater until cards pass.
+
+| Column | What goes here | What does not |
+|---|---|---|
+| **Now** | Thin scope that continues the live hypothesis this cycle | Pets, platform rewrites, refused strategy |
+| **Next** | Bets with evidence, not yet a week | "Someday AI" with no card |
+| **Later** | Parking lot plus Lesson 3 refusals, written so sales cannot resurrect them quietly | Hidden backlog in Slack |
+
+Near-term rows name an **outcome**, not a ticket dump. "Raise Lesson 1→2 completion" belongs in Now. "Add certificates, login, and a forum" belongs in Later until strategy and retention change.
+
+[Product leadership](/learn/product/product-leadership) covers how you defend this board in a room. This lesson is how you fill it.
+
+## 4. Spec and slice
+
+Before the week starts, write one page and cut vertical scope.
+
+### Thin spec (the PRD you need)
+
+A fifty-page PRD is a task that can hide a missing hypothesis. Ben Horowitz's [Good Product Manager / Bad Product Manager](https://a16z.com/good-product-manager-bad-product-manager/) puts the outcome on the PM. The document serves the build.
+
+| Field | What you put |
+|---|---|
+| **Outcome** | Scoreboard movement this slice is for |
+| **Who** | User / buyer / pin from strategy |
+| **Live hypothesis** | The six-line card, or a pointer to it |
+| **In scope** | 3–7 bullets the beachhead can use |
+| **Out of scope** | Named refusals and "not this week" |
+| **Done** | Observable: shipped, instrumented, or N users completed the job |
+| **Risks** | Value, usability, feasibility, viability left open |
+
+Design vision and Figma file structure wait for [Briefing design](/learn/product/design-vision-branding) and [Figma for PMs](/learn/product/figma-for-pms). The spec here is enough for engineering to cut a vertical slice.
+
+Good PMs keep the spec short enough that a change in the hypothesis forces a rewrite. Bad PMs freeze a PRD and let the product drift.
+
+### Cut by job, not by layer
+
+- Weak Now list: "auth, then database, then UI, then analytics."
+- Strong Now list: "a reader can finish Lesson 1 and we can count start and finish."
+
+Auth, payments, and a full tech rail stay out of Now for this product until a later hypothesis needs them ([Product strategy](/learn/product/product-strategy)). A spike belongs in a **learning week** if feasibility is the open risk. A spike that becomes a quarter of platform work is the build trap with a new name.
+
+Ryan Singer's [*Shape Up*](https://basecamp.com/shapeup) is useful for **appetite**: how much time the slice is allowed, not how many tickets Jira can hold. You do not need Basecamp's whole system to use that idea.
+
+## 5. Run the week
+
+The Scrum clock (plan, daily, review, retro) can run discovery or delivery. The trap from Lesson 4 is a sprint whose increment is only backlog features nobody tested.
+
+### Learning week, build week, or mixed
+
+| Kind of week | Increment | Done | Retro looks at |
+|---|---|---|---|
+| **Learning week** | Finished experiment card | Sample hit, stop rule read, decision written | Expected vs actual; next card |
+| **Build week** | Shippable slice of Now | Spec "done" met; metric events fire | Did the outcome move; what to cut |
+| **Mixed** | One primary bet plus one thin build | Both named up front | Do not hide twelve tickets as "discovery" |
+
+A small team runs **one primary bet** on the critical path. Mixed weeks fail when everything is "a bit of both" and nothing finishes.
+
+**Spotify** (early squad lore, public talks) ran short delivery loops once a surface existed. The PM move that mattered was naming whether the week was for learning or for shipping a slice. Velocity without that name is output.
+
+### Prioritize this week
+
+Sequencing of pins is strategy (Lesson 3). Fighting a loud stakeholder is leadership (Lesson 6). Here you pick **this week's** work.
+
+1. Does it serve the live hypothesis and the OKR / objective?
+2. Is it the cheapest remaining risk (value, usability, feasibility, viability)?
+3. Can the team finish it in the appetite (one week, or a named two-week cap)?
+4. Did strategy refuse it? If yes, it does not enter Now.
+
+RICE, ICE, and WSJF are optional scoring sheets. They do not replace those four questions. A scored list of refused ideas remains a refused list.
+
+### Planning, standup, review, retro
+
+**Planning:** Name the kind of week (learn / build / mixed). Name the outcome and the not-this-week list out loud. Walk the one-page spec. Eng pushes back on fake one-week scope. Design matches fidelity to the slice. Confirm who owns the metric and the stop rule (Lesson 4 table).
+
+**Standup:** Blockers on the **bet**, not a tour of every ticket. "Waitlist form is stuck on spam" is a standup. "I did six story points" is karaoke.
+
+**Review / inspect:** Show the increment: interview notes and a decision, or the slice in production. Compare to done.
+
+**Retro:** Learning week: what would change the next card. Build week: what bloated the slice. Process theater (stickies about stickies) waits until the bet is named.
+
+### Who cuts the week
+
+| Role | Owns |
+|---|---|
+| **PM** | Kind of week, outcome, in/out, done, call on what slips |
+| **Engineering** | Honest appetite; vertical slice; events; kill switch if you ship a flag |
+| **Design** | Fidelity for this slice; no vision-deck scope sneak |
+| **Founder / GM** | Air cover for Later; no "add this one checkbox" mid-week without rewriting Now |
+
+## 6. After you ship: fit remains a test
+
+Shipping the MVP is not a certificate of fit. The MVP is how you keep testing whether the beachhead returns, pays attention, or pays later.
+
+This site: Lesson 1→2 completion is the capture metric from strategy. The MVP (public spine, specimen teaching) is the product you measure. Waitlist clicks on the tech track are a demand signal, not fit. Paid packaging waits until retention on the free spine proves out.
+
+## 7. Specimen: this site
+
+Walk the same order on this product.
+
+### MVP and board
+
+**Now (v1 MVP):** public Learn, free PM spine, lessons that use this product as the example, enough analytics to count lesson start and finish. Optional thin waitlist on the tech track if the Lesson 4 demand card is running. One home page. Engineers as pin two on the same pages.
+
+**Next:** more of the PM spine; instrumentation quality; waitlist follow-up if the door earned it.
+
+**Later (refused until the hypothesis is funded):** login wall on the PM spine, Stripe, paid eng rail, certificates, cohorts, community-as-growth, infra theater.
+
+### One slice, one-page spec
+
+- Outcome: readers start and finish the new lesson.
+- Who: PM without eng depth.
+- Hypothesis: specimen teaching raises completion.
+- In: one lesson, catalog link, events.
+- Out: auth, payment, second site.
+- Done: production URL; events in the analytics you have.
+- Risk: traffic too thin for A/B; read completion as a cohort, not a p-value.
+
+### Example weeks
+
+**Build week:** publish the next PM lesson, wired to start/finish events, linked from the catalog. Done: live on production, capture metric can move.
+
+**Learning week:** twelve beachhead interviews with the stop rule from Lesson 4 Card 1, decision written. Done: memo the team can quote, Now list updated.
+
+## Common mistakes
+
+| Mistake | What is happening |
+|---|---|
+| MVP = crappy v1 | Thin became broken; beachhead cannot say yes |
+| Feature list before any passed card | Wish list with dates (Lesson 4) |
+| PRD as the product | Document froze; hypothesis moved |
+| Discovery "seeps" tickets with no kill | Build trap with a research label |
+| Every week is mixed | Nothing finishes |
+| Standup as point theater | Bet is unnamed |
+| Prioritize with RICE, ignore strategy refusals | Scoring theater |
+| "We shipped, we have PMF" | Fit untested on return behavior |
+
+Good PMs measure the week by the outcome and the learning. Bad PMs measure the week by tickets closed.
+
+## Before you go on
+
+Take one hypothesis that passed (or pretend Lesson 4 Card 2 on this site passed). Write in order:
+
+1. **MVP Now** (3–7 bullets). **Next** (2). **Later** (named refusals).
+2. A **one-page spec** using the table in section 4.
+3. **This week:** learn, build, or mixed. Done in one sentence.
+4. Three lines you will say in planning, and one question for retro.
+
+If Now has more than seven bullets, you wrote v1.
+
+## References
+
+- Eric Ries, [*The Lean Startup*](http://theleanstartup.com/) (MVP as learning)
+- Marty Cagan, [*Inspired*](https://www.svpg.com/books/) (smallest valuable product; discovery and delivery)
+- Melissa Perri, [*Escaping the Build Trap*](https://www.melissaperri.com/escaping-the-build-trap) (outcomes; Product Kata as the learning week)
+- Henrik Kniberg, [Making sense of MVP](https://blog.crisp.se/2016/01/25/henrikkniberg/making-sense-of-mvp)
+- Ryan Singer, [*Shape Up*](https://basecamp.com/shapeup) (appetite as a time box)
+- Ben Horowitz, [Good Product Manager / Bad Product Manager](https://a16z.com/good-product-manager-bad-product-manager/)
+- Ken Schwaber & Jeff Sutherland, [The Scrum Guide](https://scrumguides.org/) (cadence; increment; inspect and adapt)
+- Geoffrey Moore, [*Crossing the Chasm*](https://www.geoffreyamoore.com/book/crossing-the-chasm-3rd-edition/) (whole product for the beachhead)
+
+Previous: [Experiments](/learn/product/experiments). Next: [Product leadership](/learn/product/product-leadership).

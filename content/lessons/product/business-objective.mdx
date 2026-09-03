@@ -1,0 +1,474 @@
+---
+title: The business objective
+summary: >-
+  Where business ideas come from, how to form an objective and business case,
+  how to pitch investors and your team, beachhead strategy, and how OKRs fit
+  after the thinking is done.
+audience: Both
+status: published
+order: 2
+---
+
+[Lesson 1](/learn/product/how-pm-begins) ended with a sequence: objective → hypothesis → tests. This lesson stays on the first step — the **business objective** — and does not repeat the loop, the cone of uncertainty, or how to pick a primary metric on the scoreboard. Those live in Lesson 1.
+
+Here we answer four questions in order:
+
+1. Where does the objective usually come from?
+2. How do business ideas show up before anyone writes a case?
+3. If you must propose an objective, how do you derive it?
+4. How do you document it, **pitch it**, and get funded — market, persona, beachhead, economics?
+
+Frameworks like OKRs enter last. They are **formats for distilling an objective into measurable results**, not a substitute for figuring out who you serve first.
+
+## Where objectives usually come from
+
+In most companies, the business objective arrives **from above** — annual planning, a board directive, a CEO memo, or a quarterly goal-setting ritual. You inherit a slice: grow revenue in a segment, cut cloud cost, fix retention in a cohort, ship a new line to diversify.
+
+Lesson 1 already showed what that feels like: Robinhood's leadership wanted **revenue growth** before crypto was chosen; mature PMs get OKR-shaped slices from planning whether or not the company calls them OKRs. Your first job is to understand the handed-down objective until you can say, in one sentence, what moves on the scoreboard and by when.
+
+Good PMs clarify inherited objectives until they are measurable. Bad PMs treat "increase engagement" as sufficient and start grooming tickets.
+
+## How business ideas arrive (before the case exists)
+
+The **business objective** and **business case** are formal. The **idea** behind them rarely arrives as a filled template. It shows up from one or more of these paths — often messy, often slow.
+
+| Source | What happens | Example | Read |
+|---|---|---|---|
+| **Your own pain** | You live the problem | **Stripe**: developers hated payments plumbing; **Airbnb**: hosts could not pay rent ([*Founders at Work*](https://www.foundersatwork.com/post/stories)) | Jessica Livingston, [*Founders at Work*](https://www.foundersatwork.com/) |
+| **Watching users** | You observe struggle in the wild | Christensen's commuters and the thick shake — job, not demographics ([*HBR* JTBD](https://hbr.org/2016/09/know-your-customers-jobs-to-be-done)) | Torres, [*Continuous Discovery Habits*](https://www.producttalk.org/continuous-discovery-habits/) |
+| **Customer pull** | Users hack a workaround; you productize | **Slack** grew out of internal chat while building a game — the tool survived because teams pulled it ([origin story, public interviews](https://slack.com/about)) | Moore, [*Crossing the Chasm*](https://www.geoffreyamoore.com/book/crossing-the-chasm-3rd-edition/) |
+| **Industry diagnosis** | You study structure and see a shift | **Netflix**: postage economics capped DVDs; streaming was the policy answer | Rumelt, [*Good Strategy Bad Strategy*](https://www.goodstrategybadstrategy.com/) |
+| **Technology change** | New capability unlocks a new job | **Tesla**: battery and motor progress made EV performance credible | Christensen, [*The Innovator's Dilemma*](https://www.christenseninstitute.org/the-innovators-dilemma/) |
+| **Slow hunch + adjacency** | Ideas compound from side projects and networks | Steven Johnson's **liquid networks** — insight needs collision and time ([*Where Good Ideas Come From*](https://www.stevenberlinjohnson.com/wheregoodideascomefrom/)) | Johnson, [*Where Good Ideas Come From*](https://www.stevenberlinjohnson.com/wheregoodideascomefrom/) |
+| **Random observation** | You notice an anomaly and cannot let it go | **Amazon** books: huge category, mail-order precedent, catalog beats shelf limits | Bezos letters; Bryar & Carr, [*Working Backwards*](https://www.workingbackwards.com/) |
+| **Data / deals / support** | Patterns in lost deals, churn, tickets | Enterprise PM inherits "we lose when security review slips" — idea is trust infrastructure, not another feature | Perri; Torres |
+
+Paul Graham's essay [How to get startup ideas](https://www.paulgraham.com/startupideas.html) stresses **organic** ideas — problems you understand deeply — over "startup ideas" invented for a pitch competition. Giff Constable's [*Talking to Humans*](https://www.talkingtohumans.com/) is the discipline layer: talk to specific humans before you scale the story.
+
+<Key>Ideas are inputs. The case is the pitchable output.</Key> Your PM job is to turn a raw idea — however it arrived — into an objective and case that survive skepticism.
+
+## When you must propose the objective yourself
+
+Sometimes there is no crisp mandate. A founder asks "what should we build next?" A GM gives you a territory and says "figure it out." A new product line has a budget but no written goal. You are not writing a roadmap yet — you are proposing **what winning would mean** for the company in that space.
+
+Richard Rumelt's [*Good Strategy Bad Strategy*](https://www.goodstrategybadstrategy.com/) is the best single book on this step. His **strategy kernel** is three parts:
+
+| Part | Question | PM translation |
+|---|---|---|
+| **Diagnosis** | What is the challenge? | What is broken or underserved — with evidence |
+| **Guiding policy** | What approach will we take? | The bet direction, not the feature list |
+| **Coherent actions** | What coordinated moves follow? | Roadmap themes — still not tickets |
+
+The **business objective** sits between diagnosis and action: it names the outcome that would prove the guiding policy worked. Rumelt's bad-strategy smell test applies: if the "objective" is a fluff slogan ("be customer-centric") or a laundry list of ambitions with no diagnosis, you do not have an objective yet — you have wallpaper.
+
+<StrategyKernelDiagram />
+
+### A practical path when you are asked to define the objective
+
+Work in this order. Skip a step and you will ship outputs that sound strategic but do not move money.
+
+1. **Diagnose with evidence.** Lost-deal notes, churn interviews, support themes, usage cliffs, competitive win/loss — not only brainstorms. Teresa Torres's [*Continuous Discovery Habits*](https://www.producttalk.org/continuous-discovery-habits/) is the modern playbook for keeping evidence fresh weekly; Rumelt is the book for turning evidence into a challenge statement.
+
+2. **Name the constraint.** What single bottleneck, if removed, would unlock the rest? Andy Grove's [*High Output Management*](https://www.amazon.com/High-Output-Management-Andrew-Grove/dp/0679762884) trains you to think in **outputs**, not activity: the factory is only as fast as the slowest step. For a PM, the constraint might be activation, sales cycle length, gross margin, or trust after an outage — not "we need more features."
+
+3. **Propose one measurable outcome + time box.** Tie it to company strategy. Roger Martin and A.G. Lafley's [*Playing to Win*](https://www.rogerlmartin.com/books/playing-to-win) forces "where to play" and "how to win" before metrics: which customer, which channel, which advantage. Your objective should fit inside those choices.
+
+4. **Sanity-check economics.** A objective that wins users but destroys margin is a different conversation with finance. Helmer's [*7 Powers*](https://www.7powers.com/) helps you ask whether the bet builds durable advantage — not required reading for week one, but the right book when leadership asks "why us, why now?"
+
+5. **Socialize before the backlog.** One page: diagnosis, proposed outcome, what you would learn in 90 days if wrong. That page is the seed of a business case (below).
+
+**Netflix**, mid-2000s: the diagnosis was postage and inventory economics caps on DVD-by-mail; the guiding policy was streaming; the objective became subscriber growth on a digital cost curve — not "more DVDs." **Adobe**, 2011–2013: diagnosis was boxed software and piracy friction; guiding policy was subscription access; the objective became recurring revenue (ARR) through Creative Cloud — years of migration pain, but the objective was clear before every feature debate ([Adobe investor narrative](https://www.adobe.com/investor-relations.html)).
+
+When you propose an objective, you are doing Rumelt's diagnosis and guiding policy in PM language. [Product strategy](/learn/product/product-strategy) goes deeper on refusal and long-term where-to-play; this lesson gets you to a funded case with a **beachhead** you can test.
+
+## Sharpening the objective before anyone formats it
+
+Before OKRs, SMART goals, or a north-star workshop, the objective must pass a plain test. Lesson 1 defined the scoreboard; here is the lint check:
+
+| Question | Weak | Strong |
+|---|---|---|
+| What moves? | "Improve the product" | "Grow paid accounts in mid-market by 20%" |
+| For whom? | "Customers" | "Teams evaluating us against Competitor X" |
+| By when? | "Soon" | "By end of Q3" |
+| Why now? | "It's important" | "We lose 40% of deals when security review slips past 30 days" |
+
+If leadership handed you a weak line, your job is to sharpen it in writing and send it back. If you proposed it yourself, do not publish until you can answer all four without hedging.
+
+<OutputsVsOutcomesDiagram />
+
+<Key>An objective is a commitment the company can measure.</Key> The business case is the document that shows you know who it is for and why they would care.
+
+## What goes into a business case
+
+A **business case** is how you persuade leadership to fund the objective — or kill it before it eats a quarter. It is Rumelt's kernel plus **who, where, and how you will win first** — not a PRD and not a full experiment plan.
+
+Writing the case is half the job. The other half is **pitching it** — to your exec, your team, and sometimes investors or the board — so people **choose** to fund the bet and align on what success means.
+
+Think of the case as answering: *If we are right about this market and this wedge, what should move on the scoreboard — and what would prove us wrong cheaply?*
+
+### Criteria checklist
+
+Not every bet needs every row at equal length. A new product line needs market and beachhead depth; an internal efficiency bet might lean on cost and risk.
+
+| Section | What it answers | Hypothesis link |
+|---|---|---|
+| **Diagnosis** | What is broken or underserved — with evidence | Why this bet exists |
+| **Company objective link** | Which top-level goal this serves | Alignment check |
+| **Target market** | Segment size, growth, budget, geography | Who the market is |
+| **Beachhead niche** | The **first** tight segment you will dominate | Where you start (see Moore below) |
+| **Personas** | Who **uses** vs who **pays** (often different in B2B) | Who you build and sell for |
+| **Job / problem** | Situation, struggle, alternative today | What must be true about their behavior |
+| **Competitive alternatives** | What they use now — including spreadsheets and "do nothing" | What you must beat |
+| **Guiding policy / bet** | Approach in one sentence — not a feature list | The claim you are making |
+| **Hypothesis seeds** | 2–3 falsifiable beliefs ("they will pay if…") | Inputs to [Experiments](/learn/product/experiments) |
+| **Primary metric** | What moves if the bet works | Scoreboard from Lesson 1 |
+| **Guardrails** | What must not get worse (margin, NPS, incidents) | Constraints on the bet |
+| **GTM wedge** | First channel or motion to reach the beachhead | How first users find you |
+| **Business model sketch** | Who pays, how, rough unit economics | Viability preview |
+| **Financial case** | Investment, return, payback timeline | The ask in money |
+| **Risks & mitigations** | What kills the bet; what you learn before scaling | Kill criteria preview |
+| **90-day learning plan** | What you will know soon that you do not know now | Cheap tests before big build |
+
+**Hypothesis seeds** are not the full experiment worksheet — that is the next lesson's job. In the case you list beliefs leadership must agree might be wrong: "Mid-market admins will adopt without professional services," "Developers will integrate in under a day," "Free tier converts at X%."
+
+Good PMs make personas and beachhead explicit in the case. Bad PMs write "TAM slide + AI trend" and ask for headcount.
+
+### Business case vs strategy vs hypothesis
+
+These get conflated. Separate them:
+
+| Artifact | Owns | Does not own |
+|---|---|---|
+| **Business case** | Why fund this bet now; market, persona, economics, ask | Sprint tickets, UI mocks |
+| **Strategy** | Where to play, how to win, **what you refuse**, sequence of markets | Quarterly OKR wording |
+| **Hypothesis** (test) | One falsifiable claim + metric + how you would know you are wrong | Annual vision |
+
+Strategy often **narrows** the case: the beachhead is a strategic choice. The hypothesis **tests** a slice of the case before you scale.
+
+<CaseStrategyHypothesisDiagram />
+
+### Beachhead: find a niche, win it, expand
+
+Geoffrey Moore's [*Crossing the Chasm*](https://www.geoffreyamoore.com/book/crossing-the-chasm-3rd-edition/) is the classic book on **how disruptive products find first users** without dying in the gap between early enthusiasts and the mainstream.
+
+Moore's core PM ideas for the business stage:
+
+1. **Pick a beachhead** — a niche segment small enough to dominate, specific enough that word-of-mouth and references work.
+2. **Deliver the "whole product"** for that niche — not MVP sloppiness, but everything that niche needs to say "yes" (support, integrations, trust).
+3. **Expand in bowling-pin order** — adjacent niches once the beachhead is referenceable.
+
+That sequence is **strategy inside the case**: target market is the wide terrain; **beachhead** is the first pin.
+
+<BeachheadBowlingPinDiagram />
+
+**Amazon**, 1995–1997: Jeff Bezos did not open with "everything store" on day one in customer experience. He opened with **books** — huge SKU count in one category, familiar mail-order behavior, a category where an online catalog clearly beat physical shelf limits. The beachhead made selection the weapon; expansion into music, electronics, and everything else followed the same pattern once logistics and trust compounded ([Bezos shareholder letters](https://www.aboutamazon.com/news/company-news/letters-to-shareholders); Bryar & Carr, [*Working Backwards*](https://www.workingbackwards.com/)).
+
+**Facebook**, 2004: **Harvard**, then other colleges, then the open network — each beachhead had dense social graph density before the product meant anything globally. The objective at each stage was penetration **within** a closed segment, not "all humans" on day one.
+
+**Tesla**: **Roadster** (high-end enthusiasts, proof of electric performance) before **Model S** and mass-market EVs — beachhead buyers funded learning on batteries and manufacturing ([Musk strategy interviews](https://www.tesla.com/blog); widely taught in Moore-style expansion analysis).
+
+**PayPal**: power sellers on **eBay** — a beachhead with urgent payment pain and built-in density before broad consumer P2P.
+
+**Slack**: teams **inside** companies (often engineering-led) before "enterprise messaging for everyone" — beachhead users who tolerated rough edges because email was the enemy.
+
+When you fill out **target market** and **personas** in the case, always name the **beachhead** explicitly: "We are not selling to all of mid-market IT yet. We are selling to security admins at Series B–D SaaS companies in the US with SOC2 pressure."
+
+Moore's follow-on [*Inside the Tornado*](https://www.geoffreyamoore.com/book/inside-the-tornado/) covers what happens **after** the chasm — mainstream hypergrowth — useful once your beachhead is won, not for picking it.
+
+### One-page case shape (reuse before you ask for engineers)
+
+```text
+Diagnosis:          [Evidence — what is broken]
+Objective link:     [Company goal]
+Target market:      [Segment definition]
+Beachhead:          [First niche you will dominate — Moore pin]
+Personas:           [User vs buyer — one line each]
+Job / problem:      [Situation + alternative today]
+Bet:                [Guiding policy — one sentence]
+Hypothesis seeds:   [2–3 beliefs that could be wrong]
+Primary metric:     [Scoreboard if right]
+Guardrails:         [Must not worsen]
+GTM wedge:          [How beachhead users find you]
+Ask:                [People, time, budget]
+90-day learning:    [What we will know soon]
+```
+
+### How to pitch the case (investors, leadership, team)
+
+The deck in the appendix does not fund the bet. A **live pitch** does — Q&A, credibility, and whether the room believes you will learn fast when wrong.
+
+| Audience | They need | Your tone |
+|---|---|---|
+| **Investors / board** | Market, beachhead, why now, ask, return logic | Crisp, evidence-heavy, honest about risk |
+| **Exec / GM** | Fit with company objective, opportunity cost, 90-day learning | "Here is what we will know by Q2" |
+| **Engineering & design** | Who we serve first, what we refuse, why this wedge | Specific users, not TAM poetry |
+| **GTM / sales** | Beachhead, buyer persona, whole product for that niche | "We are not selling to everyone yet" |
+
+**Pitch structure that works** (10–15 minutes live, or a tight memo):
+
+1. **Hook — one sentence pain** in the beachhead's words. Not "we are a platform." "Series B SaaS security admins lose deals when SOC2 review takes 45 days."
+2. **Diagnosis — evidence** (2–3 bullets). Lost deals, churn quotes, usage cliffs. Constable's rule: name real humans, not personas invented in a workshop.
+3. **Beachhead + personas** — who first, user vs buyer. Moore's pin, not the whole map.
+4. **Bet — guiding policy** one sentence. What you will try and **what you will not try** this year.
+5. **Why now** — market shift, regulation, competitor gap, internal constraint.
+6. **Proof plan** — hypothesis seeds + 90-day learning. What cheap tests run before big build.
+7. **Ask** — people, time, money. One number the room can say yes or no to.
+8. **Close — measurable objective** — primary metric + guardrails. The scoreboard if the bet works.
+
+<PitchSpineDiagram />
+
+**Amazon** trains PMs to pitch with a **PR/FAQ** before build — narrative press release plus skeptical customer and investor questions ([*Working Backwards*](https://www.workingbackwards.com/), Bryar & Carr). Read the PR aloud in the pitch. If it sounds like marketing fluff, the case is not ready.
+
+**Sequoia's** [Writing a business plan](https://sequoiacap.com/article/writing-a-business-plan) and YC deck guidance stress the same spine: problem, solution, why now, market, product, business model, team — adapted to stage. Use them as outlines, not as permission to add fifty slides.
+
+Oren Klaff's [*Pitch Anything*](https://www.pitchanything.com/) explains **frame and tension** in investor rooms — status, time pressure, and narrative flow. Ben Horowitz's memo voice applies internally: good PMs **sell the bet** to engineering and GTM; bad PMs "socialize the roadmap" and wonder why nobody cares.
+
+**The Mom Test** rule (Rob Fitzpatrick, [*The Mom Test*](https://www.momtestbook.com/)): pitch language must survive questions from people who want you to succeed but will not buy to be polite. If your beachhead only works when nobody asks hard questions, it is not a beachhead yet.
+
+Good PMs rehearse the pitch with one skeptic before the staff meeting. Bad PMs email a forty-page doc and call it alignment.
+
+### Business model sketch (inside the case)
+
+The case should hint at **who pays, how, and at what cost** — not a full pricing study. Netflix's shift to streaming was a model change, not a feature release. Salesforce's seat-plus-expansion model shaped admin and permissions work for a decade.
+
+At case stage you need a **sketch**: revenue model (subscription, usage, seats), who signs the check, rough price logic, and whether the math can work at the beachhead scale you named. You do not need perfect willingness-to-pay research yet — that is the job of the dedicated pricing lesson.
+
+**Pricing depth lives in [Pricing as a business case](/learn/product/pricing-business-case).** That lesson is still growing; we will add packaging, WTP, and unit-economics work there using the standard pricing canon below. For now, link your case to that lesson when the bet hinges on price — and flag "pricing TBD" explicitly instead of hiding it in a TAM slide.
+
+| Case-stage pricing question | Answer in the sketch |
+|---|---|
+| Who pays vs who uses? | Personas row |
+| How do they pay? | Subscription, usage, services, hybrid |
+| Why this price vs alternatives? | One sentence — not a spreadsheet |
+| What breaks if we are wrong on price? | Risk row / kill criterion |
+
+**Books the pricing lesson will draw from** (read when you hit packaging and WTP, not before you have a beachhead):
+
+- Madhavan Ramanujam & Georg Tacke, [*Monetizing Innovation*](https://www.simon-kucher.com/en/who-we-are/experts/madhavan-ramanujam) — design the offer around the price, not price around the product
+- Thomas Nagle, John Hogan & Joseph Zale, [*The Strategy and Tactics of Pricing*](https://www.routledge.com/The-Strategy-and-Tactics-of-Pricing/Nagle-Hogan-Zale/p/book/9781032178657) — segmentation, value communication, price structure
+- Hermann Simon, [*Confessions of the Pricing Man*](https://www.confessionsofthepricingman.com/) — how pricing decisions actually get made in companies
+- William Poundstone, [*Priceless: The Myth of Fair Value*](https://www.williampoundstone.net/Priceless.html) — psychology of price anchors and perceived value
+- Rafi Mohammed, [*The Art of Pricing*](https://www.artofpricing.com/) — practical pricing moves for product and sales teams
+
+Until that lesson ships, cite "pricing hypothesis — see [Pricing as a business case](/learn/product/pricing-business-case)" in your case and move on with the rest of the checklist.
+
+**Microsoft** Office 365: subscription case tied to IT admin outcomes before ribbon parity ([Perri](https://www.melissaperri.com/escaping-the-build-trap)) — an internal pitch as much as an external one.
+
+## Expressing the objective: frameworks are formatting
+
+Once leadership agrees on **what** matters and the **case** has a beachhead, companies pick a **ritual** for writing the objective on calendars and dashboards. None of these discover your persona or niche.
+
+| Framework | What it does | When teams use it |
+|---|---|---|
+| **OKRs** | Qualitative objective + few measurable key results | Quarterly alignment, many teams |
+| **SMART** | Lint on one goal (specific, measurable, …) | RFPs, project charters, single bets |
+| **Balanced Scorecard** | Objectives across financial, customer, process, learning | Enterprise cascades |
+| **North Star + inputs** | One outcome metric + weekly levers | Growth-stage product companies |
+| **V2MOM** | Vision, values, methods, obstacles, measures | Salesforce-style annual planning |
+| **HEART / GSM** | User-quality goals with instrumentation | UX-heavy products (Google-origin) |
+| **OMTM** | One metric per company stage | Early startups (*Lean Analytics*) |
+
+Your job: learn which ritual your exec uses, then write your team's contribution in **that** shape.
+
+### OKRs — one way to break an objective into key results
+
+**OKRs** pair an **objective** (direction) with **key results** (measurable proof). John Doerr brought the practice from Intel to **Google** in 1999; [*Measure What Matters*](https://www.whatmatters.com/get-started/) and Google's [re:Work OKR guide](https://rework.withgoogle.com/guides/set-goals-with-okrs/steps/introduction/) are the standard references for **format**, not for choosing what Google should pursue — Rumelt and Lafley come first.
+
+Use OKRs after the objective is worth measuring. A common failure is skipping diagnosis and filling OKR templates with activity ("ship SSO," "ship admin panel") while revenue or retention sits still — Perri's build trap inside OKR theater. Lenny Rachitsky's [OKR posts](https://www.lennysnewsletter.com/p/okrs) are useful for running the quarterly ritual; they do not replace a diagnosis.
+
+<ObjectiveKeyResultsDiagram />
+
+**Google** scaled search and adjacent products with OKRs as a **coordination** layer on top of already-debated ambitions — KRs as negotiation objects between teams, not a substitute for strategy ([Doerr TED talk](https://www.ted.com/talks/john_doerr_why_the_secret_to_success_is_setting_the_right_goals)).
+
+### Other formats in one line each
+
+- **SMART** (Doran, 1981): clears wording on a single goal — common in enterprise procurement; see [SMART criteria](https://en.wikipedia.org/wiki/SMART_criteria).
+- **Balanced Scorecard** (Kaplan & Norton, [*HBR 1992*](https://hbr.org/1992/01/the-balanced-scorecard-measures-that-drive-performance)): four perspectives so finance-only goals do not starve customer and capability work — **Southwest** is the classic teaching case linking low fares, fast turns, and training.
+- **North Star** (Ellis, [*Hacking Growth*](https://www.hackinggrowth.com/); [Lenny on NSM](https://www.lennysnewsletter.com/p/north-star-metric)): one compass metric plus inputs — early **Facebook** growth lore around MAU; **Airbnb** around booked nights.
+
+<NorthStarInputsDiagram />
+
+- **V2MOM** (Benioff, [Salesforce V2MOM posts](https://www.salesforce.com/blog/v2mom/)): annual vision-to-measures memo — product work maps to Methods.
+- **HEART** ([Google Research](https://research.google/pubs/pub36299/)): happiness, engagement, adoption, retention, task success — quality goals before revenue layers.
+- **OMTM** ([*Lean Analytics*](https://leananalyticsbook.com/)): one metric per stage — **Dropbox** video driving signups before full sync build.
+
+Good PMs match the company's ritual. Bad PMs import OKR templates into a scorecard company and wonder why nobody reads them.
+
+## After the case is funded — what this lesson does not teach
+
+Once leadership funds the beachhead and objective, other lessons own the next layers:
+
+- **Product strategy** — long-term refusal and where-to-play beyond the first pin ([Product strategy](/learn/product/product-strategy)).
+- **Growth model** — how users and revenue compound after beachhead wins ([Product-led growth](/learn/product/product-led-growth), [Product analytics and GTM](/learn/product/product-analytics-gtm)).
+- **Hypothesis and tests** — turn each seed into a falsifiable experiment ([Experiments](/learn/product/experiments)).
+- **MVP and weekly scope** — smallest proof this week ([From MVP to weekly scope](/learn/product/mvp-weekly-scope)).
+
+The business stage ends when the case is approved: objective, beachhead, personas, and ask are explicit. Lesson 1's loop runs on what comes after.
+
+## Moves when the business stage is stuck
+
+| Situation | Move |
+|---|---|
+| Objective handed down but vague | Return the four-question lint table in writing |
+| You must propose the objective | Rumelt kernel: diagnosis → policy → outcome |
+| Case missing market or persona | Add beachhead row — one niche, named buyer and user |
+| "Target market" is everyone | Moore beachhead: one pin, bowling-pin expansion later |
+| Leadership wants OKRs before diagnosis | Offer one-page case first; OKRs after |
+| Case is vision-only | Add hypothesis seeds, primary metric, 90-day learning |
+| Pitch falls flat | PR/FAQ read-aloud; rehearse with one skeptic ([*The Mom Test*](https://www.momtestbook.com/)) |
+| Wrong ritual for the company | Map to their actual planning doc (V2MOM, scorecard, NSM) |
+
+## Example: business objective for this Portfolio
+
+This site is the specimen for the lesson — not a diary of our backlog. Below is how the **business objective and case** would look if you pitched this product to a skeptical co-founder or advisor.
+
+### Rumelt kernel (strategy before slides)
+
+| Part | This product |
+|---|---|
+| **Diagnosis** | PMs and engineers talk past each other. Courses and decks teach abstractions; neither side sees how the other thinks under real constraints. |
+| **Guiding policy** | Teach both crafts through **one live product** — public Portfolio plus a free PM spine — before paid packaging or infra theater. |
+| **Coherent actions** | Ship readable lessons, wire the method (hypothesis → tests → MVP), grow the tech rail only after the PM spine earns attention. |
+
+### Business objective (what leadership would fund)
+
+<Key>Prove that a free, readable PM spine on a real portfolio site earns repeat learners — then expand technical depth and packaging.</Key>
+
+Sharpened:
+
+| Question | Answer |
+|---|---|
+| What moves? | Return visitors and **lesson completion** through the PM spine (Lesson 1 → Lesson 2 → …) |
+| For whom? | **Beachhead:** PMs without engineering depth who need to speak credibly with eng; second entry: engineers learning PM craft |
+| By when? | Next planning window — e.g. "12 PM spine lessons live with measurable completion" (adjust to your quarter) |
+| Why now? | AI and speed of build raised the cost of PM↔tech misalignment; unstructured free content exists but rarely ties to a product being built in public |
+
+### One-page case (filled in)
+
+```text
+Diagnosis:          PM↔tech gap; slide-deck learning does not stick; no single
+                    public product that teaches PM method on the thing you are
+                    looking at.
+
+Objective link:     Build a credible teaching brand + PLG wedge before monetization.
+
+Target market:      Professionals crossing the PM↔engineering boundary — global,
+                    English-first for v1.
+
+Beachhead:          PM newcomers without eng depth (primary pin); engineers
+                    learning PM as second pin — not "all product people."
+
+Personas:           User: PM who owns roadmap but fears technical reviews.
+                    Buyer (later): same person or eng lead self-serving; v1 is
+                    free — "buyer" is future packaging decision.
+
+Job / problem:      "I need to sound credible in eng reviews and pick bets
+                    without becoming an engineer."
+
+Bet:                Free PM spine on a live portfolio; tech rail and price after
+                    spine proves attention.
+
+Hypothesis seeds:   (1) People finish lessons when the site is the example.
+                    (2) Dual-audience one journey beats two separate sites.
+                    (3) Completion depth beats vanity traffic.
+
+Primary metric:     % of Lesson 1 starters who complete Lesson 2 within 14 days
+                    (activation through spine).
+
+Guardrails:         Lesson quality (readable, cited); no feature-factory infra
+                    in v1; do not break trust with paywall on PM spine.
+
+GTM wedge:          Portfolio credibility, LinkedIn/X, word of mouth — product
+                    is the lesson (PLG).
+
+Ask:                Founder time: lesson writing + site iteration; hosting cost
+                    at MVP scale; no paid GTM in v1.
+
+90-day learning:    Do return visitors complete the next lesson? Which lesson
+                    loses readers? Will engineers enter from the same home page?
+```
+
+<PortfolioCaseCardDiagram />
+
+Pricing and unit economics stay **TBD** on purpose — that is a [Pricing as a business case](/learn/product/pricing-business-case) exercise, not a guess in the objective slide.
+
+### Eight-minute pitch (script outline)
+
+1. **Hook:** "PMs ship PRDs engineers ignore, and engineers ship code PMs cannot defend — because neither side learned on the same product."
+2. **Diagnosis:** Gap is structural; free content is either pure PM theory or pure code, rarely both on one live site.
+3. **Beachhead:** PM without eng depth first — they feel the pain in every sprint review.
+4. **Bet:** Public Portfolio + free PM spine; you learn PM on the product in front of you.
+5. **Why now:** Build cycles shortened; misalignment costs rose.
+6. **Proof plan:** Ship spine lessons; measure Lesson 1 → 2 completion; interviews on what made them stay.
+7. **Ask:** Time to write and ship lessons; defer Stripe, auth, and platform curriculum until spine signal exists.
+8. **Close:** "Success this quarter is repeat learners through the spine — not homepage hits."
+
+Read that aloud. If step 4 still sounds like a vision statement, tighten the beachhead sentence until a skeptic can repeat it.
+
+### How this case would express in OKRs (format only)
+
+After the pitch lands, a team might write:
+
+- **Objective:** Become the default free PM spine for technical credibility at the junior/mid PM level.
+- **Key results (example):** Lesson 1→2 completion rate ≥ X%; 12 spine lessons published; median read depth ≥ Y% on Lesson 1; qualitative N from 10 target readers.
+
+OKRs do not replace the diagnosis above. They translate an **already argued** objective into a quarter.
+
+## Before you go on
+
+Pick a product you know. Fill the **one-page case shape**, then outline an **8-minute pitch** using the structure above (hook → ask). Rehearse it once out loud. Mark what you would validate in 30 days.
+
+Bring guesses to [Experiments](/learn/product/experiments) when you want tests.
+
+## References
+
+### How ideas become bets
+
+- Jessica Livingston, [*Founders at Work*](https://www.foundersatwork.com/) (origin stories)
+- Steven Johnson, [*Where Good Ideas Come From*](https://www.stevenberlinjohnson.com/wheregoodideascomefrom/)
+- Clayton Christensen, [*The Innovator's Dilemma*](https://www.christenseninstitute.org/the-innovators-dilemma/)
+- Paul Graham, [How to get startup ideas](https://www.paulgraham.com/startupideas.html)
+- Giff Constable, [*Talking to Humans*](https://www.talkingtohumans.com/)
+- John Mullins & Randy Komisar, [*Getting to Plan B*](https://www.amazon.com/Getting-Plan-B-Breaking-Business/dp/1422126691) (evidence that changes the plan)
+
+### Pitching the case
+
+- Colin Bryar & Bill Carr, [*Working Backwards*](https://www.workingbackwards.com/) (PR/FAQ pitch)
+- Sequoia, [Writing a business plan](https://sequoiacap.com/article/writing-a-business-plan)
+- Oren Klaff, [*Pitch Anything*](https://www.pitchanything.com/)
+- Rob Fitzpatrick, [*The Mom Test*](https://www.momtestbook.com/) (questions that kill bad pitches)
+
+### Forming objectives (read these first)
+
+- Richard Rumelt, [*Good Strategy Bad Strategy*](https://www.goodstrategybadstrategy.com/)
+- Roger Martin & A.G. Lafley, [*Playing to Win*](https://www.rogerlmartin.com/books/playing-to-win)
+- Andy Grove, [*High Output Management*](https://www.amazon.com/High-Output-Management-Andrew-Grove/dp/0679762884)
+- Hamilton Helmer, [*7 Powers*](https://www.7powers.com/)
+- Melissa Perri, [*Escaping the Build Trap*](https://www.melissaperri.com/escaping-the-build-trap) (outcomes vs outputs)
+
+### Pricing
+
+Full lesson: [Pricing as a business case](/learn/product/pricing-business-case). Case-stage sketch only here; deep WTP and packaging there using:
+
+- Madhavan Ramanujam & Georg Tacke, [*Monetizing Innovation*](https://www.simon-kucher.com/en/who-we-are/experts/madhavan-ramanujam)
+- Thomas Nagle, John Hogan & Joseph Zale, [*The Strategy and Tactics of Pricing*](https://www.routledge.com/The-Strategy-and-Tactics-of-Pricing/Nagle-Hogan-Zale/p/book/9781032178657)
+- Hermann Simon, [*Confessions of the Pricing Man*](https://www.confessionsofthepricingman.com/)
+- William Poundstone, [*Priceless*](https://www.williampoundstone.net/Priceless.html)
+- Rafi Mohammed, [*The Art of Pricing*](https://www.artofpricing.com/)
+
+### Market, beachhead, and GTM
+
+- Geoffrey Moore, [*Crossing the Chasm*](https://www.geoffreyamoore.com/book/crossing-the-chasm-3rd-edition/) and [*Inside the Tornado*](https://www.geoffreyamoore.com/book/inside-the-tornado/) (beachhead → mainstream)
+- Colin Bryar & Bill Carr, [*Working Backwards*](https://www.workingbackwards.com/) (Amazon PR-FAQ / Prime)
+- Clayton Christensen et al., [Jobs to Be Done](https://hbr.org/2016/09/know-your-customers-jobs-to-be-done), *HBR* (problem situation in the case)
+
+### Documenting and expressing objectives
+
+- John Doerr, [*Measure What Matters*](https://www.whatmatters.com/get-started/) (OKR format — after direction is set)
+- Google re:Work, [Set goals with OKRs](https://rework.withgoogle.com/guides/set-goals-with-okrs/steps/introduction/)
+- Lenny Rachitsky, [OKRs](https://www.lennysnewsletter.com/p/okrs) and [North Star Metric](https://www.lennysnewsletter.com/p/north-star-metric), *Lenny's Newsletter*
+- Robert Kaplan & David Norton, [Balanced scorecard](https://hbr.org/1992/01/the-balanced-scorecard-measures-that-drive-performance), *HBR*
+- Teresa Torres, [*Continuous Discovery Habits*](https://www.producttalk.org/continuous-discovery-habits/) (evidence for diagnosis)
+- Ben Horowitz, [Good Product Manager/Bad Product Manager](https://a16z.com/good-product-manager-bad-product-manager/)
+
+Cases cited: Stripe/Airbnb origin pain (*Founders at Work*); Slack customer pull; Johnson slow hunches; Amazon books beachhead; Facebook college sequence; Tesla Roadster; PayPal eBay sellers; Netflix streaming pivot; Adobe Creative Cloud; Microsoft Office 365; Google OKRs (Doerr); Dropbox video test.

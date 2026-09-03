@@ -1,0 +1,19 @@
+{
+  "title": "Product management",
+  "root": true,
+  "defaultOpen": true,
+  "pages": [
+    "how-pm-begins",
+    "business-objective",
+    "product-strategy",
+    "experiments",
+    "mvp-weekly-scope",
+    "product-leadership",
+    "product-led-growth",
+    "product-analytics-gtm",
+    "pricing-business-case",
+    "product-sense-and-ai",
+    "design-vision-branding",
+    "figma-for-pms"
+  ]
+}

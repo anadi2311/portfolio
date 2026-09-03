@@ -1,0 +1,18 @@
+{
+  "title": "Product engineering",
+  "root": true,
+  "pages": [
+    "why-this-stack",
+    "frontend",
+    "apis",
+    "auth-identity",
+    "data-and-databases",
+    "platform-gcp",
+    "docker",
+    "kubernetes-networking",
+    "kafka",
+    "clickhouse-analytics",
+    "terraform",
+    "helm-git-cicd"
+  ]
+}

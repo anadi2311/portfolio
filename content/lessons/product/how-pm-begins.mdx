@@ -1,0 +1,193 @@
+---
+title: How product management begins?
+summary: Product management is doing whatever it takes to make a product successful on terms the company can name. Success is subjective; you start with a business case, form a hypothesis, and test before you scale the build.
+audience: Both
+status: published
+order: 1
+---
+
+Product management is <Key>doing whatever it takes to make a product successful</Key>.
+
+On terms the company can name and measure.
+
+"Successful" is not one universal scoreboard. A seed-stage company proving willingness to pay cares about different numbers than a public company defending margin. The same product can be winning on one definition and failing on another. Your job is to learn which definition leadership means *now*, then align the team on it.
+
+**Brian Chesky and Joe Gebbia**, 2009: Airbnb needed <Key>booked nights</Key>, not more pins on the map. They flew to New York and photographed apartments by hand until conversion moved.
+
+**Spotify** at different chapters: listening hours when the company was growing usage; label economics and gross margin when the business matured.
+
+**Enterprise B2B**: a buyer team often scores <Key>time-to-value</Key> and win rate against a named competitor, not how many tabs you shipped this quarter.
+
+**After a trust crisis** (breach, outage, public backlash): fewer incidents, faster recovery, and CSAT can matter more than feature velocity until the scoreboard recovers.
+
+That is the whole job. Sprints, PRDs, roadmaps, standups, and hypothesis templates are tools. You pick them up when they move the scoreboard and put them down when they become theater. A PRD is a task. A product customers choose and pay for is the job.
+
+You sit between the customer who wants a problem solved and the company that needs a result it can afford to repeat — often without anyone on the product team reporting to you. You still own the bet.
+
+## How PM work starts
+
+When you join as a PM, you rarely start from a blank page. Here is what that actually looks like.
+
+### You join an existing product
+
+Most of the time you land on a product that has already been running for three, four, or five years, depending on the company. The backlog exists. Customers exist. The business has a rhythm.
+
+Your job is not to invent the company from scratch. You get a **product or company objective** handed to you. It comes out of OKRs, annual planning, or whatever framework the company uses. You own a slice of that, not a personal roadmap.
+
+If you are a **growth or GTM PM**, the objective might sound like: increase active users, grow gross share, expand revenue in a segment. Your job is to move that number by **creating features, changing features, or removing features** that do not pull their weight.
+
+If you are an **analytics PM**, the job looks completely different. You might own whether product teams can run experiments without filing a data ticket, whether metrics definitions are trusted, or how fast the company can answer "did this launch work?" You are not shipping user-facing UI; you are shipping clarity and speed for everyone else.
+
+If you are an **infra or platform PM**, you are often even further from the end user. Your objectives are internal: cut cloud spend without slowing releases, reduce incident frequency, ship a deployment path engineers actually adopt, tighten security controls the business requires. The scoreboard is company health, not a growth chart in the app store.
+
+Same title. Different objective. Same underlying job: move what leadership said matters this quarter.
+
+### You join a new product
+
+Sometimes you join—or help build—a **completely new product**. Uncertainty is much higher here.
+
+You are not only asking which features to ship. You are asking whether the product should exist, who will pay, and whether the business is **sustainable** after you find early traction. That means extensive user research, not a week of interviews and a PRD. Objectives are often **less set in stone** at the start. The job is harder. You still get a direction from the CEO, the business team, or a strategy doc. Sometimes you are **in the strategy meetings** yourself, throwing in ideas for what product should be built next.
+
+**Robinhood** is a good example. The brokerage was already well known. Leadership wanted to **grow revenue**. Before Robinhood pushed into crypto, there were strategy meetings: execs in a room asking where growth could come from, looking at several different target markets, narrowing the list. Crypto trading and tokenized stocks were bets that came out of that room. Later came deeper technical work—including building on their own chain on **Arbitrum**. Chain choice and token standards are engineering decisions. The PM layer underneath is simpler to name: the objective was still revenue. The company **tested a couple of product directions**, put a bet on one or two ideas, and built.
+
+New product development feels different from owning a mature line. In both cases you still **determine a hypothesis** for the objective you are trying to achieve. Then you **test and evaluate** that hypothesis before you scale the build.
+
+### The sequence
+
+PM work does not start with grooming a backlog. It starts with the objective (or business case): who has the problem, why the company cares now, what success looks like on the scoreboard.
+
+From there you write a **hypothesis**—a claim specific enough that you could be wrong. Then you run **tests**: talk to people, observe behavior, ship the smallest proof before you commit months of engineering.
+
+<PmSequenceDiagram />
+
+We teach each step in later lessons: [Experiments](/learn/product/experiments) for hypothesis and tests, [From MVP to weekly scope](/learn/product/mvp-weekly-scope) for the smallest proof and the weekly slice. This lesson names the sequence so you know where you are headed.
+
+## Embrace uncertainty
+
+You will not know at the start whether the product will work. That is normal. The job is to reduce uncertainty cheaply, not to pretend you had the answer in week one.
+
+The **cone of uncertainty** is a standard picture for this. Cost engineers used cone diagrams in the 1950s to show how early estimates can be wildly wrong. Barry Boehm brought the idea into software as the funnel curve in the 1980s. Steve McConnell popularized it in [*Software Project Survival Guide*](https://www.construx.com/resources/) (1997): think of a **funnel** — wide and uncertain at the start, narrowing as the project progresses and you learn. [The SilverLogic](https://tsl.io/blog/understanding-the-cone-of-uncertainty-in-agile-scrum) walks through the same shape for Agile teams: expansive at the beginning, gradual constriction as feedback arrives.
+
+At **project start** you might know the destination (grow revenue, ship a new line, fix retention) but not the route. Estimates on time, cost, and what customers will actually do sit inside a **wide band**. As you gather requirements, run discovery, lock a hypothesis, build an MVP, and ship, that band **narrows**. You still might be wrong, but you are wrong with more evidence.
+
+<ConeOfUncertaintyDiagram />
+
+At the wide end of the cone, your priority is **feedback**: customer conversations, prototypes, small tests, alignment with stakeholders on what success means. Near the narrow end, you **execute and refine** with a clearer scope. The cone is not prophecy — if the product pivots mid-flight, uncertainty can **widen again** until new signal arrives. That is why PM work pairs with iterative delivery (sprints, MVPs, experiments), not one big plan drawn on day one.
+
+Dropbox's demo video ran before full sync existed. Signups proved demand; production sync followed. Instagram was Burbn first — too many features, flat usage. The team cut everything except photos. Both teams killed or narrowed bets based on signal, not conviction alone.
+
+When the signal fails, good teams stop or pivot. Netflix Qwikster, 2011: subscribers left after a split and price hike. Hastings apologized in public and reversed course. The miss was strategic, not a comms problem. PM work includes naming when a bet is dead before you burn another quarter.
+
+<Key>Uncertainty is the job, not a personal failure.</Key> Frameworks help you learn faster. They do not remove the need to test.
+
+## Define the scoreboard
+
+Before you argue about features, agree on <Key>one scoreboard for this product</Key>.
+
+| If the company needs… | Success might look like… |
+|---|---|
+| Growth | New paying accounts, expansion revenue, lower customer acquisition cost |
+| Profit | Higher gross margin, fewer support tickets per user, better unit economics |
+| Retention | Users still active at day 30 and day 90, lower churn in a key segment |
+| Trust | Higher NPS or CSAT, fewer public complaints, more referrals |
+| Market position | Win rate against a named competitor, share in a segment |
+| Efficiency (B2B) | Shorter time-to-value, fewer steps to complete the core job |
+| Risk reduction | Fewer security incidents, closed compliance gaps |
+| Learning (early stage) | Proof that a segment will pay, repeat, or refer before you scale spend |
+
+Pick <Key>one primary metric</Key> for the quarter. Secondary metrics explain the story; they do not replace the primary one when it flatlines.
+
+Melissa Perri's [*Escaping the Build Trap*](https://www.melissaperri.com/escaping-the-build-trap) names the distinction: <Key>outputs</Key> are what you ship; <Key>outcomes</Key> are what moves on the scoreboard. Monthly revenue shipped without daily revenue is still an output. Angry sellers are the outcome Perri's teams learned from the hard way.
+
+## What the industry teaches
+
+These writers disagree on details. They agree that PM is outcome ownership under ambiguity — not ticket throughput.
+
+**Ben Horowitz** ([Good Product Manager/Bad Product Manager](https://a16z.com/good-product-manager-bad-product-manager/), Netscape memo): PMs own the result, know the customer and the numbers, and define their job and their success. The memo is worth reading. We are not going to repeat its good/bad list here — use it as a mirror when you catch yourself measuring activity instead of impact.
+
+**Marty Cagan** ([SVPG](https://www.svpg.com/product-management-start-here/)): On strong teams, PMs own **value** (will customers choose this?) and **viability** (can we sell, support, and afford it?). Design owns usability. Engineering owns feasibility. The title "product manager" is stable; the job changes by company stage and team model ([product vs feature teams](https://www.svpg.com/product-vs-feature-teams/)).
+
+| Risk | Question | Owner |
+|---|---|---|
+| Value | Will customers choose this? | Product manager |
+| Viability | Can we sell, support, and afford it? | Product manager |
+| Usability | Can users figure it out? | Product designer |
+| Feasibility | Can we build it well? | Engineering |
+
+**Melissa Perri**: Strategy is choosing which outcomes to pursue and which outputs to refuse. The build trap is paying for velocity while retention and revenue sit still.
+
+**Lenny Rachitsky** ([What is product management?](https://www.lennysnewsletter.com/p/what-is-product-management)): Weekly work splits into shape the product, ship the product, and synchronize the people — all in service of the scoreboard, not as three separate careers.
+
+**Clayton Christensen** ([Jobs to Be Done](https://hbr.org/2016/09/know-your-customers-jobs-to-be-done), *HBR*): Commuters hired a thick shake for a long drive; the competitor was a banana. PM starts in the situation, not the feature backlog. We use JTBD as a lens in [The business objective](/learn/product/business-objective).
+
+**Giff Constable** ([*Talking to Humans*](https://www.talkingtohumans.com/)): Talk to specific humans before you scale the build. Rahul Vohra at Superhuman charged early, ran a waitlist, and tuned onboarding until daily use moved — tests before scale.
+
+## Confusions to avoid
+
+**Feature factory.** The org celebrates releases while the scoreboard does not move. Perri's seller portal shipped monthly revenue views; sellers needed daily revenue. Four months wasted on the wrong output.
+
+**Project manager with a product hat.** Someone hits the date on the wrong work and calls it discipline. Sales demands SAML by Q3. The PM question is whether BigCo's ARR pays for enterprise identity now, what you cut if capacity is fixed, and whether one design partner teaches you enough before you generalize.
+
+**Title without homework.** Founders say "CEO of the product" because it costs no equity. Cagan's [job description template](https://www.svpg.com/product-manager-job-description/) lists what the team cannot delegate: customer knowledge, economics, competition, legal and privacy constraints. [Product leadership and stakeholders](/learn/product/product-leadership) covers the room skills when nobody reports to you.
+
+Juicero, 2017: polished hardware for a job hands could do. Early Airbnb needed trust — photos, payments, insurance — not prettier search filters. Discovery asks whether the idea earns production code. Delivery ships code you can defend. Reversing that order and calling it agile is a common failure mode.
+
+## Where this track goes
+
+This lesson orients you. The rest of the PM track teaches each skill when a gap shows up in the room.
+
+| Skill you need | Lesson |
+|---|---|
+| Business objective — how it is formed, case, frameworks | [The business objective](/learn/product/business-objective) |
+| Stakeholders, influence, leadership without authority | [Product leadership and stakeholders](/learn/product/product-leadership) |
+| Strategy, refusal, what you will not build | [Product strategy](/learn/product/product-strategy) |
+| Free product as growth, activation, the wedge | [Product-led growth](/learn/product/product-led-growth) |
+| Hypothesis, metric, ship or kill | [Experiments](/learn/product/experiments) |
+| Judgment, taste, PM work in the AI era | [Product sense, taste, and AI](/learn/product/product-sense-and-ai) |
+| Scoreboard metrics, analytics, go-to-market | [Product analytics and GTM](/learn/product/product-analytics-gtm) |
+| Pricing, packaging, unit economics (viability) | [Pricing as a business case](/learn/product/pricing-business-case) |
+| Vision and branding briefs for design | [Briefing design](/learn/product/design-vision-branding) |
+| Figma, components, front-end lingo for PMs | [Figma for PMs](/learn/product/figma-for-pms) |
+| MVP slices and weekly scope | [From MVP to weekly scope](/learn/product/mvp-weekly-scope) |
+
+If you came for technical depth (APIs, data, hosting), the [product engineering track](/learn) opens after this spine.
+
+## This site as a specimen
+
+| Step | This product |
+|---|---|
+| Business | PMs need tech depth; technical people need PM craft; free PM lessons are the wedge |
+| Hypothesis | People read PM lessons when the product on screen is the product they learn from |
+| Test | Return visits, scroll depth, completion of the next lesson |
+| MVP | Public home, Learn catalog, lesson one live |
+| Sprint | Ship the readable spine before packaging, auth, or platform scale |
+
+You are inside the hypothesis.
+
+## Two readers, one product
+
+| Reader | Background | Goal |
+|---|---|---|
+| PM without an engineering background | Stakeholders, roadmaps, status | [Product engineering track](/learn) after this spine |
+| Person from tech learning PM | Systems, code, tradeoffs | PM craft in the lessons above |
+
+## Before you go on
+
+In a notes app, write one paragraph: **What do you think product management is?**
+
+No framework names required. No five-line hypothesis template yet — that comes when we teach experiments.
+
+<LessonOneQuiz />
+
+## References
+
+- Ben Horowitz, [Good Product Manager/Bad Product Manager](https://a16z.com/good-product-manager-bad-product-manager/) (a16z; orig. Netscape)
+- Clayton Christensen et al., [Jobs to Be Done](https://hbr.org/2016/09/know-your-customers-jobs-to-be-done), *Harvard Business Review*, 2016
+- Giff Constable, [*Talking to Humans*](https://www.talkingtohumans.com/)
+- Marty Cagan, [*Inspired*](https://www.svpg.com/inspired-how-to-create-tech-products-customers-love-2nd-edition/) and [SVPG essays](https://www.svpg.com/product-management-start-here/)
+- Melissa Perri, [*Escaping the Build Trap*](https://www.melissaperri.com/escaping-the-build-trap)
+- Lenny Rachitsky, [What is product management?](https://www.lennysnewsletter.com/p/what-is-product-management), *Lenny's Newsletter*
+- Steve McConnell, *Software Project Survival Guide* (cone of uncertainty); [Construx](https://www.construx.com/resources/)
+- The SilverLogic, [Understanding the Cone of Uncertainty in Agile/Scrum](https://tsl.io/blog/understanding-the-cone-of-uncertainty-in-agile-scrum), 2023
+
+Cases cited: Netflix Qwikster, Airbnb photography, Dropbox video, Instagram/Burbn, Juicero, Superhuman.

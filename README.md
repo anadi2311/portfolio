@@ -7,3 +7,12 @@ The product spec is in [docs/PRODUCT.md](docs/PRODUCT.md).
 ## v1
 
 Public home + Learn shell, passwordless auth, and two free lessons. Paid tracks, Stripe, Kafka, and Kubernetes come later.
+
+## Run locally
+
+```bash
+npm install
+npm run dev
+```
+
+Open [http://localhost:3000](http://localhost:3000).

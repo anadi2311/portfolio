@@ -1,13 +1,8 @@
-import {
-  DocsBody,
-  DocsDescription,
-  DocsPage,
-  DocsTitle,
-} from "fumadocs-ui/layouts/docs/page";
+import { DocsBody, DocsDescription, DocsPage, DocsTitle } from "fumadocs-ui/layouts/docs/page";
 import { createRelativeLink } from "fumadocs-ui/mdx";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { LessonQuiz } from "@/components/lesson-quiz/LessonQuiz";
+import { LessonDocsShell } from "@/components/lesson-quiz/LessonDocsShell";
 import { getMDXComponents } from "@/components/mdx";
 import { formatLessonHeading } from "@/lib/lessons";
 import { getReadingTime } from "@/lib/reading-time";
@@ -67,30 +62,28 @@ export default async function LessonPage({ params }: PageProps) {
   const MDX = page.data.body;
   const slugPath = slug.join("/");
   const quiz = getLessonQuiz(slugPath);
-  const quizFooter = quiz ? <LessonQuiz quiz={quiz} variant="sidebar" /> : undefined;
 
   return (
-    <DocsPage
+    <LessonDocsShell
       toc={page.data.toc}
       full={page.data.full}
-      tableOfContent={{ footer: quizFooter }}
-      tableOfContentPopover={{ footer: quizFooter }}
+      quiz={quiz}
+      metaLine={
+        <p
+          id="lesson-top"
+          className="scroll-mt-24 text-sm text-fd-muted-foreground"
+        >
+          {readingTime.label} read · {page.data.audience} · {trackLabel} · Free
+        </p>
+      }
+      title={lessonHeading}
+      description={page.data.summary}
     >
-      <p
-        id="lesson-top"
-        className="scroll-mt-24 text-sm text-fd-muted-foreground"
-      >
-        {readingTime.label} read · {page.data.audience} · {trackLabel} · Free
-      </p>
-      <DocsTitle>{lessonHeading}</DocsTitle>
-      <DocsDescription>{page.data.summary}</DocsDescription>
-      <DocsBody>
-        <MDX
-          components={getMDXComponents({
-            a: createRelativeLink(source, page),
-          })}
-        />
-      </DocsBody>
-    </DocsPage>
+      <MDX
+        components={getMDXComponents({
+          a: createRelativeLink(source, page),
+        })}
+      />
+    </LessonDocsShell>
   );
 }

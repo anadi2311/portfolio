@@ -7,7 +7,7 @@ import { Confetti } from "./Confetti";
 
 type LessonQuizProps = {
   quiz: LessonQuiz;
-  variant?: "sidebar" | "inline";
+  variant?: "sidebar" | "inline" | "toc";
 };
 
 type Result = "correct" | "incorrect" | null;
@@ -65,9 +65,11 @@ export function LessonQuiz({ quiz, variant = "sidebar" }: LessonQuizProps) {
   };
 
   const buttonClass =
-    variant === "sidebar"
-      ? "w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm font-medium text-zinc-800 shadow-sm transition hover:border-zinc-300 hover:bg-zinc-50"
-      : "rounded-lg border border-zinc-200 bg-white px-4 py-2 text-sm font-medium text-zinc-800 shadow-sm transition hover:border-zinc-300 hover:bg-zinc-50";
+    variant === "toc"
+      ? "shrink-0 rounded-md border border-zinc-200 bg-white px-2 py-1 text-xs font-medium text-zinc-800 shadow-sm transition hover:border-zinc-300 hover:bg-zinc-50"
+      : variant === "sidebar"
+        ? "w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm font-medium text-zinc-800 shadow-sm transition hover:border-zinc-300 hover:bg-zinc-50"
+        : "rounded-lg border border-zinc-200 bg-white px-4 py-2 text-sm font-medium text-zinc-800 shadow-sm transition hover:border-zinc-300 hover:bg-zinc-50";
 
   return (
     <>

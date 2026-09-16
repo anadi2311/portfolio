@@ -38,8 +38,11 @@ export function readingTimeFromWordCount(words: number): ReadingTime {
   return { words, minMinutes, maxMinutes, label };
 }
 
+/** Cache only in production; in dev the file changes while the process lives. */
+const useCache = process.env.NODE_ENV === "production";
+
 export function getReadingTime(slug: string): ReadingTime {
-  const cached = cache.get(slug);
+  const cached = useCache ? cache.get(slug) : undefined;
   if (cached) return cached;
 
   const slugPath = path.join(lessonsRoot, slug);
@@ -55,6 +58,6 @@ export function getReadingTime(slug: string): ReadingTime {
   }
 
   const result = readingTimeFromWordCount(words);
-  cache.set(slug, result);
+  if (useCache) cache.set(slug, result);
   return result;
 }

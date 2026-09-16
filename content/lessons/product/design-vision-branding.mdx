@@ -1,0 +1,236 @@
+---
+title: Vision, brand, and Figma for PMs
+summary: "PMs brief design with vision, flows, and tokens. Figma and AI can jump to high fidelity; agreement and scoreboard still gate what ships. Agent UIs may change where the interface lives."
+audience: Both
+status: published
+order: 11
+---
+
+A PM who cannot name vision, tokens, frames, and components cannot brief a designer. The same gap shows up when you ask a model to "make it Notion-like": the model invents a vibe; you get noise.
+
+<Key>Design literacy is a communication skill</Key> for humans first, then for AI. You still own the scoreboard from [Lesson 1](/learn/product/how-pm-begins). This lesson gives you the nouns to brief the work.
+
+## The job is the brief, not the hex
+
+You own problem, audience, feeling, constraints, and success. A head of design owns the system: type, color, space, components, and consistency across surfaces.
+
+**Bad brief (real pattern):** "Make it modern and clean. Use our purple." A senior designer cannot execute that. You handed taste theater, not a brief.
+
+**Good brief (one page):** who the beachhead is; the job the product does; three adjectives for how it should feel and two things it must refuse; constraints (open-source chrome, bilingual type, readable first); success on the scoreboard. Hex codes can wait until the system exists.
+
+Cagan's risk frame applies here. Value risk: will people care? Usability risk: can they use it? Brand and UI choices sit under both. You do not pick pixels to look busy. You pick a brief so design can reduce those risks.
+
+**Specimen (this Learn product):** feeling = lab notebook, not bootcamp landing page. Principles = specimen not school; two audiences one UI; readable first; open pieces then tweak. That brief is enough for a designer (or you + AI) to start. Picking `#7C3AED` first is how you get generic SaaS purple.
+
+## Vision to brand system
+
+A senior designer turns your brief into a **brand system** you can reuse. The stack runs top down:
+
+1. **Vision / positioning:** one paragraph on who this is for and what it refuses
+2. **Personality:** 3–5 adjectives plus explicit "we are not…"
+3. **Identity:** wordmark or logo, color roles, type pair, spacing grid, icon/illustration style, UI voice
+4. **Tokens:** named values (`bg`, `text`, `accent`, `danger`), type scale, spacing scale (4 or 8)
+5. **Components:** button, input, card, nav built from tokens
+6. **Screens:** marketing, app, docs composed from components
+
+<BrandStackDiagram />
+
+<Key>Tokens and components are how you standardize a brand</Key> so the marketing site, the app chrome, and the docs feel like one entity. Stripe, Linear, and Notion did not invent a new look per page. They locked roles and reused them.
+
+**Standardize type.** Pick a display face and a body face (or one family with clear weights). Define sizes for H1, H2, body, caption. Write rules: when to use bold, line length, line height. Poppins on this site is a type decision tied to Latin + Devanagari; the rule matters more than the font name.
+
+**Standardize space.** An 8pt grid means padding and gaps snap to 8, 16, 24, 32. Designers and engineers stop arguing "16 vs 18."
+
+**Standardize color as roles.** Background, text, muted text, accent, danger. A rainbow of unused swatches is not a system.
+
+**Portfolio consistency.** New surface? Same tokens. A "fun" one-off landing that breaks the system trains users that the brand is optional. Head of design kills that drift in review.
+
+**Exercise (15 minutes).** Write a one-page brief for a product you know (or this Learn specimen): beachhead, job, three adjectives, two refusals, constraints, scoreboard metric. No hex yet.
+
+## Case: how Notion reads
+
+Open [Notion](https://www.notion.so). The brand is not one logo treatment. It is a set of repeated choices:
+
+| Choice | What you see | System decision |
+|---|---|---|
+| Surface | Soft off-white pages | Background token, not pure white billboard |
+| Type | Approachable sans, calm hierarchy | Body-first scale; display used sparingly |
+| Accent | Restrained; color supports content | Accent as role, not rainbow chrome |
+| Density | Air between blocks; content wins | Spacing scale + readable line length |
+| Illustration | Soft, playful, low chrome | Illustration language locked to personality |
+| Motion / polish | Subtle; does not stall the job | Motion serves continuity, not spectacle |
+
+<NotionIdentityDiagram />
+
+Break any row on purpose and "Notion-ness" collapses: loud purple SaaS gradients, dense navy decks, three competing accents, illustration that fights the text. The lesson for you: <Key>brand is a system of refusals</Key> as much as a system of assets. Name what you will not look like.
+
+## Same nouns for designers and for AI
+
+[Lesson 10](/learn/product/product-sense-and-ai) covered rubber-stamping the model. Design jargon is how you stop vibe prompting.
+
+| Weak prompt | Stronger prompt |
+|---|---|
+| "Make a modern landing page like Notion" | "Off-white `bg`, charcoal `text`, one accent, Inter-like sans 16/24 body, 8pt grid, one hero idea, no promo cards in the first viewport" |
+| "Add a nice button" | "Primary button component: filled accent, 12px radius, states default / hover / disabled; label 14 medium" |
+| "Match our brand" | Paste the token table and the three adjectives from the brief |
+
+Comment the same way in Figma. "This hierarchy fails the job" beats "I don't love the vibe." The model and the designer both need the job, the tokens, and the edge states.
+
+## Figma anatomy for PMs
+
+You do not need to be a Figma power user. You need the **same nouns** designers use in review and that you will reuse when prompting AI.
+
+Open the diagram and match left to right: the **Layers** list is the tree; the **canvas** is what it draws.
+
+<FigmaAnatomyDiagram />
+
+### How to read a file (PM walkthrough)
+
+1. **File:** the whole `.fig` document (source of truth).
+2. **Page:** a tab inside the file (`Foundations`, `Screens`, `Archive`). Leave comments on the live Screens page, not an old dump.
+3. **Frame:** one screen or artboard (`Home / mobile`). Point here in comments: "On Home / mobile…" not "the thing on the left."
+4. **Layer:** any row in Layers (text, rectangle, group, component…). Structure of the screen.
+5. **Group:** a temporary cluster (here: `Hero` wrapping headline + subcopy). Fine for layout; for reuse, promote to a component.
+6. **Component:** the **master** (solid diamond in Figma). Example: `Button / Primary` with label `Join waitlist`. Change the master once; instances follow.
+7. **Instance:** a **copy** of that component placed on a frame (hollow diamond). This is what you see on the marketing screen.
+8. **Variant:** states of a component (`default`, `disabled`, `loading`). Ask for empty / error / disabled, not only the happy path.
+9. **Style / variable:** shared color, type, or spacing (tokens in Figma form).
+10. **Auto layout:** direction, gap, padding. **Hug** = size to content. **Fill** = stretch in the parent (engineers hear flexbox).
+
+| Say this in review | Avoid |
+|---|---|
+| "On the Home / mobile **frame**, the CTA **instance** should use the disabled **variant**." | "That yellow thing" |
+| "Is Hero still a **group**, or should it be a **component**?" | "Make the box nicer" |
+| "Padding looks off; is **auto layout** hug or fill on the button?" | Arguing 1px before structure |
+
+**Good PM comments:** Does this frame do the job for the beachhead? Is hierarchy clear? Where are empty, error, and loading? Does this match the brief's refusals?
+
+**Bad PM comments first:** 1px padding wars before structure; hex debates before tokens exist; "make the logo bigger" with no scoreboard reason.
+
+Practice: open any product Figma (or this diagram), pick one row in Layers, and say aloud: frame, group, component, or instance. That drill is the literacy.
+
+### PM Figma checklist (not designer depth)
+
+Figma is a large product. You do not need every feature. You need a short loop:
+
+| Do this | Skip (for now) |
+|---|---|
+| Open the right **page** and **frame**; leave a pinned **comment** on the object | Redrawing screens as a hobby designer |
+| Hit **Play** on a **prototype** and walk the user path | Wiring every advanced prototype trigger |
+| Use **FigJam** for journeys, sticky research, and workshop alignment | Owning the illustration library |
+| Know **Dev Mode** exists so eng can inspect specs from the file | Becoming the handoff bottleneck |
+| Point at the **library** / design system: reuse `Button`, do not invent a new one | Authoring the full component set |
+| Prompt AI with **tokens, components, and one flow** (attach the system when the tool allows) | Vibe prompts: "Notion-like," "modern," "clean" |
+
+Anatomy (above) is how you name objects. This checklist is how you **work** in Figma as a PM: review, comment, prototype, align, then brief AI with the same nouns.
+
+**Where to go deeper (Figma’s own PM + AI material).** [AI prototyping for product managers](https://www.figma.com/resource-library/ai-prototyping-for-product-managers/) teaches the craft you will use most with AI: describe one journey, device, and key interactions; generate a clickable flow; click through for dead ends and edge cases; share a link for comments before eng commits. [AI in product management](https://www.figma.com/resource-library/ai-in-product-management/) connects FigJam (cluster and summarize research) to Figma Make (prototype on your design system) to stakeholder review. Treat prompting as the skill: draft the brief and tokens here, then use those guides to run the tools. Optional context: [Figma for Product Managers](https://www.figma.com/product-managers/) (product overview) and [UX for Product Managers](https://www.figma.com/resource-library/ux-for-product-managers/) (flows and FigJam, not pixel craft).
+
+## From hypothesis to user flow
+
+[Lesson 4](/learn/product/experiments) cleared the bet: hypothesis, metric, cheap test, ship or kill. Design work after a kill is waste. Design work after a clear "go" still starts with **behavior**, not pixels.
+
+A **user flow** is the sequence of steps a person takes to finish a job: entry → decisions → success (and the failure branches). A **journey map** can add context (emotions, channels) around that path. A **wire** or sketch is a rough screen sequence. You draw these so the team agrees on *what happens* before anyone argues about corners and shadows.
+
+### How to draw a flow (PM-usable)
+
+1. **Name the job and the beachhead** in one line (from the brief).
+2. **List steps** as boxes in order: land → choose → confirm → done.
+3. **Mark decisions** (diamonds or labeled forks): paid vs free, logged in vs guest, success vs error.
+4. **Add one unhappy path** per critical step (empty, fail, timeout). Happy-path-only flows lie.
+5. **Stop at the scoreboard moment:** the behavior you measure in the experiment.
+
+Do this in FigJam, on a whiteboard, or as a numbered list in the PRD. Boxes and arrows beat prose. Engineers and designers can attack a flow; they cannot attack a vibe paragraph.
+
+**Sketch then (or with) Figma.** Rough frames labeled Step 1 / Step 2 are enough to debate. You are not illustrating. You are locking sequence and ownership of each step.
+
+### AI changed the fidelity ladder
+
+The old default ladder was: flow → low-fidelity wires → mid-fi → high-fi mock → prototype → build. Low-fi existed because high-fi was expensive. Teams used gray boxes to force argument about structure before polish distracted everyone.
+
+Today, if you have a real design system (tokens + components) and you can attach that system to an AI tool (Figma Make, Cursor + Figma, similar stacks), you can often **jump from an agreed flow straight into high-fidelity screens** that already use your Button and type scale. [Taste at speed](https://www.news.aakashg.com/p/taste-at-speed) and Figma’s AI prototyping guides assume that world: clickable, on-brand drafts in minutes.
+
+<Key>You can skip low-fi as a mandatory stage; you cannot skip agreement.</Key>
+
+Cheap high-fi creates a new failure mode: ten polished ideas before anyone agreed on the job. Shipping is no longer the scarce resource. **Choosing the right thing** is. Structure that still works:
+
+| Gate | Agree on this before AI paints screens |
+|---|---|
+| Hypothesis | Metric, kill rule ([Lesson 4](/learn/product/experiments)) |
+| Flow | Steps, decisions, one unhappy path, success moment |
+| Brief | Beachhead, feeling, refusals, constraints |
+| Tokens / library | Reuse the system; do not invent a parallel brand |
+| Review | Play the prototype; comment on job and edge states |
+
+Good PM: one flow on the wall, then AI generates three hi-fi options inside the library, then the team kills two by lunch. Bad PM: twenty hi-fi concepts in Slack with no kill rule, then ships the prettiest one.
+
+Agent surfaces and headless product UIs (chat as the interface) belong with product sense, not Figma anatomy. See [Lesson 10](/learn/product/product-sense-and-ai#interfaces-now-and-next) for that thread.
+
+## From tokens to UI
+
+Tokens alone are not a product. Components compose screens.
+
+1. Define tokens (color, type, space)
+2. Build atoms (button, input, label)
+3. Build molecules (search field, nav item, card)
+4. Compose frames (home, lesson, settings)
+5. Cover states and breakpoints
+
+<TokenToUiDiagram />
+
+Brad Frost's [*Atomic Design*](https://atomicdesign.bradfrost.com/) names that ladder. You do not need the book memorized. You need to ask: is this a one-off drawing, or a component we will reuse? One-offs create drift. Components enforce the brand.
+
+Handoff language for eng: default / hover / focus / disabled; empty and error copy; mobile vs desktop frames. Enough to talk. Not enough to replace design.
+
+## Landing pages and motion
+
+A strong landing page is hierarchy + type + restrained color + **one** visual idea. Brand first. One headline. One supporting line. One CTA group. One dominant visual. Stats strips, promo cards, and schedule widgets in the first viewport are how pages turn into dashboards nobody trusts.
+
+Motion belongs where it clarifies:
+
+| Purpose | Example | Skip if… |
+|---|---|---|
+| Enter | Hero content settles so hierarchy is obvious | It delays first value |
+| Feedback | Button press, success check | It hides a failed state |
+| Continuity | Shared element from marketing to app | It is decoration only |
+
+Tools at a high level: Figma prototypes for intent; CSS transitions for simple UI; Lottie or video for richer illustration. Design and front-end own the craft. Your job is purpose and scoreboard: does motion help activation, or does it stall the job?
+
+<LandingMotionDiagram />
+
+**Good:** a short fade that confirms "you joined the waitlist." **Bad:** a three-second parallax before the CTA is tappable. Taste from Lesson 10 applies: kill the cool demo that fails the hypothesis.
+
+## Exercise
+
+**Brief → flow → tokens → prompt (30 minutes).**
+
+1. Use your one-page brief from earlier (or write one for a product you use weekly).
+2. Draw a five-box user flow for one job (include one failure branch).
+3. Invent a tiny token table: `bg`, `text`, `accent`, type body size/line-height, spacing base (4 or 8).
+4. Write one AI prompt that names the **flow steps** and tokens for a high-fi prototype (assume a design library exists).
+5. Write three Figma comments you would leave after playing that prototype (job, hierarchy, one edge state).
+
+Compare the prompt to "make it modern." Keep the better one.
+
+## Check
+
+Finish with specifics:
+
+> The beachhead is ___. The job flow is ___ → ___ → ___. The brand refuses ___. Tokens: bg ___, text ___, accent ___. In Figma I will point at the ___ (frame / component / variant). My AI prompt names the flow and ___.
+
+<InlineLessonQuiz slug="product/design-vision-branding" />
+
+## References
+
+- Brad Frost, [*Atomic Design*](https://atomicdesign.bradfrost.com/)
+- Marty Cagan, value / usability risk framing ([SVPG](https://www.svpg.com/))
+- Ben Horowitz, [Good Product Manager / Bad Product Manager](https://a16z.com/good-product-manager-bad-product-manager/)
+- Notion product and marketing surfaces (observe the system; this lesson maps visible choices to brand decisions)
+- Figma, [AI prototyping for product managers](https://www.figma.com/resource-library/ai-prototyping-for-product-managers/) (journey → clickable flow → edge cases)
+- Figma, [AI in product management](https://www.figma.com/resource-library/ai-in-product-management/) (FigJam → Make → review; prompting as craft)
+- Figma, [Figma for Product Managers](https://www.figma.com/product-managers/) and [UX for Product Managers](https://www.figma.com/resource-library/ux-for-product-managers/)
+- Aakash Gupta, [Taste at speed](https://www.news.aakashg.com/p/taste-at-speed) (evaluate working software when prototypes are cheap)
+- Figma help: [Components and variants](https://help.figma.com/hc/en-us/articles/360038662654), [Auto layout](https://help.figma.com/hc/en-us/articles/360040451373)
+- Prior lesson: [Product sense, taste, and AI](/learn/product/product-sense-and-ai); [Experiments](/learn/product/experiments)
+
+Previous: [Product sense, taste, and AI](/learn/product/product-sense-and-ai). Next: [Specimen workbook: this site](/learn/product/specimen-workbook).

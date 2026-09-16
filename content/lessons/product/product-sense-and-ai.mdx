@@ -1,0 +1,160 @@
+---
+title: Product sense, taste, and AI
+summary: "AI speeds up PM tasks. The job stays the same: make the product successful on a measurable scoreboard. Product sense and taste are how you decide when the model drafts first."
+audience: Both
+status: published
+order: 10
+---
+
+AI drafts specs, summarizes interviews, and spins prototypes in a fraction of the time those tasks used to take.
+
+The job from [Lesson 1](/learn/product/how-pm-begins) is unchanged: **make the product successful on terms the company can measure.** Product sense and taste are how you use the model without handing it the decision.
+
+## What AI changes, and what it does not
+
+Lenny Rachitsky's [How AI will impact product management](https://www.lennysnewsletter.com/p/how-ai-will-impact-product-management) separates the load: drafting specs, summarizing research, roadmap scaffolding, and parts of discovery get model help. Strategy, stakeholder trust, picking the problem, and killing a bad bet stay with you.
+
+Shreyas Doshi argues in [Why Product Sense is the only product skill that will matter in the AI age](https://shreyasdoshi.substack.com/p/why-product-sense-is-the-only-product) that when every team uses similar models, the chatbot is not the edge. The edge is how you improve on what the model returns: insight from customer calls the model never heard, a no that saves a quarter, prioritization that fits your runway.
+
+He calls that bundle **product sense**: correct macro and micro product decisions under ambiguity. Five skills:
+
+| Skill | Plain English | AI can help with | You still own |
+|---|---|---|---|
+| Empathy | Why users act the way they do | Interview summaries, support themes | Which pain is real vs loud |
+| Simulation | How the product behaves at scale | Scenario drafts, edge-case lists | What breaks trust in production |
+| Strategic thinking | What to build and refuse | Market scans, competitor matrices | Fit with your strategy and runway |
+| Taste | Which good option fits *here* | Option generation | The pick and the explanation |
+| Creative execution | What competitors cannot copy | Brainstorm volume | The non-obvious wedge |
+
+**Taste** is the part of product sense people name when they cannot explain why one good option beat another.
+
+## Product taste
+
+In design chatter, "taste" often means pretty UI. For PMs, taste is **trained judgment about what should exist, what should not, and why the gap matters.**
+
+Logan Lincoln's [Product Taste handbook](https://loganlincoln.com/handbook/taste) defines it as choosing the right problem, standard, and trade-off when evidence alone cannot decide. That shows up in pricing, onboarding length, error copy, and the support load you accept.
+
+Saquib J on [product taste as trained judgment](https://saquibj.com/ai-product-management-with-saquib/product-taste-the-one-skill-ai-cannot-replace/): untrained instinct produces faster noise; trained judgment produces better calls. Taste comes from consequential choices you lived with.
+
+Shreyas Doshi's taste work asks: can you explain *why* this version fits this product, this user, this moment? If the answer is "the model said so," you have not finished.
+
+## Do not rubber-stamp the model
+
+Lincoln names a failure mode: the model proposes options, frames trade-offs, recommends one, and drafts the rationale. You approve. The slide looks fine. You added no independent thought.
+
+| Good habit | Bad habit |
+|---|---|
+| Draft five specs, then pick and defend with customer evidence | Paste the model's prioritization and call it strategy |
+| Synthesize notes, then run follow-up calls | Ship "AI-powered" because the board asked |
+| Generate many prototypes, kill most | Let the model write the hypothesis so you never form one |
+
+Keep yourself honest:
+
+1. **Form a view before you prompt.** Even a rough one. The model should attack your view, not replace it.
+2. **Explain the decision in your words.** If you cannot, you have not decided.
+3. **Validate model-sourced insight with contact.** One user conversation beats ten elegant summaries.
+
+AI makes it easier to look busy on the way to the wrong scoreboard. The scoreboard still decides.
+
+## Evaluate working software faster
+
+Aakash Gupta's [Taste at speed](https://www.news.aakashg.com/p/taste-at-speed): when prototypes are cheap, the PM skill is evaluating **working software**, killing most of it, shipping the survivors.
+
+Fifteen prototype evaluations a week trains judgment faster than one monthly spec review. Keep the hypothesis from Lesson 1. Test it in clickable form earlier.
+
+Engineers learning PM: you already debug systems. Taste is debugging whether people should want the thing. PMs learning tech: you do not need to out-code the team. You need to care whether the thing should exist.
+
+## When the product itself is AI
+
+The section above is about **you** using AI to do PM work. A separate problem appears when the **product** is AI: chatbots, copilots, agents, generated content.
+
+Models are probabilistic. They hallucinate, drift, and fail in corners demos skip. Marily Nika, in [Building AI product sense, part 2](https://www.lennysnewsletter.com/p/building-ai-product-sense-part-2) on Lenny's Newsletter:
+
+1. **Map failure modes.** Where does the model break?
+2. **Define minimum viable quality (MVQ).** What is good enough to ship?
+3. **Design guardrails.** Fallbacks, human handoff, refusal rules, logging for review.
+
+You must tell a product bug from a model limitation. Users will not. Support will not. Know before the demo is public.
+
+## Exposure hours
+
+Lenny's AI-era writing keeps returning to **exposure hours**: talk to users, read support tickets, sit on a sales call, watch someone fail at onboarding.
+
+Judgment follows contact with reality. A team that has not spoken to a customer in months will run its understanding on model summaries. The summaries will be fluent and still wrong.
+
+Some companies put new hires on support for week one so builders meet users before they ship. AI adds another layer between you and reality unless you stay close to the front line.
+
+Your job is not to type faster. It is to **decide better** and **prove you decided** with evidence the model did not invent.
+
+## Scoreboard for AI bets
+
+"We need AI" is not a success metric. Tie the bet to Lesson 1's scoreboard:
+
+For instance, consider an AI copilot that drafts replies for support agents. Time saved and suggestion acceptance explain how the feature behaves. The product outcome is whether agents resolve customer problems with less effort and customers receive correct answers.
+
+Suppose 100 agents try the copilot, 60 accept at least one draft, and 45 resolve a qualifying ticket without a correction or reopen. Those 45 have reached first value. If 30 of them resolve another qualifying ticket with the copilot four weeks later, the team has early retention evidence. It can now ask why the other 15 stopped. A faster draft that creates more reopened tickets fails the customer even if agent usage rises.
+
+| Company need | Primary product outcome | Diagnostic AI measures | Guardrails and kill rule |
+|---|---|---|---|
+| Retention | Activated agents return and resolve the same job in a later period | Suggestion acceptance and time saved show whether the workflow feels useful | Stop if repeat resolution stays flat after agents have a fair chance to return |
+| Trust | Customers receive correct resolutions and rate the interaction well | Draft accuracy on a reviewed evaluation set helps locate model failures | Stop if reopened tickets, escalations, or complaints rise past the agreed limit |
+| Growth | New target accounts reach their first successful resolution sooner | Setup completion and first-draft generation show where onboarding changes | Stop if signups rise while successful first resolutions stay flat |
+| Cost | Cost per ticket resolved without errors falls | Model cost and human handling time explain the cost change | Stop if savings come from lower quality, hidden rework, or more escalations |
+
+If you cannot fill the kill signal column, you are shipping a demo, not running a product bet.
+
+Before customers have time to return, call time saved and task completion leading evidence. Call the metric retention only after the same eligible customers have had a real opportunity to repeat the job. [Experiments](/learn/product/experiments) defines primary, diagnostic, and guardrail metrics; [Product analytics and GTM](/learn/product/product-analytics-gtm) explains retention cohorts.
+
+## Good PM vs bad PM with AI
+
+| Good PM | Bad PM |
+|---|---|
+| Uses AI to widen insight, then validates with users | Delegates the why to the model |
+| Kills a cool demo that fails the hypothesis | Ships "AI-powered" for the slide |
+| Owns the scoreboard outcome, including misses | Blames the model, the data, or "the market" |
+| Forms a view before prompting | Prompts first, decides never |
+
+Horowitz's split still holds: tasks vs job. Tasks got faster. The job did not shrink.
+
+## Interfaces now, and next
+
+**Now:** most products still ship a frontend people click: web, mobile, Figma-designed screens, design systems, prototypes. [Lesson 11](/learn/product/design-vision-branding) teaches the nouns for that world (frames, components, flows, briefs).
+
+**Already shifting:** people spend more time in **agent surfaces** (Cursor, Claude, ChatGPT, and similar) that call tools and APIs. The "UI" is a conversation plus occasional cards, diffs, or confirmations. The app behind the agent can be thin or headless: Expedia-class booking, docs, CRM, infra, reached by the agent instead of by a human hunting through menus.
+
+**Plausible next step:** more products expose capabilities to agents (APIs, actions, permissions) while the human lives in one chat surface. Full page UIs appear when needed (maps, payments, legal confirmations, dense tables) and stay quiet otherwise. Dynamic UI: the interface is assembled for the task, not shipped as a fixed sitemap of buttons.
+
+That future does not retire product sense. It raises the bar on **jobs, permissions, scoreboards, and flows** you can describe without a mock. Brand still matters when a surface appears. Tokens and components still matter for the moments a visual UI pops. The PM who only knows "make the button blue" is stuck; the PM who can write a kill rule and a flow can brief both a designer and an agent.
+
+Hold two truths: ship speed went up; the cost of shipping the wrong thing also went up. Judgment from this lesson is how you choose what the agent (or the Figma file) is allowed to multiply.
+
+## Exercise
+
+**Decision drill (15 minutes).** Pick one product decision this week. Before opening any AI tool, write:
+
+1. What success means on the scoreboard (one metric)
+2. Your current leaning and why
+3. What would change your mind
+
+Use AI to **challenge** line 2, not replace it. Rewrite line 2 in your own words. If you cannot tell whether it moved, you rubber-stamped.
+
+**Friction log (ongoing).** For one week, note every moment a user (or you, dogfooding) hits confusion, distrust, or a workaround. One line per hit. Patterns in that log train taste. Models will not write the log for you.
+
+## Check
+
+Finish this sentence with specifics:
+
+> The scoreboard metric is ___. AI might help by ___. I will know I was wrong if ___. I will validate with ___ (a human or behavior), not only a model output.
+
+<InlineLessonQuiz slug="product/product-sense-and-ai" />
+
+## References
+
+- Aakash Gupta, [Taste at speed](https://www.news.aakashg.com/p/taste-at-speed)
+- Logan Lincoln, [Product Taste: How to Build Better Judgement](https://loganlincoln.com/handbook/taste)
+- Lenny Rachitsky, [How AI will impact product management](https://www.lennysnewsletter.com/p/how-ai-will-impact-product-management) and [Building AI product sense, part 2](https://www.lennysnewsletter.com/p/building-ai-product-sense-part-2) (Marily Nika), *Lenny's Newsletter*
+- Saquib J, [Product taste: one skill AI can't replace](https://saquibj.com/ai-product-management-with-saquib/product-taste-the-one-skill-ai-cannot-replace/)
+- Shreyas Doshi, [Why Product Sense is the only product skill that will matter in the AI age](https://shreyasdoshi.substack.com/p/why-product-sense-is-the-only-product) and [Advanced Product Taste](https://maven.com/shreyas-doshi/taste) (Maven workshop)
+- Ben Horowitz, [Good Product Manager / Bad Product Manager](https://a16z.com/good-product-manager-bad-product-manager/)
+
+Previous: [Pricing as a business case](/learn/product/pricing-business-case). Next: [Vision, brand, and Figma for PMs](/learn/product/design-vision-branding).

@@ -3,7 +3,6 @@ import Link from "next/link";
 type Track = {
   name: string;
   price: string;
-  priceNote?: string;
   audience: string;
   includes: string[];
   cta?: { label: string; href: string };
@@ -29,9 +28,8 @@ const tracks: Track[] = [
   },
   {
     name: "Product engineering",
-    price: "Paid",
-    priceNote: "Cost only. Covers hosting. No profit.",
-    audience: "PMs who need technical depth to partner with engineering.",
+    price: "Free",
+    audience: "PMs who need technical depth for eng reviews, timelines, and MVPs.",
     includes: [
       "Frontend: how apps are built and shipped",
       "APIs and how services talk",
@@ -41,7 +39,10 @@ const tracks: Track[] = [
       "Kafka and ClickHouse for analytics pipelines",
       "Terraform, Helm, Git, and CI/CD",
     ],
-    status: "Opens after the PM spine. Payments not live yet.",
+    cta: {
+      label: "Start tech lessons",
+      href: "/learn/engineering/engineering-with-ai",
+    },
   },
 ];
 
@@ -62,9 +63,6 @@ function TrackColumn({ track }: { track: Track }) {
       <div className="flex flex-col gap-1">
         <h2 className="text-2xl font-semibold tracking-tight">{track.name}</h2>
         <p className="text-lg text-zinc-400">{track.price}</p>
-        {track.priceNote ? (
-          <p className="text-sm text-zinc-500">{track.priceNote}</p>
-        ) : null}
       </div>
 
       <div className="flex flex-col gap-3">

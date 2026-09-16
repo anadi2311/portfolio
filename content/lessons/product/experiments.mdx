@@ -52,10 +52,10 @@ OKRs fit as the **direction** in the Product Kata, not as the experiment itself.
 
 | Layer | Job | Example |
 |---|---|---|
-| **Objective** | Outcome the company funds | Earn repeat learners on the free PM spine |
-| **Key result** | Scoreboard movement | Lesson 1→2 completion rises from X% to Y% in a quarter |
-| **Hypothesis** | Falsifiable cause | Readers finish more when the product in front of them is the teaching specimen |
-| **Experiment** | Cheapest test of that cause | Rewrite one lesson around the live product; measure completion vs the prior version on a named cohort |
+| **Objective** | Outcome the company funds | Earn tech-for-PMs demand on a live product |
+| **Key result** | Scoreboard movement | Non-friend tech-lesson starts and waitlist replies rise to named bars |
+| **Hypothesis** | Falsifiable cause | Beachhead PMs start free tech when it teaches on the product in front of them |
+| **Experiment** | Cheapest test of that cause | Ship one free tech lesson + waitlist; count non-friend starts vs friends |
 
 A key result is not a success rule for a single test. A KR can move for many reasons. The experiment isolates one belief. Do not write "run twelve experiments" as a KR. That is an output. Put the outcome on the KR and put the learning plan under it.
 
@@ -109,7 +109,7 @@ After cards pass, the PM writes a short **now / next / later**:
 
 ### This site
 
-You do not start with "auth, Stripe, certificates, twelve engineering lessons" as the roadmap. Strategy refused most of that for now. Experiments test the free PM spine and demand signals (waitlist) first. The MVP list for v1 is whatever keeps Lesson 1→2 learning moving: readable lessons, thin waitlist if Card 3 runs, instrumentation. Payment and a full tech rail enter the roadmap only after those bets pass.
+You do not start with "auth, Stripe, certificates, twelve engineering lessons" as the roadmap. Strategy refused most of that for now. Experiments test **beachhead tech demand** (free tech starts, waitlist) and keep the free PM spine as trust. The MVP is whatever makes the free tech wedge and demand signal real: first free tech lessons, thin waitlist, instrumentation, outreach. Payment enters only after demand funds packaging.
 
 ## Form the hypothesis
 
@@ -122,11 +122,44 @@ Write all six lines:
 1. **We believe** ___ (who: user or buyer in the beachhead).
 2. **will** ___ (behavior change you can observe).
 3. **because** ___ (reason rooted in a job or constraint).
-4. **We will know we are right when** ___ (metric) **moves by** ___ **within** ___ (time box) **for** ___ (sample).
+4. **We will know we are right when** ___ (metric) moves from a baseline of ___ to ___ within ___ (time box) for ___ (eligible sample), while ___ (guardrail) stays above or below ___.
 5. **The cheapest test is** ___ (interview, survey, prototype, fake door, concierge, A/B, waitlist).
 6. **If we are wrong we will** ___ (stop, pivot the claim, or change the beachhead).
 
 If line 4 has no number and no time box, you wrote a slogan. If line 6 is missing, you wrote a plan to confirm yourself.
+
+### Write the counting rule
+
+A metric on an experiment card needs enough detail that two analysts would calculate the same answer:
+
+- **Eligible group:** who had a fair chance to perform the behavior
+- **Event:** the exact behavior that counts as success
+- **Numerator:** how many eligible people completed that behavior
+- **Denominator:** how many eligible people entered the measurement
+- **Baseline:** the current rate before the change
+- **Threshold:** the result large enough to change the decision
+- **Time window:** how long each person has to act
+
+For example, suppose 100 eligible visitors see a waitlist offer and 20 join:
+
+```text
+waitlist conversion = 20 joins ÷ 100 eligible visitors = 20%
+```
+
+After a new explanation, 26 of 100 comparable visitors join. Conversion is 26%. That is:
+
+- a **6 percentage-point increase**, calculated as `26% - 20%`
+- a **30% relative increase**, calculated as `(26% - 20%) ÷ 20%`
+
+Both descriptions refer to the same result, but "30% lift" sounds larger because it compares the change with the baseline. Report the starting rate, ending rate, and sample beside either figure. This small example teaches the arithmetic; 100 visitors may still be too few for a trustworthy A/B decision.
+
+An **A/B test** assigns comparable eligible customers to a control experience or a changed experience, then compares outcomes. Name three metric roles before exposure:
+
+- The **primary metric** decides whether the hypothesis won, such as waitlist conversion.
+- A **diagnostic metric** explains the path, such as how many visitors opened the curriculum preview.
+- A **guardrail metric** catches harm, such as unsubscribe rate, page latency, or support complaints.
+
+Do not replace a flat primary metric with a rising diagnostic after seeing results. The preview can attract clicks without creating more qualified demand.
 
 ### Strong vs weak
 
@@ -159,7 +192,7 @@ Write yes on every line before you start:
 1. **Lean:** one person-week or less of team time, including analysis.
 2. **Fast to read:** you can interpret the result inside the time box (days or two weeks, not a quarter).
 3. **Least effort that can kill the claim:** interviews before prototypes, prototypes before production, fake door before a full surface.
-4. **Just enough data:** a sample and a threshold you named in advance, not "as many as we can get."
+4. **Sufficient data:** a sample and a threshold you named in advance instead of "as many as we can get."
 5. **Tied to a decision:** if the result cannot change the roadmap or the strategy memo, skip the test.
 
 An underpowered A/B that "looked positive" creates false confidence. Five beachhead interviews with a written coding sheet beat a dashboard nobody defined. Kohavi's [*Trustworthy Online Controlled Experiments*](https://experimentguide.com/) matters when you have traffic and need causal proof on a live surface. Early bets die in cheaper designs first.
@@ -168,7 +201,7 @@ An underpowered A/B that "looked positive" creates false confidence. Five beachh
 
 Qualitative work (interviews, open surveys, diary notes) builds **intuition** about the job and the language people use. Behavioral work (clicks, completion, waitlist, A/B) shows whether people **act**. You need both over a quarter. One interview series without a behavior check leaves you with stories. One click metric without interviews leaves you guessing why.
 
-The goal of week-one discovery is direction. The goal of a later A/B is confidence on a specific change. Do not demand lab-grade p-values for a beachhead you have not talked to.
+The goal of week-one discovery is direction. The goal of a later A/B is confidence on a specific change. Do not demand statistical significance for a beachhead you have not talked to; [Product analytics and GTM](/learn/product/product-analytics-gtm) explains that evidence bar.
 
 ## What you run at each product stage
 
@@ -181,7 +214,7 @@ The same company uses different experiments at different stages. <Key>Stage pick
 | **Pre-product / 0→1** | Does anyone care? Will they pay or adopt? Is the motion viable? | Problem interviews, concept tests, fake door, waitlist, concierge, landing-page demand, pricing probes | Underpowered A/B, multi-variate tests, "data science" with no events |
 | **Early product (thin usage)** | Does the beachhead return? Which job is real? | Mixed: interviews + completion/retention on a small cohort, prototype tests, Wizard of Oz | Treating n=30 as a platform experiment; hiring an experimentation team before instrumentation exists |
 | **PMF pursuit / expanding beachhead** | Can we repeat acquisition and retention? | Cohort retention, activation funnels, qualitative on churn, thin A/B on onboarding if traffic allows | Feature roadmaps with no cards; fake doors for surfaces you shipped |
-| **Continuous product (steady traffic)** | Which change moves the scoreboard? | Online A/B, staged rollouts, holdouts, funnel experiments, experiment design with power analysis ([Kohavi](https://experimentguide.com/)) | Skipping discovery on a **new** problem space because "we only do A/B here" |
+| **Continuous product (steady traffic)** | Which change moves the scoreboard? | Online A/B, staged rollouts, holdouts, funnel experiments, and power analysis that estimates the sample needed to detect a worthwhile change ([Kohavi](https://experimentguide.com/)) | Skipping discovery on a **new** problem space because "we only do A/B here" |
 | **New line inside a mature company** | Same as 0→1 for the **new** bet | Start with value/viability for the new beachhead; use the company's traffic only when the question is causal on a live surface | Assuming parent-company scale makes the new idea proven |
 
 ### Early stage: viability and value first
@@ -212,7 +245,7 @@ A mature app can run **platform A/B** on checkout and **0→1 discovery** on a n
 
 ### This site today
 
-This product is early: public lessons, thin traffic, no login wall on the PM spine. Fit: interviews, completion on the free spine, waitlist fake door. Not fit yet: multi-variate pricing A/B or a data-science experimentation platform. When Lesson 1→2 volume is steady and events are clean, A/B on lesson structure becomes honest. Until then, lean cards beat fake rigor.
+This product is early: public lessons, thin traffic, no login wall on free lessons. Fit: interviews, free-tech starts, waitlist, PM-spine completion as trust. Not fit yet: multi-variate pricing A/B or a data-science experimentation platform. When free-tech volume is steady and events are clean, A/B on lesson structure becomes honest. Until then, lean cards beat fake rigor.
 
 ## Ways to run the experiment
 
@@ -232,7 +265,7 @@ Pick the design that matches the risk. Perri (build trap / Product Kata), Consta
 
 ### Behavioral: product and frontend
 
-**Fake door / "coming soon" CTA:** a button or track on the live site for a surface you have not built. Click and waitlist email are the signals. Label it honestly (waitlist, not "buy now" for a product that does not exist).
+**Fake door / "coming soon" CTA:** a button or track on the live site for a surface you have not built. Click and waitlist email are the signals. Label it as a waitlist rather than "buy now" for a product that does not exist.
 
 **Prototype / clickable flow:** Figma or a thin frontend path. Measures completion of a job, confusion points, time on step.
 
@@ -244,7 +277,7 @@ Pick the design that matches the risk. Perri (build trap / Product Kata), Consta
 
 **Who:** PM owns the hypothesis and the success rule. Designer owns the door copy, empty states, and prototype fidelity. Engineer owns the route, event, waitlist store, and feature flag. Data owns the event name and whether the sample is valid.
 
-**Metric:** CTR on the door, waitlist starts, activation inside the prototype, completion delta, retention to the next lesson.
+**Metric:** **click-through rate (CTR)**, the percentage of eligible door views that produce a click; waitlist starts; activation inside the prototype; completion change; retention to the next lesson.
 
 ### Mixed: learn then measure
 
@@ -284,7 +317,7 @@ Roles below assume a small product team. Titles vary. The ownership does not.
 ### Engineer
 
 - Builds the **smallest** instrumentation or path that makes the metric real: route, click event, waitlist form, feature flag, cohort tag.
-- Estimates honestly whether the "one week" test fits; pushes back when the brief is a quarter of platform work in disguise.
+- Estimates whether the "one week" test fits; pushes back when the brief is a quarter of platform work in disguise.
 - Sits in at least one discovery session per primary bet so findings do not die at the sprint boundary.
 - Owns data quality at the event layer (no duplicate fires, no lost waitlist rows).
 - Implements the kill switch: turn the fake door off, remove the flag, archive the prototype.
@@ -332,9 +365,9 @@ Hastings reversed Qwikster in public when subscribers left. The scoreboard overr
 
 ## Specimen: experiments for this site
 
-Strategy for this product ([Lesson 3](/learn/product/product-strategy)): beachhead is **PMs without engineering depth** who need to sound credible with engineers; win by teaching on the live product; free PM spine first; Lesson 1→2 completion as capture metric; engineers as pin two on the **same** home page; refuse login wall on the PM spine, paid eng track before retention, ads, and course-platform sprawl.
+Strategy for this product ([Lesson 3](/learn/product/product-strategy)): beachhead is **PMs without eng depth who need tech literacy**; free PM spine is trust/showcase; free tech lessons are the PLG wedge; GTM is public URL + LinkedIn / PM communities / meetups; demand metrics are tech starts + waitlist; engineers are pin two on the **same** home page; refuse login wall on free lessons, Stripe before funded packaging, ads, and course-platform sprawl.
 
-The pain underneath that beachhead sounds like "I cannot follow the eng conversation or judge the timeline." Experiments should test that job and the free-spine wedge first. Paid packaging and a deep tech rail are **later** hypotheses. You may run **cheap demand signals** for them. You do not ship Stripe or a login wall on the PM spine to "test" them.
+The pain: "I cannot follow the eng conversation, judge the timeline, or trust AI-drafted code." Experiments test that job and the **free tech wedge** first. Free PM completion is a trust guardrail, not the whole product bet. Paid packaging is a **later** hypothesis after demand. You do not ship Stripe to "test" interest.
 
 ### Card 1: open interviews on the biggest issue
 
@@ -346,47 +379,56 @@ The pain underneath that beachhead sounds like "I cannot follow the eng conversa
 2. **will** name engineering literacy / eng-review fear as a top issue in their week
 3. **because** they cannot approximate timelines or challenge estimates without a model of how the system works
 4. **Right when** in 12 interviews across beginner, growth/GTM, and generalist PMs (exclude people who work as technical PMs today), at least 8 unprompted top-three issues include eng communication, stack literacy, or timeline judgment
-5. **Cheapest test:** 30-minute problem interviews. Ask "what failed last week in your product job?" and "where do you feel least credible with eng?" Do **not** open with "would you pay to learn tech?" or "do you want an engineering track?"
+5. **Cheapest test:** 30-minute problem interviews. Ask "what failed last week in your product job?" and "where do you feel least credible with eng?" Do **not** open with "would you pay to learn tech?"
 6. **If wrong:** the beachhead pain is elsewhere (stakeholder chaos, discovery skill, analytics). Revisit strategy before you build a tech curriculum.
 
 **Who:** PM writes the guide and synthesizes themes. Designer joins three sessions if workflow stories appear. Engineer joins two sessions so findings stick. Founder helps recruit non-friends in the beachhead.
 
-**Intuition you want:** a coded list of top jobs. If "lack eng knowledge" is the common thread **without you planting it**, the free PM spine and a later tech rail both have a problem worth solving. If the common thread is "my CEO changes priority every Monday," you are solving the wrong product.
+**Intuition you want:** a coded list of top jobs. If "lack eng knowledge" is the common thread **without you planting it**, the free tech wedge has a problem worth solving. If the common thread is "my CEO changes priority every Monday," you are solving the wrong product.
 
-### Card 2: specimen teaching on the free PM spine
+### Card 2: waitlist / tech interest (before the curriculum)
 
-1. **We believe** PMs without eng depth
-2. **will** finish Lesson 1 at a higher rate
-3. **because** the method is easier to trust when the product in front of them is the example
-4. **Right when** Lesson 1 completion rises by 10 points within 30 days for readers who land from the public URL
-5. **Cheapest test:** one lesson rewritten around this site as specimen vs the prior abstract version; same distribution channel
-6. **If wrong:** stop claiming "teach on the product" as the edge; revisit positioning
-
-**Who:** PM owns the rewrite brief and the completion definition. Designer owns lesson layout clarity. Engineer owns analytics events for start and finish.
-
-### Card 3: fake door on the tech track (demand only)
-
-**Later packaging hypothesis (not v1 GTM):** PMs who finish (or start) the free spine will raise their hand for a structured tech-depth rail, cheap enough to feel like a tool (illustrative ask: on the order of **$50 for long-lived access**), so they can communicate with eng, judge timelines, and build more themselves with AI. Strategy keeps the rule: **no paid eng track until PM retention proves out.** This card tests interest. It does not ship payment.
+**Demand hypothesis (not payment, not twelve lessons yet):** beachhead PMs will raise a hand for structured tech depth on this product. This card runs **before** you ship free tech lessons. It does **not** ship Stripe.
 
 1. **We believe** beachhead PMs who hit the Learn home page
 2. **will** click into the product-engineering track and join a waitlist
-3. **because** they want a structure for technical depth after (or beside) the free PM spine
-4. **Right when** within 30 days, at least N waitlist emails from non-friend PMs (set N from your traffic; example bar: 40), and waitlist → reply rate on a one-question follow-up is ≥25%
-5. **Cheapest test:** tech-track entry is clickable; CTA is "Join the waitlist" (honest). Confirmation page may ask one optional question: "What would you pay for once, for long-lived access to the tech rail?" with ranges that include a ~$50 band. No login wall on the PM spine. No Stripe.
-6. **If wrong:** interest in paid tech depth is weak or only friends clicked. Keep the PM spine free; delay the eng rail; do not invent pricing in [Pricing as a business case](/learn/product/pricing-business-case) from vanity clicks.
+3. **because** they want stack literacy for reviews, timelines, and MVPs/POCs
+4. **Right when** within 30 days, at least N waitlist emails from non-friend PMs (example bar: 40), and waitlist → reply on a one-question follow-up ≥25%
+5. **Cheapest test:** tech-track CTA "Join the waitlist" (honest). Optional question: "What would you pay once for long-lived deeper tech access?" with ranges including a ~$50 band. No login wall. No Stripe. **No fake "Start lesson 1" on eng until a lesson exists.**
+6. **If wrong:** interest is weak or only friends. Keep free PM lessons; do not invent a tech curriculum or packaging from vanity clicks. Personal teach/showcase may continue — that is a second scoreboard, not PMF.
 
-**Who:** PM owns the hypothesis, the N threshold, and the follow-up question. Designer owns the track card and waitlist states. Engineer owns the route, form, store, and "friends vs public" tag. Data validates bots and duplicates.
+**Who:** PM owns N and the follow-up. Designer owns waitlist states. Engineer owns form, store, friends vs public tag. Data validates bots.
+
+### Card 3: free tech wedge on the live product
+
+1. **We believe** beachhead PMs (especially waitlist members)
+2. **will** start (and often finish) a free tech lesson on this site
+3. **because** stack literacy taught on the product in front of them beats slide-deck eng courses
+4. **Right when** within 30 days of publish, at least N non-friend tech-lesson starters (set N from traffic; example: 25) and finish rate ≥ a named bar
+5. **Cheapest test:** publish 1–3 free tech lessons **after** Card 2 earned enough signal (or a thin parallel door if interviews already passed); CTA from home and Learn; events for start/finish; tag friends vs public
+6. **If wrong:** free tech on this product is not the wedge; revisit positioning before you write twelve eng lessons
+
+**Who:** PM owns the lesson brief and success bar. Designer owns track entry and lesson clarity. Engineer owns routes and events.
 
 ### Card 4: channel
 
 1. **We believe** beachhead PMs
-2. **will** arrive and start Lesson 1
-3. **because** founder network plus public URL reach people who fear the eng review
-4. **Right when** 40 beachhead starters in 30 days who are not personal friends
-5. **Cheapest test:** publish Lesson 1, post to founder channels, tag traffic; count starters who are not personal friends
-6. **If wrong:** the channel hypothesis fails before the product hypothesis; change channel work, keep the spine free
+2. **will** arrive and start a free tech lesson (or join the waitlist)
+3. **because** LinkedIn, Lenny-style PM Slack, and meetups reach people who fear the eng review
+4. **Right when** 40 beachhead tech starters or waitlist joins in 30 days who are not personal friends
+5. **Cheapest test:** publish free tech + waitlist; post to those channels; tag traffic; count non-friends
+6. **If wrong:** the channel hypothesis fails before the product hypothesis; change channel work, keep free lessons
 
-### Card 5: pin two on the same home page
+### Card 5: free PM spine as trust (guardrail)
+
+1. **We believe** beachhead PMs
+2. **will** still finish PM Lesson 1 when the site also sells tech depth
+3. **because** free PM craft builds trust and portfolio credibility without becoming the whole product bet
+4. **Right when** PM Lesson 1→2 completion stays above a named floor while tech CTAs are visible
+5. **Cheapest test:** one home page, both tracks; measure PM completion with tech entry present
+6. **If wrong:** tech messaging is crowding out trust; rewrite home copy before you kill the PM spine
+
+### Card 6: pin two on the same home page
 
 1. **We believe** engineers learning PM
 2. **will** find the PM spine credible without a second site
@@ -397,7 +439,7 @@ The pain underneath that beachhead sounds like "I cannot follow the eng conversa
 
 ### Order for this product
 
-Run **Card 1** and **Card 2** on the critical path first (pain + free spine). Run **Card 3** as a demand signal in parallel only if the fake door is truly thin. **Card 4** and **Card 5** check capture and pin two. Pricing depth stays in the pricing lesson after waitlist and retention data exist.
+Run **Card 1** and **Card 2** on the critical path (pain + **waitlist before curriculum**). Run **Card 3** after waitlist (or interviews) earn the first free tech lessons. **Card 4** checks capture. **Card 5** is the trust guardrail. **Card 6** is pin two. Pricing depth stays in the pricing lesson after waitlist data exists.
 
 ## Common mistakes
 
@@ -412,6 +454,10 @@ Run **Card 1** and **Card 2** on the critical path first (pain + free spine). Ru
 | Lab-grade proof on day one | Overbuilt test; no decision in the time box |
 | Leading interviews ("would you buy our tech course?") | Invented demand |
 | "We believe users want X" | No metric, sample, or stop rule |
+| Change the denominator after seeing results | The team chooses the population that makes the result look strongest |
+| Promote a diagnostic metric after the primary stays flat | A click or intermediate step replaces the customer outcome named before exposure |
+| Read the dashboard repeatedly and stop on the first positive result | Random variation receives the credit for a win |
+| Set no guardrail threshold | The team notices harm only after rollout |
 | KR listed as the experiment | Direction confused with a single test |
 | Fifteen open A/Bs | No primary learning bet; underpowered reads |
 | PM owns interviews; eng skips discovery | Findings die at the sprint boundary |
@@ -427,12 +473,16 @@ Pick one belief inside a product you know. Fill the six-line card. Then answer:
 1. Is this testing a **strategic** bet or a random feature request?
 2. Which OKR or objective does it serve?
 3. Is the test lean, fast to read, and least effort for a real decision?
-4. Which **product stage** is this bet in, and does the instrument match (interview vs A/B vs waitlist)?
-5. Who owns PM, design, and engineering rows this week?
-6. Can you finish in one week with the sample you named?
-7. If this card passes, what thin scope would enter **Now** on a now/next/later board (not a twelve-feature roadmap)?
+4. Who is eligible, what event counts, and what denominator produces the rate?
+5. What are the baseline, success threshold, and guardrail limit?
+6. Which **product stage** is this bet in, and does the instrument match (interview vs A/B vs waitlist)?
+7. Who owns PM, design, and engineering rows this week?
+8. Can you finish in one week with the sample you named?
+9. If this card passes, what thin scope would enter **Now** on a now/next/later board (not a twelve-feature roadmap)?
 
 If you cannot name the stop rule, you are not ready to ask engineering for time. If you hold a dated feature roadmap and no hypothesis cards, start by turning each near-term feature into a belief or deleting it.
+
+<InlineLessonQuiz slug="product/experiments" />
 
 ## References
 

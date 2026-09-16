@@ -1,0 +1,915 @@
+---
+title: "Data structures and algorithms, with product stakes"
+summary: "The working set of DS&A: complexity, every core structure, and the algorithm patterns interview prep drills, each tied to a feature, a metric, and a cost. Optional details panels and a reading path for the rest."
+audience: Both
+status: published
+order: 2
+---
+
+Engineers reach for data structures and algorithms when a feature has a speed, memory, cost, or correctness problem. If all you hear is "we need to optimize," you cannot choose between shipping the slow version now and paying for the fast one.
+
+Every term below is defined the first time it appears, and every idea carries the product decision it belongs to. A PM leaves able to name `n`, the metric at risk, and the appetite. An engineer working through interview material gets the same structures and patterns, plus the reason each one exists in a shipped product. Mechanisms sit inside **Optional details** panels, closed by default; the product story holds without them, and the reading path at the end goes further than one page can.
+
+Systems that span many machines (copying data for safety, keeping temporary copies of hot results, surviving a dead disk) belong to [system design](/learn/engineering/system-design). Here the scope is what data you hold, how you organize it, and what you do to it.
+
+## Performance lands on the scoreboard
+
+| Product area | What the user experiences | Business consequence |
+|---|---|---|
+| Checkout or paywall | The payment page takes too long, fails, or charges twice. | More buyers abandon the purchase, so conversion and revenue fall. Duplicate charges also create refunds and damage trust. |
+| Search, feed, or lesson page | Results appear slowly, feel irrelevant, or fail to load. | New users take longer to reach value, which weakens activation. Returning users lose trust and visit less often, which hurts retention. |
+| Admin dashboard | Filters take seconds to respond or reports show incorrect numbers. | Teams cannot finish routine work efficiently. Customers may reduce usage, refuse to buy more seats, or leave for a faster product. |
+| Background work, such as exports or emails | The product accepts the request, but the file or email arrives late or never arrives. | Support tickets increase. If the company promised a delivery time in a service-level agreement (SLA), it may also breach that commitment. |
+| Work the system repeats continuously | Servers repeatedly recalculate results or read more data than the feature needs. | The cloud provider charges for that unnecessary computing work, increasing operating cost and reducing profit margin. |
+
+<Key>Algorithm choice is a product trade-off:</Key> ship a correct slow path now, or spend eng time on a fast path that protects conversion and cost. You name the outcome and the appetite. Eng picks the structure.
+
+<PerformanceOutcomeDiagram />
+
+Five factors sit behind every "which approach" argument:
+
+- **Latency:** how long the user waits to see value
+- **Throughput:** how much work the system handles each second
+- **Cost:** processor time, memory, database reads, and data sent over the network
+- **Freshness:** whether the answer must be current or can be slightly out of date
+- **Risk:** how long the approach takes to build, operate, and debug
+
+For instance, let's look at Spotify.
+
+**Spotify search**
+
+- **Situation:** Spotify's catalog kept growing. Checking every track title worked in a demo but became too slow for a real catalog.
+- **Product stake:** search is a path into listening. When search slows down, fewer users reach a song and start playing it.
+- **Technical response:** engineers added an **index**, a separate lookup structure that finds matching tracks without checking the entire catalog, then ranked those matches so the most useful results appeared first.
+
+## Complexity: how work grows
+
+`n` is the size of the thing that matters for this feature: users, rows, lessons, cart lines, graph edges. **Big-O** describes the shape of the work as `n` grows, ignoring constants on purpose. It answers one question: at 10× or 100× the data, does the work stay flat, grow slowly, grow in step, or explode?
+
+| Shape | Meaning | Product feel |
+|---|---|---|
+| O(1) | Flat, whatever `n` is | Lookup by id feels instant |
+| O(log n) | Each step halves the problem | Indexed search stays fast at millions |
+| O(n) | One pass over the data | Scan every lesson once |
+| O(n log n) | Sort-shaped | Rank a feed of `n` items |
+| O(n²) | Nested loops over `n` | Fine at 50, dead at 5,000 |
+| O(2ⁿ), O(n!) | Try every combination | Only for tiny inputs, or with pruning |
+
+<BigOGrowthDiagram />
+
+**Space matters too.** A **cache** is a temporary copy of data you already computed, so the next request does not redo the work. Holding every user's timeline in that copy uses memory in proportion to how many users you store. That is O(n) space, and memory is a bill. Interview prep calls the choice between more CPU work and more memory the time/space trade-off. Product calls it "faster page, bigger instance."
+
+**Admin "export all users."** At 200 users the O(n) export is a button. At 2 million it can cause an outage and fill the support backlog. Nothing about the code changed; `n` did. The fix is usually a background job plus an email link, not a faster button.
+
+<TechDepth>
+
+**Worst, average, amortized.** A hash map lookup is O(1) on average and O(n) in an unusually bad worst case. **Amortized cost** spreads an occasional expensive operation across many cheap ones. Appending to a dynamic array is O(1) amortized because most appends are cheap, while an occasional resize copies everything. Eng cares which cost a feature can tolerate. A payment request with a strict completion deadline cares about the worst case; a nightly job may only need the average.
+
+**Why log n feels like magic.** Binary search throws away half the remaining data each step. A million sorted items resolve in about twenty steps. That is the whole reason indexed lookup beats scanning.
+
+**Constants still exist.** An O(n²) approach with a tiny constant can beat O(n log n) at small `n`, which is why eng measures instead of arguing. Big-O compares growth, not milliseconds.
+
+**The loop to watch for.** Users × users, or orders × line items, is O(n²) hiding in readable code. Coding agents produce these happily because the test data is small (see [engineering with AI](/learn/engineering/engineering-with-ai)).
+
+</TechDepth>
+
+**The question that upgrades your brief:** what is `n` today, what is it in twelve months, and what breaks first at 10×?
+
+## The structures
+
+A data structure organizes data so that some operations are cheap and others are expensive. Picking one is picking which operations your feature performs constantly.
+
+Computer science uses the phrase **data structure** as an umbrella term, but two ideas sit underneath it:
+
+- An **abstract data type (ADT)** defines behavior: which operations a program may perform and what those operations mean. A stack, for example, requires last in, first out access through `push`, `pop`, and `peek`.
+- A **concrete data structure** defines storage: how the computer arranges the items in memory. Dynamic arrays and linked lists are concrete structures.
+
+That distinction allows one structure to build another. A program can implement stack behavior with a dynamic array or a linked list. Calling a stack a "data structure" is normal shorthand; calling it an abstract data type is more precise.
+
+<StructureLookupDiagram />
+
+### Array and dynamic array
+
+Start with the structure you already use whenever you write a numbered list.
+
+An **array** stores items in a specific order. Each item receives a numbered position, called its **index**. Most programming languages start counting at zero, so the first item is at index `0`, the second at index `1`, and so on.
+
+Imagine a row of numbered lockers. If you know that the item you need is in locker 4,000, you can go directly to locker 4,000. You do not need to open lockers 1 through 3,999 first. An array works the same way:
+
+- **Read by position:** when the program already knows the index, it can jump directly to that item. Reading index 4,000 requires the same number of lookup steps as reading index 4. Big-O describes both as O(1), or constant time.
+- **Find by value:** when the program knows only a value, such as the title `"Data structures and algorithms"`, it may need to inspect each item until it finds a match. In the worst case, it checks all `n` items, so the work is O(n).
+- **Insert in the middle:** when order must remain intact, adding a new item at index 2 requires moving the old item at index 2 to index 3, the old item at index 3 to index 4, and so on. As the array grows, more items may need to move.
+- **Add at the end:** a **dynamic array** can grow when it fills up. Most additions at the end are cheap. Occasionally the program creates a larger block of memory and copies the existing items into it.
+
+Consider a shopping cart. The cart keeps its line items in order so the interface can render the first item, second item, and third item. Reading a known position is easy. Finding the line item for product `ABC-123` still requires a scan unless the program also maintains a separate lookup from product ID to cart item.
+
+Arrays fit product features where order matters:
+
+- a course showing lessons in sequence
+- products listed in a shopping cart
+- a user's recent searches, newest first
+- one page of search results
+
+**Pagination** means dividing a long result set into smaller pages, such as 20 products at a time. The array usually holds the items for the current page. The database should still find those 20 rows efficiently before the application places them in the array.
+
+That distinction prevents a common performance problem. The array itself is not a database. If the application loads 100,000 customer records into an array and checks them one by one on every page request, it repeats an O(n) scan for every visitor. A database index, explained later, lets the database locate the required rows first; the application then uses an array only for the small ordered result it needs to display.
+
+**Product decision**
+
+- **Used in:** ordered lesson lists, shopping-cart lines, image carousels, recent searches, and one page of search results.
+- **Prefer an array when:** order matters, the feature often reads an item by position, and most additions happen at the end.
+- **Avoid an array when:** the feature constantly inserts items near the beginning, removes items from the middle, or searches a large collection by value without a separate lookup.
+
+### String
+
+A **string** is an ordered sequence of characters: letters, numbers, spaces, punctuation, or symbols. `"Anadi"` is a string containing five characters. Because those characters sit in order, many string operations use the same techniques as arrays.
+
+**Simple model:** place letter tiles in a row. You can read the tile at a numbered position, compare two rows, remove spaces from either end, or search one row for a smaller sequence of tiles. A string gives a program those operations for text.
+
+Common operations include:
+
+- **Count:** calculate how many characters or words the string contains.
+- **Search:** find a smaller sequence, called a **substring**, inside the larger string. For example, `"data"` is a substring of `"database"`.
+- **Compare:** decide whether two strings should count as the same value.
+- **Transform:** trim spaces, change letter casing, split a sentence, or join several strings.
+
+Account signup makes this problem visible. A customer enters `Anadi@example.com ` with a capital letter and a space at the end. The same customer later enters `anadi@example.com`. A literal comparison treats those inputs as different strings. **Normalization** means applying agreed rules, such as removing surrounding spaces and converting email letters to lowercase, before comparison.
+
+The product consequence is concrete: missing normalization can create duplicate accounts, split purchase history between identities, and lock a customer out of data they already own.
+
+**Product decision**
+
+- **Used in:** names, email addresses, search queries, URLs, messages, coupon codes, document text, and imported CSV fields.
+- **Prefer string operations when:** the feature must validate, compare, search, split, or display human-readable text.
+- **Avoid treating raw strings as final identity when:** casing, spaces, accents, phone-number formats, or aliases can make the same real-world value look different. Normalize first and keep a stable internal ID.
+
+<TechDepth>
+
+**Characters are not always one byte.** Unicode is the standard computers use to represent writing systems and symbols. Some visible characters, including many emoji, use multiple underlying code units. Code that assumes one visible character equals one byte can cut text incorrectly or miscount a username.
+
+**Product questions:** should search ignore capital letters? Are accents significant? Should `"résumé"` match `"resume"`? Can a user include emoji in a display name? These are product rules before they are string algorithms.
+
+</TechDepth>
+
+### Linked list
+
+A **linked list** stores each item in a separate container called a **node**. Each node holds the value and a link, or pointer, to the next node. A **doubly linked list** adds a second pointer to the previous node.
+
+**Simple model:** picture a scavenger hunt. Each clue tells you where to find the next clue. You cannot jump straight to clue 4,000 because only clue 3,999 contains its location. Starting from the first node and reaching the 4,000th therefore requires O(n) steps.
+
+The trade-off changes when you already hold the node you need:
+
+- **Insert:** connect the previous node to the new node, then connect the new node to the next one.
+- **Delete:** connect the surrounding nodes to each other, bypassing the deleted node.
+- **Read by position:** start at one end and follow links until you reach that position.
+
+A design tool's undo history shows the benefit. Each edit can point to the edit before and after it. Undo moves one link backward; redo moves one link forward. The tool does not need to shift every later edit when it adds a new action.
+
+Arrays still often read faster on real hardware because their items usually occupy one continuous block of memory. A linked list scatters nodes around memory, so the processor has to follow each pointer. Better Big-O for insertion does not guarantee a faster feature if the product mostly reads the list.
+
+**Product decision**
+
+- **Used in:** undo and redo history, browser navigation internals, music playlists that support frequent reordering, and the recency order inside an LRU cache.
+- **Prefer a linked list when:** the program already holds the node to change and frequently inserts or removes nearby items without needing numbered access.
+- **Avoid a linked list when:** the feature often asks for "item 4,000," scans the full collection, or benefits from compact memory. An array is usually simpler and faster for ordinary product lists.
+
+### Hash map and hash set
+
+A hash map is easier to understand when you compare it with an array.
+
+**An array is a row of numbered shelves**
+
+```text
+Position 0 → Apple
+Position 1 → Banana
+Position 2 → Mango
+```
+
+If the program asks for position `2`, it goes directly to Mango. If it asks for Banana without knowing the position, it may need to check Apple first and Banana second.
+
+**A hash map is a cabinet of labelled drawers**
+
+```text
+"apple"  → ₹100
+"banana" → ₹40
+"mango"  → ₹80
+```
+
+Each label is called a **key**. The information stored under that label is the **value**. Asking for the key `"banana"` takes the program directly to the value `₹40`; it does not check Apple and Mango first.
+
+Now connect that simple model to a product feature.
+
+**Customer-profile lookup**
+
+An array could store profiles in order:
+
+```text
+Position 0 → Anadi's profile
+Position 1 → Priya's profile
+Position 2 → Rahul's profile
+```
+
+The application knows the customer ID `user-9281`, not the numbered position. It may have to check profiles until it finds the matching ID.
+
+A hash map stores each profile under its customer ID:
+
+```text
+"user-9281" → Anadi's profile
+"user-1042" → Priya's profile
+"user-7814" → Rahul's profile
+```
+
+The application asks for `"user-9281"` and goes directly to Anadi's profile. A **hash map** therefore stores key-to-value pairs for fast lookup by a known key.
+
+The word "directly" hides the important mechanism. The map does not scan its keys to discover where `"user-9281"` sits. A **hash function** runs the same calculation on that key during storage and lookup:
+
+```text
+hash("user-9281") → bucket 5
+```
+
+When the application stores the profile, the calculation sends it to bucket 5. When the application requests the profile, the same calculation sends the lookup to bucket 5. The map jumps to that bucket instead of checking buckets 0 through 4. That fixed amount of work gives a hash map O(1) lookup on average.
+
+A **hash set** keeps only the keys, without a separate value. It answers a simpler question: "Have we already seen this?" For example, a waitlist can place each normalized email address in a set and reject a duplicate signup.
+
+That difference powers several familiar features:
+
+- **Session lookup:** find the stored sign-in state for a customer using its unique session ID.
+- **Feature flag:** find whether a named feature is enabled for this customer.
+- **Deduplication:** use a set to reject an email or imported row already seen.
+- **Counting:** store a count under each event name, such as `lesson_started → 418`.
+- **Plan or permission check:** answer whether the customer has access to a particular paid plan or protected action.
+
+The product stake is response time and correctness. A keyed lookup keeps a profile page fast; a set prevents duplicate invitations, charges, or analytics events.
+
+**Product decision**
+
+- **Used in:** user ID to profile lookup, session storage, feature flags, shopping-cart items keyed by product ID, event counts, deduplication, and permission checks.
+- **Prefer a hash map when:** the feature knows a unique key and needs to retrieve or update the matching value quickly.
+- **Prefer a hash set when:** the feature only needs to answer "has this appeared?" or enforce uniqueness.
+- **Avoid either one when:** customers need values in sorted order, need range queries such as dates between Monday and Friday, or do not have a stable key.
+
+<TechDepth>
+
+**Collisions explain "on average."** Two different keys can produce the same bucket number. That event is a **collision**. The map resolves collisions by keeping several entries in a bucket or checking nearby buckets. A healthy map has few entries to check in each bucket, so lookup remains O(1) on average. If all `n` keys collide, lookup falls to O(n) in the worst case.
+
+**Resizing.** As buckets fill, collisions become more frequent. The map eventually creates more buckets and redistributes its entries, a process called **rehashing**. Most lookups remain cheap, but a resize can make one operation take longer than usual.
+
+**What maps cannot do.** Order. "Give me items 50 to 60 sorted by title" wants a sorted structure or an ordered index, not a hash map. This is exactly why databases offer both hash indexes and tree indexes.
+
+</TechDepth>
+
+### Stack
+
+A **stack** allows work at one end only. Adding an item is called **push**; removing the newest item is called **pop**. This produces last in, first out order.
+
+Those rules define the behavior, not the storage. A dynamic array can implement a stack by adding and removing items only at its end. The array supplies the storage; the stack supplies the access rule.
+
+**Simple model:** stack trays in a cafeteria. Staff place each clean tray on top. The next customer takes the top tray, so the last tray added is the first one removed.
+
+Browser navigation uses this shape:
+
+1. Opening a new page pushes the previous page onto the history stack.
+2. Pressing Back pops the most recent page.
+3. Pressing Back again reveals the page before that.
+
+Stacks also support undo history, closing nested dialogs in reverse order, and reading nested formats such as JSON or HTML. A parser is code that turns raw text into a structure the application can understand. It uses a stack to remember which bracket or tag still needs to close.
+
+**Product decision**
+
+- **Used in:** browser Back, undo, nested modal dismissal, spreadsheet formula evaluation, and checking whether brackets or HTML tags close correctly.
+- **Prefer a stack when:** the most recent unfinished action must complete or reverse first.
+- **Avoid a stack when:** work must be processed in arrival order, by urgency, or by an arbitrary ID. Those requirements point to a queue, priority queue, or map.
+
+<TechDepth>
+
+A **monotonic stack** keeps its values consistently increasing or decreasing. When a new value violates that order, the algorithm removes values until the order returns. That pattern answers questions such as "which later day first had a higher price?" in one pass instead of comparing every day with every later day.
+
+</TechDepth>
+
+### Queue and deque
+
+A **queue** accepts new items at the back and removes old items from the front. This produces first in, first out order, like customers waiting at a checkout.
+
+**Simple model:** customers join the back of a checkout line, and the cashier serves the person at the front. A new arrival does not normally move ahead of someone who has already waited.
+
+A large account export can take several minutes. Making the customer hold the page open until it finishes creates timeouts and repeated clicks. A queue separates acceptance from completion:
+
+1. The customer clicks **Export**.
+2. The application places an export job at the back of the queue.
+3. A **worker**, a program that processes queued jobs, takes the oldest job.
+4. The product emails a download link when the file is ready.
+
+The customer gets immediate confirmation while the server does expensive work separately. The same pattern handles emails, notifications, video processing, and print jobs.
+
+A **deque**, pronounced "deck," is a double-ended queue. It adds and removes items at either end. One use is a **sliding window**, a moving group such as "events from the last five minutes." As time moves forward, new events enter one end and expired events leave the other.
+
+**Product decision**
+
+- **Used in:** email delivery, account exports, video processing, notification delivery, support-work assignment, and recent-event windows.
+- **Prefer a queue when:** the customer should receive immediate acknowledgement while slower work finishes later, or fairness requires older work to run first.
+- **Prefer a deque when:** the algorithm must add and remove data at both ends, such as maintaining events inside a moving time window.
+- **Avoid a basic queue when:** one urgent job must jump ahead, the customer needs an immediate result, or jobs depend on one another. Use priorities, synchronous processing, or dependency tracking instead.
+
+<QueueStackDiagram />
+
+<TechDepth>
+
+**Backpressure** occurs when customers or services add work faster than workers complete it. The queue grows, completion takes longer, and old jobs may expire.
+
+The response depends on the product promise:
+
+- **Rate limit:** temporarily reject or slow new requests.
+- **Batch:** process several similar jobs together to reduce repeated work.
+- **Set expectations:** show the customer's position or promise an email instead of an immediate result.
+- **Add workers:** pay for more computing capacity to drain the queue faster.
+
+</TechDepth>
+
+### Heap and priority queue
+
+A **priority queue** returns the most important item next instead of the oldest item. A **heap** is the tree-shaped data structure commonly used to implement that rule. It keeps only enough order to identify the highest- or lowest-priority item; it does not fully sort everything.
+
+**Simple model:** a hospital triage desk does not always treat the person who arrived first. Staff identify the patient with the most urgent need and treat that patient next. A heap keeps the next highest-priority item available without arranging every waiting item into a complete order.
+
+Consider a support product holding 100,000 open tickets while displaying only the ten most urgent. Sorting every ticket whenever an agent opens the page repeats work the interface never uses. A heap keeps the next most urgent ticket easy to retrieve:
+
+- Looking at the highest-priority item costs O(1).
+- Adding a ticket costs O(log n).
+- Removing the highest-priority ticket costs O(log n).
+
+Priority queues also run scheduled timers, select trending content, and combine several already-sorted result streams. The product question is whether customers need the full ranking or only the first few results.
+
+**Product decision**
+
+- **Used in:** urgent-ticket routing, scheduled notifications, top-ten leaderboards, trending content, delivery dispatch, and selecting the next task by deadline.
+- **Prefer a heap when:** the product repeatedly needs the highest-, lowest-, earliest-, or latest-priority item but does not need every item fully sorted.
+- **Avoid a heap when:** customers need arbitrary lookup by ID, the entire list in exact order, or frequent searches for items that are not at the top.
+
+### Tree, BST, and balanced tree
+
+A **tree** represents a hierarchy. The top node is the **root**. A node below another node is its **child**, and the node above it is its **parent**. A node with no children is a **leaf**. **Depth** counts how far a node sits below the root; **fan-out** counts how many children a node has.
+
+**Simple model:** a family tree starts with one person or couple and branches into children, grandchildren, and later generations. Each downward step adds depth. The same branching shape describes folders and subfolders.
+
+A course provides a familiar example: it has sections, each section has lessons, and each lesson may have exercises. That hierarchy is a tree. File folders, threaded comments, product categories, and company reporting lines use the same shape.
+
+A **binary tree** allows each node to have at most two children. A **binary search tree (BST)** adds an ordering rule: values smaller than the current node go left; larger values go right. Following that rule discards half of a balanced tree at each step, making lookup, insertion, and deletion O(log n).
+
+A badly shaped tree can become a long chain, which makes those operations O(n). A **balanced tree**, such as an AVL or red-black tree, moves nodes after updates to keep its height under control.
+
+The shape creates product constraints:
+
+- A comment thread with extreme depth becomes difficult to read and query.
+- A folder with thousands of direct children creates large menus and expensive permission checks.
+- A category tree with several possible parents is no longer a tree; it has become a graph.
+
+**Traversal** means visiting every node in a deliberate order:
+
+- **In-order:** visit left, current, right. A BST produces sorted values this way.
+- **Pre-order:** visit the parent before its children. This works for copying or saving a hierarchy.
+- **Post-order:** visit children before their parent. This works for deleting a folder only after deleting its contents.
+- **Level-order:** visit one depth at a time. A comment interface can use it to load the top levels before deep replies.
+
+**Product decision**
+
+- **Used in:** course outlines, file folders, product categories, threaded comments, organisation charts, menus, and sorted database indexes.
+- **Prefer a general tree when:** each item has one clear parent and the feature needs to preserve or navigate that hierarchy.
+- **Prefer a balanced search tree when:** values must stay sorted while the application frequently adds, removes, and searches them.
+- **Avoid a tree when:** an item can have several parents, relationships form loops, or the feature mainly needs direct lookup by key. Those cases point to a graph or hash map.
+
+### Trie
+
+A **trie**, pronounced "try," is a tree that stores one character along each step of a path. Words sharing a beginning also share the same path. The beginning of a word is called its **prefix**.
+
+**Simple model:** imagine a hallway where each door is labelled with the next letter. To find words beginning with `car`, walk through doors `c`, `a`, and `r`. Every room beyond that point represents a possible continuation, such as `car`, `care`, or `cart`.
+
+Autocomplete makes the shared path concrete. A list storing `cat`, `car`, and `care` follows one path for `ca`, then branches. After a customer types `car`, the application reaches that path and returns every word below it. Lookup work depends on the number of typed characters rather than the total number of stored words.
+
+Tries power search suggestions, tag pickers, contact search, and matching lists of blocked or protected terms. The trade-off is memory: shared prefixes save some duplication, but every character node and pointer still occupies space.
+
+**Product decision**
+
+- **Used in:** search autocomplete, contact suggestions, command palettes, spelling dictionaries, tag pickers, and matching domain-name or network-address prefixes.
+- **Prefer a trie when:** customers search by the beginning of a word and the product must return suggestions after each typed character.
+- **Avoid a trie when:** the collection is small, customers search by meaning or spelling similarity, or memory cost matters more than prefix speed. A sorted array, hash map, or full-text search system may fit better.
+
+### Graph
+
+A **graph** represents things and the relationships between them. Each thing is a **node**; each relationship is an **edge**. Unlike a tree, a graph allows several parents, two-way relationships, and **cycles**, where following links can return to the starting node.
+
+**Simple model:** a city map is a graph. Intersections are nodes and roads are edges. Several roads can reach one intersection, roads can work in both directions, and following several roads can bring you back to where you started.
+
+LinkedIn provides a familiar graph. Members are nodes and connections are edges. One member can connect to hundreds of others, two members can share connections, and a chain of connections can loop back to its starting point.
+
+Graphs power:
+
+- follow and friendship networks
+- recommendations such as "customers who completed this lesson also started that one"
+- group and folder permissions
+- package or task dependencies
+- delivery routes and workflow states
+
+**Product decision**
+
+- **Used in:** social connections, recommendation relationships, document permissions, dependency planning, fraud rings, delivery routes, and workflows that can branch or loop.
+- **Prefer a graph when:** items can connect to several other items and the feature asks about reachability, paths, clusters, or dependencies.
+- **Avoid a graph when:** every item has one parent, lookup is only by ID, or a simple ordered list answers the requirement. Trees, maps, and arrays are easier to build and operate for those cases.
+
+<TechDepth>
+
+An **adjacency list** stores, for each node, only the nodes connected to it. It suits a sparse graph where most possible relationships do not exist. An **adjacency matrix** stores a table containing every possible pair. It uses more memory but answers "are these two nodes connected?" directly. A social network usually uses adjacency lists because every member connects to a tiny fraction of all members.
+
+</TechDepth>
+
+### Union-find (disjoint set)
+
+**Union-find**, also called a **disjoint-set structure**, tracks which items belong to the same group. It performs two jobs:
+
+- **Find:** return the group containing an item.
+- **Union:** merge two groups after learning they belong together.
+
+**Simple model:** people at an event receive coloured wristbands showing their group. Finding a person's group means checking the wristband colour. Combining the blue and green groups means giving them one shared group identity instead of comparing every blue person with every green person.
+
+Identity resolution shows why grouping matters. A customer signs up with a personal email, later uses a work email, and then buys through an Apple private relay address, which forwards messages without revealing the customer's main address. Rules may conclude that all three accounts represent one person. Union-find merges those records into one group without repeatedly comparing every account with every other account.
+
+The same structure groups devices, joins computer-network connections, and detects whether adding a relationship would create a cycle. The product stake is a complete customer history without an O(n²) comparison across millions of records.
+
+**Product decision**
+
+- **Used in:** merging duplicate customer identities, grouping devices that belong together, connecting computers into networks, clustering records, and checking whether two items already share a group.
+- **Prefer union-find when:** the application repeatedly merges groups and asks whether two items belong to the same connected group.
+- **Avoid union-find when:** the feature must list the path between items, remove arbitrary relationships, explain why two records were grouped, or store rich relationship details. A graph with explicit edges is more suitable.
+
+### Bloom filter
+
+A **Bloom filter** is a memory-efficient structure that answers a limited membership question:
+
+- **Definitely absent:** the item has not appeared.
+- **Probably present:** the item may have appeared, so the application performs a slower, exact check.
+
+**Simple model:** imagine a quick screening card with several boxes. Each known item marks a few boxes. If a new item needs a box that remains unmarked, it is definitely absent. If all its boxes are marked, the marks may belong to that item or may overlap with marks from other items, so the answer is only "probably present."
+
+The second answer can be wrong. A **false positive** occurs when the filter reports "probably present" for an item that is absent. It never produces a false negative for an item added correctly.
+
+A browser safety check provides one example. The browser checks a web address against a Bloom filter of known dangerous sites. A "definitely absent" answer avoids a network request. A "probably present" answer triggers an exact server check before showing a warning. The customer gets faster browsing while the second check prevents the probabilistic result from making the final security decision.
+
+Bloom filters also help databases skip files that cannot contain a requested key. The product trade-off is less memory and fewer slow reads in exchange for occasional unnecessary follow-up checks.
+
+**Product decision**
+
+- **Used in:** browser checks for dangerous web addresses, database file lookup, large-scale deduplication checks, and avoiding expensive requests for records that are certainly absent.
+- **Prefer a Bloom filter when:** a fast "definitely absent" answer can skip expensive work and the application can verify every "probably present" answer elsewhere.
+- **Avoid a Bloom filter when:** a false positive could directly block a payment, deny access, delete data, or produce a final customer-visible decision. Use an exact set or database lookup for those decisions.
+
+### LRU cache
+
+A **cache** keeps a temporary copy of data so the application can reuse it instead of repeating slower work. A cache has limited room, so it needs an **eviction policy**, a rule for deciding which copy to remove.
+
+**LRU** means least recently used. An LRU cache removes the item nobody has requested for the longest time. It usually combines:
+
+- a hash map that finds a cached value quickly
+- a doubly linked list that records usage order
+
+**Simple model:** a small desk can hold only five documents while a filing cabinet holds hundreds. Keep recently used documents on the desk. When a sixth document arrives, return the document untouched for the longest time to the cabinet. The desk is the cache; the filing cabinet remains the original source.
+
+A phone image gallery makes the trade-off visible. The phone cannot keep every viewed product image in memory. An LRU image cache keeps recently viewed images ready and removes an image the customer has not viewed for a long time. Returning to the previous product feels instant; opening an old product downloads its image again.
+
+The product trade-off has three parts:
+
+- A larger cache uses more memory but avoids more repeated work.
+- A smaller cache costs less memory but removes useful copies sooner.
+- The **hit rate**, the percentage of requests found in the cache, measures whether that memory is buying enough speed.
+
+**Product decision**
+
+- **Used in:** mobile image caches, recently viewed product data, browser resources, database query results, and signed-in session data.
+- **Prefer an LRU cache when:** recent use predicts near-future use, repeated computation or download is expensive, and a missed lookup can safely fall back to the original source.
+- **Avoid an LRU cache when:** every item must remain available, stale data could cause a wrong charge or permission decision, or usage recency does not predict what customers will request next.
+
+### Cost table
+
+Use this table after the explanations above. "Known" means the program already holds the required index, key, or node; finding that reference may carry a separate cost.
+
+| Structure | Fast operation | Expensive operation | Choose it when |
+|---|---|---|---|
+| Array | Read a known position in O(1); append usually costs O(1). | Finding a value or changing the middle costs O(n) because the program scans or shifts items. | The feature needs ordered items and usually reads by position. |
+| Linked list | Insert or delete in O(1) after reaching the correct node. | Reaching an arbitrary position costs O(n) because each link must be followed. | The feature changes known positions more often than it jumps to numbered positions. |
+| Hash map or set | Find, add, or remove a key in O(1) on average. | Finding by an unkeyed value still costs O(n), and maintaining sorted order is not supported. | The feature repeatedly asks "give me this ID" or "have we seen this value?" |
+| Balanced binary search tree | Find, insert, or delete a sorted key in O(log n). | It carries rebalancing and pointer overhead that a simple array does not need. | The feature needs both fast updates and results kept in sorted order. |
+| Heap | Read the highest- or lowest-priority item in O(1); add or remove it in O(log n). | Finding an arbitrary item costs O(n), and the rest of the structure is not fully sorted. | The feature needs the next best item or the top few items. |
+| Trie | Find a word or prefix in time proportional to the word's length. | It can consume substantial memory because characters become nodes and links. | The feature searches by prefix, such as autocomplete. |
+| Union-find | Check or merge groups in near-constant time. | It does not list relationships or support arbitrary group deletion well. | The feature repeatedly asks whether two records belong to the same group. |
+
+## The patterns
+
+An **algorithm** is a sequence of steps for solving a problem. A **pattern** is a reusable shape shared by many algorithms. Recognizing the shape keeps an engineer from inventing a new solution for every feature.
+
+<DsaPatternMapDiagram />
+
+The language in a requirement often hints at the useful pattern:
+
+| Requirement signal | What the pattern does | Product example and consequence |
+|---|---|---|
+| Sorted data, a pair, or duplicates | **Two pointers** move through one or two ordered lists without restarting the scan. | Merge imported contacts with existing customers without comparing every possible pair. |
+| "During the last N minutes or items" | A **sliding window** keeps only the current range while it moves through the data. | Lock an account after three failed attempts in five minutes without recounting the full login history. |
+| A sorted list or an ordered range of answers | **Binary search** discards half of the remaining possibilities after each comparison. | Find the largest upload size that stays below a response-time limit without testing every possible size. |
+| "Total between these two dates" | A **prefix sum** stores cumulative totals so a range total needs subtraction instead of a new scan. | Answer spending-by-date reports quickly after calculating cumulative spend once. |
+| Bookings, date ranges, or overlaps | **Interval processing** sorts ranges and combines or compares overlaps. | Detect double-booked rooms before confirming the reservation. |
+| "Top K," "next most urgent," or "most popular" | A **heap** keeps the best few items available without sorting the entire collection. | Display ten trending lessons while controlling ranking cost. |
+| Counts, uniqueness, or "have we seen this?" | **Hashing** uses a map or set for keyed lookup. | Count searches with no results and remove duplicate events. |
+| Try combinations while enforcing rules | **Backtracking** abandons a partial choice once it cannot lead to a valid result. | Search possible shifts without completing schedules that already break a rule. |
+| Repeated smaller problems contribute to the best answer | **Dynamic programming** saves intermediate answers and reuses them. | Find a valid discount bundle without recalculating the same combinations. |
+| The best immediate choice safely leads to the final answer | A **greedy algorithm** commits to the best local option. | Select the largest possible set of non-overlapping appointments. |
+| "Can this reach that?" or "fewest relationships" | **Breadth-first or depth-first search** follows graph edges in a controlled order. | Check document access through nested groups or find the fewest social connections. |
+| Tasks have prerequisites | A **topological sort** puts every dependency before the task that needs it. | Stop a migration or onboarding step from running before setup. |
+| Relationships carry distance, time, or price | **Dijkstra's algorithm** finds the path with the lowest total weight. | Estimate a delivery route using travel time rather than number of roads. |
+| "Do these records belong to one group?" | **Union-find** checks and merges groups. | Join duplicate identities while preserving one customer history. |
+| Search by the beginning of a word | A **trie** follows shared character prefixes. | Return autocomplete suggestions before the customer finishes typing. |
+| Store many yes/no settings compactly | **Bit manipulation** uses individual binary digits as flags. | Store several simple permissions in one small value. |
+
+<FeatureToAlgorithmDiagram />
+
+### Two pointers, sliding windows, prefix sums, and intervals
+
+These four patterns avoid repeatedly scanning the same array.
+
+**Two pointers**
+
+- **Simple model:** two people each hold an alphabetized guest list. They compare the names under their fingers. Matching names are duplicates; the person pointing to the earlier name moves down one row.
+- **Product example:** a contact importer sorts both uploaded contacts and existing customers by email, then moves one pointer through each list. It scans both lists once instead of comparing every uploaded contact with every customer.
+- **Used in:** duplicate detection, merging imported records, and finding pairs that meet a target.
+- **Prefer it when:** one or two lists are sorted, or pointers can move inward from opposite ends.
+- **Avoid it when:** the data has no useful order or the algorithm must repeatedly move backward.
+
+**Sliding window**
+
+- **Simple model:** slide a picture frame across a long timeline. The frame shows only the events currently inside it. New events enter on the right; old events leave on the left.
+- **Product example:** a fraud rule tracks failed login attempts from the last five minutes. It adds a new attempt and removes attempts older than five minutes instead of rereading the full history.
+- **Used in:** fraud rules, rate limits, activity streaks, and continuous ranges inside text or event history.
+- **Prefer it when:** the requirement says "during the last N minutes," "inside this range," or "longest continuous sequence."
+- **Avoid it when:** the relevant items are scattered rather than contiguous, or each query asks for an unrelated range.
+
+**Prefix sum**
+
+- **Simple model:** a bank statement prints the running account balance beside every transaction. To calculate activity between two points, subtract the earlier running total from the later one.
+- **Product example:** daily spend `[£4, £7, £2]` produces cumulative totals `[£4, £11, £13]`. Spend from day two through day three is `£13 - £4 = £9`.
+- **Used in:** spend reports, cumulative usage, inventory movement, and analytics over date ranges.
+- **Prefer it when:** the underlying values stay stable while the product asks many total-between-two-points questions.
+- **Avoid it when:** values change constantly, because one early change may require updating every later cumulative total.
+
+**Intervals**
+
+- **Simple model:** draw meetings as bars on a calendar. Two bars covering the same time overlap.
+- **Product example:** sorting bookings by start time lets a calendar detect double bookings, merge busy periods, and calculate how many rooms are needed at once.
+- **Used in:** calendars, subscriptions, pricing validity, room allocation, and delivery windows.
+- **Prefer it when:** each item has a start and end, such as bookings, subscriptions, price validity, or delivery windows.
+- **Avoid it when:** the feature cares about isolated points rather than ranges.
+
+The product stake across all four patterns is preserving an interactive response time as history, customers, or bookings grow.
+
+### Sorting
+
+A **sorting algorithm** rearranges values into an order, such as newest first, lowest price first, or highest score first. A **comparison sort** decides order by comparing pairs of values. Efficient general-purpose comparison sorts usually cost O(n log n).
+
+**Simple model:** arrange books on a shelf by title. Compare two books, place the earlier title first, and repeat until the shelf follows one order. The rule could instead use author, publication date, or height; the chosen rule changes the result.
+
+Take a Learn homepage showing the ten most popular lessons this week. Product first defines **popular**: starts, completions, or a score combining both. Engineering then chooses how often to calculate that order.
+
+| Approach | What it means | Suitable when | Product cost or risk |
+|---|---|---|---|
+| Sort on every page request | Recalculate the order whenever a customer opens the page. | The collection is small and customers need the newest answer. | Page latency and computing cost grow with both traffic and catalog size. |
+| Keep only the top K in a heap | Track the best `K` items, such as the top ten, without fully ordering the rest. | The interface displays only a small leaderboard. | The team must still define when scores refresh; stale scores make "popular" feel false. |
+| Precompute the ranking | Calculate order on a schedule and store the result for reuse. | Hourly or nightly freshness meets the product promise. | Customers may not see a sudden trend until the next calculation. |
+| Maintain an ordered database index | Ask the database to keep values arranged by a chosen field as records change. | Many requests repeatedly need the same ordering or range. | Every write must also update the index, using storage and write capacity. |
+
+The product decision is how current the ranking must be, how many items appear, and how much infrastructure cost that surface deserves.
+
+### Searching
+
+**Searching** means locating one or more matching items. The right approach depends on the kind of match the customer expects.
+
+**Simple model:** finding a name in an unsorted pile of cards means checking cards one by one. Finding the same name in an alphabetized phone directory lets you open near the middle and discard half of the remaining pages after each comparison.
+
+Lesson search shows why that promise matters. It could support exact titles, the beginning of a title, spelling mistakes, synonyms, or results based on meaning rather than matching words. Each promise needs different machinery.
+
+| Approach | What it does | Suitable when | Limitation |
+|---|---|---|---|
+| Linear scan | Check each title until a match appears. | The catalog contains only dozens of lessons. | Work grows with every item and repeats for every search. |
+| Binary search | Compare with the middle of a sorted list and discard half after each step. | Data is sorted and the customer expects an exact value. | It does not handle spelling mistakes or relevance ranking by itself. |
+| Database index | Maintain a separate lookup structure for a field such as a page identifier or email address. | The application repeatedly searches the same field. | The index consumes storage and adds work whenever records change. |
+| Full-text search | Build a word-to-document lookup, then rank matching documents. | Customers expect partial text, relevance, or language-aware matching. | The team must operate a larger search system and own its ranking rules. |
+
+Before choosing technology, state:
+
+- how many items customers will search
+- whether spelling mistakes should still match
+- whether exact, prefix, or meaning-based results are required
+- how quickly new content must appear in results
+- whether search is central to activation or a rarely used convenience
+
+<TechDepth>
+
+**Binary search needs sorted data.** Each comparison halves the remaining range, giving O(log n) work. **Binary search on the answer** searches an ordered range of possible answers rather than stored items. Capacity planning can use it to find the largest page size or smallest worker count that still meets a response-time target.
+
+**Full-text search** builds an **inverted index**, a map from each term to the documents containing it. A ranking formula then orders matches. Recency, popularity, personalization, and exact-match weighting are product choices expressed as numbers.
+
+</TechDepth>
+
+### Recursion, memoization, dynamic programming
+
+**Recursion** solves a problem by calling the same procedure on a smaller version of that problem. It fits data that repeats its own shape, such as a folder containing more folders. Every unfinished call uses the **call stack**, the program's record of procedures that still need to finish.
+
+**Simple model:** open a box containing smaller boxes. To count every object, use the same instruction on each box: count the loose objects, open every smaller box, and add its count. The instruction repeats until it reaches a box containing no more boxes.
+
+Calculating a folder's size provides a recursive example. The calculation adds its files plus the sizes of every child folder. The same procedure calculates each child, so the code follows the tree naturally.
+
+Recursion becomes expensive when several paths ask for the same smaller answer. **Memoization** stores each completed answer so a repeated request becomes a lookup. **Dynamic programming** plans the required smaller answers and builds the final answer from them. A **bottom-up** version fills a table from the smallest case to the largest instead of making recursive calls.
+
+**Memoization model:** write each solved answer on a sticky note. When the same question appears again, read the note instead of solving it again.
+
+**Dynamic-programming model:** complete a worksheet from the smallest known answers upward. Each new row uses answers already written above it, so the work and its order are predictable.
+
+<RecursionToDpDiagram />
+
+Common dynamic-programming families include:
+
+- **Knapsack:** choose the most valuable combination that fits a fixed capacity or budget. This resembles selecting promotions under a discount cap.
+- **Edit distance:** count the fewest character changes needed to turn one string into another. Document differences and fuzzy spelling matches use this shape.
+- **Grid paths:** count or optimize routes through cells containing obstacles. Warehouse picking and game movement use related forms.
+- **Coin change:** construct a target total from available denominations. Pricing bundles and discount combinations can have this shape.
+- **Longest increasing subsequence:** find the longest ordered improvement inside a sequence. It can detect sustained growth hidden inside noisy measurements.
+
+The phrase "exponential without memoization" means repeated work grows so quickly that the feature needs a strict input limit or stored intermediate answers before it can ship safely.
+
+**Product decision**
+
+- **Prefer recursion when:** the data repeats a nested shape, such as folders, comments, or organisational units, and the maximum depth is controlled.
+- **Avoid plain recursion when:** the input can become deeply nested, several paths repeat the same work, or the call stack could run out of room.
+- **Prefer dynamic programming when:** the feature asks for the best result and repeatedly encounters the same smaller questions.
+- **Avoid dynamic programming when:** smaller questions do not repeat or storing every intermediate answer would consume more memory than the outcome deserves.
+
+<TechDepth>
+
+Dynamic programming fits when two properties hold:
+
+- **Overlapping subproblems:** different routes through the problem ask for the same smaller answer.
+- **Optimal substructure:** the best final answer can be built from best answers to smaller parts.
+
+</TechDepth>
+
+### Backtracking
+
+**Backtracking** builds one possible answer step by step. As soon as a partial answer breaks a rule, the algorithm abandons that branch and returns to the last choice point. That early exit is called **pruning** because it cuts away part of the search tree.
+
+**Simple model:** solve a maze with a pencil. Follow one path until it reaches a dead end, return to the last junction, and try the next path. Marking the dead end prevents you from exploring an impossible route further.
+
+A shift scheduler makes pruning useful. It assigns employees one at a time. If a partial schedule already gives someone overlapping shifts or exceeds their permitted hours, no completed version of that branch can work. The algorithm stops exploring it.
+
+Backtracking powers seat assignment, valid coupon combinations, and configuration tools with interacting constraints. The number of combinations can still grow exponentially. Product can reduce that cost by limiting party size, limiting how many promotions may combine, or accepting a good-enough answer after a time limit.
+
+**Product decision**
+
+- **Used in:** shift scheduling, seat assignment, valid promotion combinations, configuration tools, and puzzle-like constraint problems.
+- **Prefer backtracking when:** the input is small enough to explore, rules can reject bad partial answers early, and the product needs a valid combination rather than a formula.
+- **Avoid backtracking when:** the number of choices is large and unbounded or the customer needs a guaranteed instant answer. Reduce the choices, use an approximation, or move the work into a background job.
+
+### Greedy algorithms
+
+A **greedy algorithm** chooses the best available option now and does not revisit the choice. This approach is faster and simpler than exploring combinations, but it is correct only when the problem has the right mathematical structure.
+
+**Simple model:** choose the option that looks best at each step, cross it off, and never revisit it. This saves the work of comparing complete combinations, but an attractive choice now can block a better result later.
+
+A meeting scheduler is one case where the greedy choice works. Repeatedly choosing the meeting that finishes earliest leaves the most room for later meetings and maximizes the number that fit. The same strategy does not solve every pricing or resource problem.
+
+An engineer saying "greedy works here" should be able to explain why the local choice cannot block a better final answer. Passing a few examples is not enough when the output controls money, eligibility, or capacity.
+
+**Product decision**
+
+- **Used in:** selecting non-overlapping meetings, compressing files by assigning shorter codes to common symbols, and making fast allocation choices where engineers have proven the greedy rule.
+- **Prefer a greedy algorithm when:** the local choice has a clear proof, speed matters, and revisiting prior choices would add cost without improving the final answer.
+- **Avoid a greedy algorithm when:** discounts, capacity, or dependencies interact in ways where today's best-looking choice can block tomorrow's better combination.
+
+### Graph traversal
+
+**Graph traversal** means visiting connected nodes in a deliberate order.
+
+- **BFS simple model:** drop a pebble into water. The first ripple reaches every nearby point before the next ripple reaches points farther away.
+- **DFS simple model:** explore a maze by following one corridor to its end before returning to the last junction.
+
+The algorithms turn those models into traversal rules:
+
+- **Breadth-first search (BFS):** explore all nodes one edge away, then two edges away, and so on. It finds the path with the fewest edges when every edge has equal cost.
+- **Depth-first search (DFS):** follow one path as far as possible before returning to try another. It helps explore all reachable nodes and detect cycles.
+- **Topological sort:** order a graph with one-way dependencies so each prerequisite appears first. It works only when those dependencies contain no cycle.
+- **Dijkstra's algorithm:** find the lowest-total-cost path when edges carry weights of zero or greater, such as travel time or price.
+
+For instance, consider Google Drive. A permission check can start from a member, follow group-membership edges, and ask whether any path reaches a group allowed to open the document. A route estimator provides the weighted version: it follows roads carrying travel-time weights and seeks the path with the lowest total time.
+
+The product requirement selects the traversal. "Fewest introductions" calls for BFS; "lowest travel time" needs a weighted-path algorithm; "run setup before migration" needs topological ordering.
+
+**Product decision**
+
+- **Used in:** document permissions, social connections, delivery routes, workflow dependencies, recommendations, and fraud-ring investigation.
+- **Prefer BFS when:** every relationship has equal cost and the feature needs the fewest hops.
+- **Prefer DFS when:** the feature must explore a complete branch, detect a cycle, or visit every reachable item.
+- **Avoid basic BFS or DFS when:** relationships carry different costs and the feature needs the cheapest total route. Use a weighted-path algorithm such as Dijkstra's.
+
+### Strings and bits
+
+**String matching** finds one sequence of characters inside another. Checking each possible starting position character by character can cost O(n × m), where `n` is the long text length and `m` is the search phrase length.
+
+**Simple model for string matching:** slide a transparent stencil containing the target word across a page. At each position, check whether every letter lines up. A smarter method uses what already matched to decide how far the stencil can move after a mismatch.
+
+Brand monitoring shows string matching at scale. The product may scan millions of posts for protected names. **Knuth-Morris-Pratt (KMP)** avoids restarting from the next character after every mismatch. A **rolling hash** converts each window of text into a compact numeric fingerprint that updates as the window moves. These techniques reduce repeated comparisons when volume makes a simple scan too expensive.
+
+**Bit manipulation** works directly with binary digits, where each **bit** is `0` or `1`. A **bitmask** assigns a meaning to each position, such as read, edit, share, or delete permission. Several yes/no settings then fit inside one number.
+
+**Simple model for bits:** place a row of light switches on a panel. Each switch represents one permission. Up means allowed (`1`); down means denied (`0`). Reading the panel reveals several yes/no settings at once.
+
+Compact storage can help at large volume, but a bitmask is harder to inspect than named fields. Prefer clear names unless storage volume or an interface close to the computer hardware makes the compact form valuable.
+
+**Product decision**
+
+- **Use advanced string matching when:** the product scans large text collections for exact phrases and a character-by-character restart costs too much.
+- **Avoid it when:** the collection is small or customers expect matches by meaning, synonyms, or spelling similarity; a full-text or meaning-based search system addresses a different need.
+- **Prefer bitmasks when:** the set of yes/no flags is small, stable, and processed at high volume or across a hardware-facing interface.
+- **Avoid bitmasks when:** flags change frequently, non-engineers must inspect them, or readability matters more than saving a few bytes.
+
+## Structures on disk
+
+The structures above assume the program can reach data in **memory**, also called RAM, while it runs. RAM is fast but temporary: its contents disappear when the machine loses power. Products therefore keep important records on **disk**, persistent storage that survives a restart but takes longer to read and write.
+
+A **database** organizes persistent records and provides operations for reading and changing them. In a table-shaped database:
+
+- a **row** represents one record, such as one customer
+- a **column** or **field** represents one property, such as email
+- a **query** asks the database to return or change particular records
+
+Consider a customer signing in with `anadi@example.com`. Without an **index** on the email field, the database may inspect each customer row until it finds a match. That operation is a **full scan**, and its work grows with the number of customers.
+
+An index is a separate data structure that maps searchable values to the records containing them. It works like the index at the back of a book: find the term first, then jump to the relevant page instead of reading every page.
+
+Database indexing applies the same key-to-location idea. Hash maps serve a broader set of jobs, including profiles, caches, counters, sessions, and duplicate detection. A database may choose a **hash index** for exact lookups such as `user_id = 123`, or a **B-tree index** when it also needs values in order or ranges such as accounts created between Monday and Friday.
+
+<IndexVsScanDiagram />
+
+An index creates a trade-off:
+
+- Reads using the indexed field become faster.
+- The index occupies additional disk space.
+- Every inserted or updated record may also require an index update.
+- An index on the wrong field consumes resources without helping an important customer path.
+
+The product question is not "Can we add an index?" It is "Which customer action needs this query to stay fast as records grow?"
+
+<LsmVsBtreeDiagram />
+
+Martin Kleppmann's *Designing Data-Intensive Applications* explains four useful storage shapes:
+
+- **Hash-index model:** a coat-check ticket maps one claim number to one hook. Staff jump to that hook without searching every coat, but the ticket numbers do not help them retrieve coats checked between two times.
+- **LSM-tree model:** a mailroom accepts new letters into a small sorted tray, periodically files that tray as one sorted bundle, then merges bundles during quieter periods.
+- **B-tree model:** a filing cabinet uses labelled guide cards. Each guide sends you to a smaller range of folders until you reach the page containing the requested key.
+- **Column-storage model:** instead of keeping each person's complete form together, keep all ages in one cabinet, all countries in another, and all purchase totals in a third. An analytics question reading only country and total avoids opening unrelated fields.
+
+| Storage structure | How it organizes data | Suitable product workload | Cost to remember |
+|---|---|---|---|
+| Hash index | Keep a map from each key to the location of its record on disk. | Exact lookups such as session ID to session, when the complete key map fits in memory. | It does not naturally support sorted ranges such as "orders between Monday and Friday." |
+| Log-structured merge tree (LSM tree) | Accept writes in memory, save them into **Sorted String Tables (SSTables)**, files whose records are ordered by key, then merge those files later. | Write-heavy products such as event collection, logs, and measurements recorded over time. | Background merging, called **compaction**, consumes processor and disk capacity and can slow reads. |
+| B-tree | Store sorted keys in fixed-size disk blocks called **pages**, arranged as a balanced tree. | Mixed reading and writing, including queries for values between two boundaries, in many table-based relational databases. | Updating pages creates writes at different disk locations and needs recovery protection if the machine crashes. |
+| Column-oriented storage | Store values from the same column together instead of keeping each complete row together. | Analytics that scans a few fields across millions of events, such as total revenue by country. | Reconstructing one complete record can require reading from several column locations. |
+
+For another example, consider payment retries.
+
+**Stripe-style idempotency keys**
+
+- **Situation:** a phone loses its connection after sending a payment request. The customer retries because the product did not show a result.
+- **Product risk:** if the server treats the retry as a new purchase, it charges the customer twice.
+- **Technical response:** the client sends an **idempotency key**, a unique label identifying that payment attempt. The server stores the result under that key. A retry with the same key returns the original result instead of creating another charge.
+- **Data-structure role:** an index makes the key lookup fast enough to run before every payment action.
+
+<TechDepth>
+
+**Why LSM trees suit writes.** The database first writes into a sorted in-memory structure. When that structure fills, it saves the whole sorted block to disk in one sequential operation. Sequential writes are efficient, but the database must later merge several files and remove overwritten values. That compaction work competes with customer queries for disk capacity.
+
+**Why B-trees suit ranges.** Each page contains sorted keys and pointers to child pages. A query such as "orders between these two dates" navigates to the first matching page, then walks nearby pages in order. A **write-ahead log** records an intended change before modifying the B-tree, allowing the database to recover if a crash interrupts the update.
+
+**Primary and secondary indexes.** A primary index usually follows the record's main identity, such as customer ID. A secondary index supports another lookup, such as email or creation date. Each additional index makes selected reads faster while adding storage and write work.
+
+**Compression** stores repeated values using fewer bytes. Column stores compress well because adjacent values often share a type or repeat. That is one reason analytics systems can scan selected columns across billions of rows efficiently.
+
+</TechDepth>
+
+## Correctness is a product surface
+
+An **edge case** is a valid but unusual input near the boundary of normal use. Algorithms often look correct on average examples and fail at those boundaries.
+
+A cart discount calculated from a list of line items shows how boundaries become product decisions. The specification must answer:
+
+- **Empty cart:** should the total be zero, or should checkout be blocked?
+- **One item:** does a bundle discount require at least two items?
+- **Duplicate item:** should two units appear as two rows or one row with quantity two?
+- **Zero or negative price:** can a credit create a negative total?
+- **Maximum size:** what happens when a wholesale customer imports 100,000 lines?
+- **Concurrent edit:** which result wins if two employees change the same order at once?
+
+Text adds another set of boundaries: capital letters, surrounding spaces, accents, emoji, and writing systems where one visible character uses several code units. Dates add time zones and daylight-saving transitions.
+
+These are product decisions. Writing them into the specification prevents an engineer from guessing and a customer from discovering the guess through lost data, a wrong charge, or a support ticket.
+
+## Cost, and what "good enough" means
+
+The fastest technical design is not automatically the best product decision. A small catalog may not justify a dedicated search system. "Good enough" means the simplest approach that meets the current customer promise and has a named threshold for replacement.
+
+| Choice | Customer experience | Operating cost | Delivery cost | Suitable stage |
+|---|---|---|---|---|
+| Scan every item on each request | Response time grows as the catalog grows. Customers eventually wait longer for the same action. | Repeated scans consume database and processor capacity on every request. | Engineers can build and understand it quickly. | Early product with small, bounded data and low traffic. |
+| Keep a temporary copy of popular results | Repeated requests return quickly, but customers may briefly see an older answer. | Memory costs money, and the team must decide when to refresh or remove stale copies. | Engineers must add cache updates, monitoring, and fallback behaviour. | Growing product with repeated reads of the same results. |
+| Operate a dedicated search or ranking service | Search can support spelling tolerance, relevance, and predictable speed at large scale. | The service has a fixed bill and needs monitoring even during quiet periods. | Engineers must copy record changes into the search service and own ranking quality. | Search is a central customer journey and simpler approaches miss its target. |
+
+A useful search brief makes each trade-off explicit:
+
+- **Outcome:** customers who find a lesson are more likely to start one.
+- **Scale:** the catalog contains 50,000 lessons and receives 50,000 searches per day.
+- **Latency target:** 95% of searches return within 300 milliseconds. This is called **p95 latency**.
+- **Freshness:** a new lesson may take up to one hour to appear.
+- **Appetite:** the team can spend one engineering week before reconsidering scope.
+
+"Make it faster" omits the information engineering needs to choose an approach.
+
+## Briefing eng
+
+A product brief for algorithmic work should answer seven questions:
+
+1. **User job:** what is the customer trying to finish?
+2. **Outcome metric:** which measurable behaviour changes if the feature improves?
+3. **Input size:** what does `n` represent, how large is it today, and how large could it become?
+4. **Latency target:** how long may the action take, including a percentile such as p95 rather than an average that hides slow requests?
+5. **Freshness:** must the answer reflect changes immediately, or can it update hourly or nightly?
+6. **Appetite:** how many engineering days is this outcome worth before the team reduces scope?
+7. **Fallback:** what does the customer see if the faster or more accurate path is unavailable?
+
+## Specimen: this Learn site
+
+The Learn product provides a final example. It already uses several structures even though the traffic is small:
+
+| Feature | Structure or pattern | Why it fits | Product outcome |
+|---|---|---|---|
+| Lessons within a track | An ordered array keeps lesson one before lesson two. | The interface renders a short sequence and often moves to the next position. | A clear sequence helps a reader continue instead of deciding where to go next. |
+| Lesson page identified by its URL slug | A keyed lookup maps a **slug**, the short text identifying a page in its web address, such as `cs-fundamentals`, to one lesson. | The page URL already provides the key, so scanning all lessons would waste work. | The requested page resolves quickly and reliably. |
+| Sidebar table of contents | A tree represents headings and their nested subheadings. | Parent and child headings already form a hierarchy. | Readers can understand and navigate a long lesson. |
+| Quiz answer check | A map connects each answer ID to its label and correctness. | The selected ID directly identifies the answer record. | Feedback appears immediately after selection. |
+| Waitlist signup | A normalized email plus a uniqueness check behaves like a set. | Membership answers whether that address already exists. | The demand count does not include accidental duplicates. |
+| Future trending-lessons list | A heap can retain the lessons with the highest start counts. | The page needs only the top few lessons rather than a complete ranking. | Readers find popular material without recalculating every position. |
+| Future lesson search | An inverted index maps words to lessons containing them. | Readers search by terms rather than exact lesson IDs. | Search can move a reader from intent to a lesson start. |
+
+Current traffic and catalog size make simple implementations appropriate. The brief should still name the threshold that would justify a more complex structure, such as search response time exceeding 300 milliseconds after the catalog reaches 50,000 lessons.
+
+## Practising this
+
+Engineers can build fluency without solving problems at random:
+
+1. Choose one pattern from the requirement table.
+2. Solve four or five problems using that pattern.
+3. Explain how you recognized it, which structure you chose, and its time and space cost.
+4. Repeat with a different pattern only after the first shape feels recognizable.
+
+PMs can practise without writing code:
+
+1. Pick a feature used during the day.
+2. Name the customer job and estimate `n`.
+3. Identify the likely structure and pattern.
+4. Explain what breaks at 10× and what response time would be acceptable.
+
+Fluency means turning "make it faster" into a measurable trade-off.
+
+## Where to go deeper
+
+No single lesson should replace deliberate practice or a full reference. Choose the next source according to the missing skill:
+
+| Learning goal | Start here | What it adds beyond this lesson |
+|---|---|---|
+| Recognize interview patterns through practice | NeetCode roadmap and the 150 problem list | Problems grouped by pattern, with worked explanations after you attempt them. |
+| Build visual intuition before formal analysis | Aditya Bhargava, *Grokking Algorithms* | Illustrated explanations of search, sorting, graphs, and several core structures. |
+| Learn how to choose an algorithm in real work | Steven Skiena, *The Algorithm Design Manual* | A catalogue connecting problem shapes to practical algorithms and trade-offs. |
+| Study implementations in depth | Robert Sedgewick and Kevin Wayne, *Algorithms* | Code, exercises, and detailed treatment of sorting, searching, graphs, and strings. |
+| Learn formal proofs and complexity analysis | Cormen, Leiserson, Rivest, and Stein, *Introduction to Algorithms* | Mathematical analysis and a broader reference for advanced algorithms. |
+| Understand storage engines and data encoding | Martin Kleppmann, *Designing Data-Intensive Applications*, chapters 3 and 4 | Hash indexes, LSM trees, B-trees, column storage, and data-format trade-offs. |
+| Understand systems spread across machines | [System design](/learn/engineering/system-design) | Keeping a service available, copying and splitting data across machines, moving slow work off the customer request, and handling failures. |
+
+## Exercise
+
+Pick one feature in an app you use daily.
+
+1. Name the user job and the one metric it moves.  
+2. Estimate `n` to the nearest order of magnitude.  
+3. Name the structure and the pattern likely sitting underneath.  
+4. Write the p95 bar, the freshness rule, and the appetite you would give eng.  
+5. Name one edge case you would put in the spec today.
+
+## Check
+
+> For feature ___, `n` is about ___, and the structure underneath is probably ___. If we take the slow path, ___ moves. I would ask for ___ and accept ___ as good enough for this appetite.
+
+<InlineLessonQuiz slug="engineering/cs-fundamentals" />
+
+Previous: [Engineering with AI](/learn/engineering/engineering-with-ai). Next: [System design](/learn/engineering/system-design).

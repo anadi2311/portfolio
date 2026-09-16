@@ -1,6 +1,6 @@
 ---
 title: From MVP to weekly scope
-summary: After a hypothesis passes, write a thin Now list, a one-page spec, and one week of work. The same cadence runs learning weeks and build weeks.
+summary: After viability and hypothesis tests clear, write a thin Now list, a one-page spec, and one week of work. The same cadence runs learning weeks and build weeks.
 audience: Both
 status: published
 order: 5
@@ -28,10 +28,24 @@ You do not start with a finished feature list and "MVP it."
 |---|---|
 | Case + strategy | Who, scoreboard, refusals (Lessons 2–3) |
 | Hypothesis seeds | Beliefs that could be wrong (Lesson 2 case; Lesson 4 cards) |
-| Cheap tests | Interviews, fake doors, concierge (Lesson 4) |
+| Cheap tests | Interviews, fake doors, concierge, and **willingness-to-pay (WTP)** probes (Lesson 4) |
 | Survivors | Thin **Now** list = the MVP |
 
 At day one the parking lot can be long. The **MVP** is only what survived enough tests that the beachhead can do one job and you can measure it. Everything else stays Next or Later until a card earns it.
+
+### Viability before you fund the build
+
+The MVP is not where you invent the business case. [Lesson 2](/learn/product/business-objective) wrote who pays, who uses, and why the bet deserves money or founder time. [Lesson 4](/learn/product/experiments) put **value and viability first**: will the beachhead care, and can this company run the motion at a price and cost that make sense?
+
+You do not need a scientific paper. You need a case good enough for a skeptical market or leadership eye: named beachhead, scoreboard, rough economics or willingness-to-pay probe, and a stop rule. Kill the bet with a prototype, fake door, waitlist, concierge, or landing page — not with a finished product you already invested a quarter in.
+
+**Dropbox** used a demo video and a waitlist before full sync. That was demand and viability learning. The later MVP was working sync for people who had already raised a hand.
+
+AI changed the build side. Prototypes and thin MVPs take less calendar time. Teams ship first and invent the case later. Cheap code does not fix a broken model. If nobody will pay attention or pay money, a beautiful skateboard still fails.
+
+Good enough for this gate: a one-page case you can defend aloud, plus at least one behavior (waitlist, prepaid, prototype task completed) that matches the story. Then survivors enter Now.
+
+<ViabilityMvpFunnelDiagram />
 
 ### MVP is not v1
 
@@ -39,13 +53,11 @@ Eric Ries's [*The Lean Startup*](http://theleanstartup.com/) treats MVP as the s
 
 Marty Cagan writes about the smallest valuable product: one audience, one job, enough quality that you can believe the metric. Henrik Kniberg's [MVP sketches](https://blog.crisp.se/2016/01/25/henrikkniberg/making-sense-of-mvp) make the same cut: a skateboard that moves, not a car with no wheels.
 
-**Dropbox** shipped a video before full sync. That was an experiment (Lesson 4). The MVP that followed was working sync for the waitlist, not every platform and every enterprise admin feature.
-
 **Instagram** cut Burbn to photos. The MVP was the photo loop people used, not the kitchen sink on the whiteboard.
 
 If the list includes every layer of the dream architecture, you wrote v1 and called it MVP.
 
-**This site at the start:** the dream list could include auth, Stripe, twelve eng lessons, certificates. Strategy refused most of that. Early tests (specimen teaching, completion, waitlist) decide what enters Now. The MVP is the free spine that can move Lesson 1→2, not the full course platform.
+**This site at the start:** the dream list could include auth, Stripe, twelve eng lessons, certificates. Strategy refused most of that. Early tests clear demand and viability (pain interviews, **waitlist before tech curriculum**) before free tech lessons earn Now. The MVP starts with demand capture on one public site — not the full course platform.
 
 ## 2. Discovery feeds build
 
@@ -88,7 +100,9 @@ This is the roadmap you write after experiments. Dates on a twelve-feature slide
 | **Next** | Bets with evidence, not yet a week | "Someday AI" with no card |
 | **Later** | Parking lot plus Lesson 3 refusals, written so sales cannot resurrect them quietly | Hidden backlog in Slack |
 
-Near-term rows name an **outcome**, not a ticket dump. "Raise Lesson 1→2 completion" belongs in Now. "Add certificates, login, and a forum" belongs in Later until strategy and retention change.
+Near-term rows name an **outcome**, not a ticket dump. "Raise non-friend tech-lesson starts" belongs in Now. "Add certificates, login, and a forum" belongs in Later until strategy and demand change.
+
+<NowNextLaterBoardDiagram />
 
 [Product leadership](/learn/product/product-leadership) covers how you defend this board in a room. This lesson is how you fill it.
 
@@ -110,16 +124,16 @@ A fifty-page PRD is a task that can hide a missing hypothesis. Ben Horowitz's [G
 | **Done** | Observable: shipped, instrumented, or N users completed the job |
 | **Risks** | Value, usability, feasibility, viability left open |
 
-Design vision and Figma file structure wait for [Briefing design](/learn/product/design-vision-branding) and [Figma for PMs](/learn/product/figma-for-pms). The spec here is enough for engineering to cut a vertical slice.
+Design vision, brand tokens, and Figma file structure are covered in [Vision, brand, and Figma for PMs](/learn/product/design-vision-branding). The spec here is enough for engineering to cut a vertical slice.
 
 Good PMs keep the spec short enough that a change in the hypothesis forces a rewrite. Bad PMs freeze a PRD and let the product drift.
 
 ### Cut by job, not by layer
 
 - Weak Now list: "auth, then database, then UI, then analytics."
-- Strong Now list: "a reader can finish Lesson 1 and we can count start and finish."
+- Strong Now list: "a beachhead PM can join a tech waitlist, and we can count non-friend signups — before we write twelve eng lessons."
 
-Auth, payments, and a full tech rail stay out of Now for this product until a later hypothesis needs them ([Product strategy](/learn/product/product-strategy)). A spike belongs in a **learning week** if feasibility is the open risk. A spike that becomes a quarter of platform work is the build trap with a new name.
+Auth, payments, and course-platform sprawl stay out of Now until a later hypothesis needs them ([Product strategy](/learn/product/product-strategy)). The honest waitlist *is* Now. First free tech lessons enter Now only after that signal (or a thin parallel door). A spike belongs in a **learning week** if feasibility is the open risk. A spike that becomes a quarter of platform work is the build trap with a new name.
 
 Ryan Singer's [*Shape Up*](https://basecamp.com/shapeup) is useful for **appetite**: how much time the slice is allowed, not how many tickets Jira can hold. You do not need Basecamp's whole system to use that idea.
 
@@ -173,33 +187,41 @@ RICE, ICE, and WSJF are optional scoring sheets. They do not replace those four 
 
 Shipping the MVP is not a certificate of fit. The MVP is how you keep testing whether the beachhead returns, pays attention, or pays later.
 
-This site: Lesson 1→2 completion is the capture metric from strategy. The MVP (public spine, specimen teaching) is the product you measure. Waitlist clicks on the tech track are a demand signal, not fit. Paid packaging waits until retention on the free spine proves out.
+The scoreboard changes as the product creates new evidence. For instance, follow Dropbox's early sync job through three stages:
+
+1. **Before working sync exists:** a demo view, waitlist join, or willingness to install shows demand. The team cannot measure product retention because customers have no finished product to return to.
+2. **When the MVP ships:** syncing one real file across two devices shows activation, the first receipt of promised value. Setup clicks and account creation diagnose the path but do not prove sync worked.
+3. **After customers have time to repeat:** syncing files again in later weeks provides retention evidence. Compare customers who started during the same period so an older group does not hide a weak new experience.
+
+Write the next metric only when the product gives customers a fair chance to produce it. A team that asks for 30-day retention one week after launch has no 30-day observation. A team that keeps reporting waitlist growth months after usage begins is avoiding product evidence. [Product-led growth](/learn/product/product-led-growth) defines activation; [Product analytics and GTM](/learn/product/product-analytics-gtm) teaches retention cohorts.
+
+This site: **waitlist replies** are the demand metric before the free tech curriculum exists. Tech-lesson starts join the scoreboard after the first lessons ship. PM Lesson 1→2 is a trust guardrail. Paid packaging waits until demand funds it — not until you invent a paywall.
 
 ## 7. Specimen: this site
 
-Walk the same order on this product.
+Walk the same order on this product. Feature ratings (beachhead value 1–5 × effort) drove the cut below.
 
 ### MVP and board
 
-**Now (v1 MVP):** public Learn, free PM spine, lessons that use this product as the example, enough analytics to count lesson start and finish. Optional thin waitlist on the tech track if the Lesson 4 demand card is running. One home page. Engineers as pin two on the same pages.
+**Now (MVP):** public home + Learn; both tracks visible; **About** at `/about` (experience, education, misc); free PM spine (enough to prove craft); **tech-track entry + honest waitlist before any tech lesson**; analytics for lesson start/finish and waitlist; outreach-ready URLs. One home page. Engineers as pin two. No auth, no Stripe.
 
-**Next:** more of the PM spine; instrumentation quality; waitlist follow-up if the door earned it.
+**Next:** first free tech lessons (1–3) once waitlist earns them; more of the PM spine; better instrumentation; waitlist follow-up / one-question WTP; measure activation into free tech.
 
-**Later (refused until the hypothesis is funded):** login wall on the PM spine, Stripe, paid eng rail, certificates, cohorts, community-as-growth, infra theater.
+**Later (refused until demand funds it):** login wall on free lessons, Stripe / paid tech packaging, certificates, cohorts, community-as-growth, infra theater as product (ok as curriculum when ready).
 
 ### One slice, one-page spec
 
-- Outcome: readers start and finish the new lesson.
-- Who: PM without eng depth.
-- Hypothesis: specimen teaching raises completion.
-- In: one lesson, catalog link, events.
-- Out: auth, payment, second site.
-- Done: production URL; events in the analytics you have.
-- Risk: traffic too thin for A/B; read completion as a cohort, not a p-value.
+- Outcome: beachhead PMs join the tech waitlist from non-friend channels.
+- Who: PM without eng depth who needs stack literacy.
+- Hypothesis: an honest waitlist on this live product earns demand before we write the tech curriculum.
+- In: About page, tech-track waitlist CTA, waitlist events, home/Learn links.
+- Out: auth, payment, second site, twelve-lesson eng dump, shipping tech lessons before the door.
+- Done: `/about` and waitlist live; waitlist events fire; friends tagged.
+- Risk: traffic too thin for A/B; read cohorts and interview evidence, not p-values.
 
 ### Example weeks
 
-**Build week:** publish the next PM lesson, wired to start/finish events, linked from the catalog. Done: live on production, capture metric can move.
+**Build week:** ship `/about` + tech waitlist on the eng track, wired to events, linked from home. Done: live on production, demand metric can move.
 
 **Learning week:** twelve beachhead interviews with the stop rule from Lesson 4 Card 1, decision written. Done: memo the team can quote, Now list updated.
 
@@ -208,6 +230,8 @@ Walk the same order on this product.
 | Mistake | What is happening |
 |---|---|
 | MVP = crappy v1 | Thin became broken; beachhead cannot say yes |
+| Build the MVP to discover if the case is real | Skipped Lesson 2–4; funded hope |
+| AI made code cheap, so skip WTP / viability | Cheap build, same broken economics |
 | Feature list before any passed card | Wish list with dates (Lesson 4) |
 | PRD as the product | Document froze; hypothesis moved |
 | Discovery "seeps" tickets with no kill | Build trap with a research label |
@@ -222,12 +246,15 @@ Good PMs measure the week by the outcome and the learning. Bad PMs measure the w
 
 Take one hypothesis that passed (or pretend Lesson 4 Card 2 on this site passed). Write in order:
 
-1. **MVP Now** (3–7 bullets). **Next** (2). **Later** (named refusals).
-2. A **one-page spec** using the table in section 4.
-3. **This week:** learn, build, or mixed. Done in one sentence.
-4. Three lines you will say in planning, and one question for retro.
+1. **Viability gate:** one sentence on the case (who pays or spends time, rough economics or WTP signal) and the cheap test that cleared it (prototype, waitlist, concierge — not the finished product).
+2. **MVP Now** (3–7 bullets). **Next** (2). **Later** (named refusals).
+3. A **one-page spec** using the table in section 4.
+4. **This week:** learn, build, or mixed. Done in one sentence.
+5. Three lines you will say in planning, and one question for retro.
 
-If Now has more than seven bullets, you wrote v1.
+If Now has more than seven bullets, you wrote v1. If step 1 is empty, you are not ready for Now.
+
+<InlineLessonQuiz slug="product/mvp-weekly-scope" />
 
 ## References
 

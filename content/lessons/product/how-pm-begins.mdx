@@ -12,13 +12,13 @@ On terms the company can name and measure.
 
 "Successful" is not one universal scoreboard. A seed-stage company proving willingness to pay cares about different numbers than a public company defending margin. The same product can be winning on one definition and failing on another. Your job is to learn which definition leadership means *now*, then align the team on it.
 
-**Brian Chesky and Joe Gebbia**, 2009: Airbnb needed <Key>booked nights</Key>, not more pins on the map. They flew to New York and photographed apartments by hand until conversion moved.
+**Brian Chesky and Joe Gebbia**, 2009: Airbnb needed <Key>booked nights</Key>, not more pins on the map. They flew to New York and photographed apartments by hand until booking conversion, the percentage of eligible listing visits that ended in a booking, moved.
 
-**Spotify** at different chapters: listening hours when the company was growing usage; label economics and gross margin when the business matured.
+**Spotify** at different chapters: listening hours when the company was growing usage; label economics and **gross margin**, the share of revenue left after direct delivery costs, when the business matured.
 
-**Enterprise B2B**: a buyer team often scores <Key>time-to-value</Key> and win rate against a named competitor, not how many tabs you shipped this quarter.
+**Enterprise B2B**: a buyer team often scores <Key>time-to-value</Key>, the elapsed time before a customer receives the promised outcome, and **win rate**, the share of competitive sales opportunities the company wins, against a named competitor.
 
-**After a trust crisis** (breach, outage, public backlash): fewer incidents, faster recovery, and CSAT can matter more than feature velocity until the scoreboard recovers.
+**After a trust crisis** (breach, outage, public backlash): fewer incidents, faster recovery, and **customer satisfaction (CSAT)** after a support or product interaction can matter more than feature velocity until the scoreboard recovers.
 
 That is the whole job. Sprints, PRDs, roadmaps, standups, and hypothesis templates are tools. You pick them up when they move the scoreboard and put them down when they become theater. A PRD is a task. A product customers choose and pay for is the job.
 
@@ -26,7 +26,7 @@ You sit between the customer who wants a problem solved and the company that nee
 
 ## How PM work starts
 
-When you join as a PM, you rarely start from a blank page. Here is what that actually looks like.
+When you join as a PM, you rarely start from a blank page. The work usually looks like this.
 
 ### You join an existing product
 
@@ -38,7 +38,7 @@ If you are a **growth or GTM PM**, the objective might sound like: increase acti
 
 If you are an **analytics PM**, the job looks completely different. You might own whether product teams can run experiments without filing a data ticket, whether metrics definitions are trusted, or how fast the company can answer "did this launch work?" You are not shipping user-facing UI; you are shipping clarity and speed for everyone else.
 
-If you are an **infra or platform PM**, you are often even further from the end user. Your objectives are internal: cut cloud spend without slowing releases, reduce incident frequency, ship a deployment path engineers actually adopt, tighten security controls the business requires. The scoreboard is company health, not a growth chart in the app store.
+If you are an **infra or platform PM**, you are often even further from the end user. Your objectives are internal: cut cloud spend without slowing releases, reduce incident frequency, ship a deployment path engineers adopt, tighten security controls the business requires. The scoreboard is company health, not a growth chart in the app store.
 
 Same title. Different objective. Same underlying job: move what leadership said matters this quarter.
 
@@ -68,7 +68,7 @@ You will not know at the start whether the product will work. That is normal. Th
 
 The **cone of uncertainty** is a standard picture for this. Cost engineers used cone diagrams in the 1950s to show how early estimates can be wildly wrong. Barry Boehm brought the idea into software as the funnel curve in the 1980s. Steve McConnell popularized it in [*Software Project Survival Guide*](https://www.construx.com/resources/) (1997): think of a **funnel** — wide and uncertain at the start, narrowing as the project progresses and you learn. [The SilverLogic](https://tsl.io/blog/understanding-the-cone-of-uncertainty-in-agile-scrum) walks through the same shape for Agile teams: expansive at the beginning, gradual constriction as feedback arrives.
 
-At **project start** you might know the destination (grow revenue, ship a new line, fix retention) but not the route. Estimates on time, cost, and what customers will actually do sit inside a **wide band**. As you gather requirements, run discovery, lock a hypothesis, build an MVP, and ship, that band **narrows**. You still might be wrong, but you are wrong with more evidence.
+At **project start** you might know the destination (grow revenue, ship a new line, fix retention) but not the route. Estimates on time, cost, and customer behavior sit inside a **wide band**. As you gather requirements, run discovery, lock a hypothesis, build an MVP, and ship, that band **narrows**. You still might be wrong, but you are wrong with more evidence.
 
 <ConeOfUncertaintyDiagram />
 
@@ -84,14 +84,28 @@ When the signal fails, good teams stop or pivot. Netflix Qwikster, 2011: subscri
 
 Before you argue about features, agree on <Key>one scoreboard for this product</Key>.
 
+### A metric is evidence of an outcome
+
+A **metric** is a number defined the same way each time so a team can track a customer behavior or business result. A **scoreboard** combines the few metrics needed to judge whether the product is succeeding at its current job.
+
+For instance, apply that idea to Airbnb's early photography work. **Booking conversion** means the percentage of eligible listing visits that end in a booking:
+
+```text
+booking conversion = visits that produce a booking ÷ eligible listing visits
+```
+
+If 100 listing visits produce five bookings, conversion is 5%. If clearer photographs help visitors trust what they will receive and eight of the next 100 comparable visits book, conversion is 8%. The metric shows that behavior changed. Interviews, support evidence, and a controlled test help the team determine whether photography caused the change.
+
+Stage changes the number worth defending. Before a product exists, a founder may count target customers who commit time, data, or money. An early product needs evidence that customers reach first value and return. A mature business may prioritize margin or expansion because demand already exists.
+
 | If the company needs… | Success might look like… |
 |---|---|
-| Growth | New paying accounts, expansion revenue, lower customer acquisition cost |
-| Profit | Higher gross margin, fewer support tickets per user, better unit economics |
-| Retention | Users still active at day 30 and day 90, lower churn in a key segment |
-| Trust | Higher NPS or CSAT, fewer public complaints, more referrals |
-| Market position | Win rate against a named competitor, share in a segment |
-| Efficiency (B2B) | Shorter time-to-value, fewer steps to complete the core job |
+| Growth | New paying accounts, more revenue from existing accounts, or lower **customer acquisition cost (CAC)**, calculated as sales and marketing spend divided by new paying customers |
+| Profit | Higher **gross margin**, the share of revenue left after direct delivery costs, plus fewer support tickets per customer and stronger revenue-versus-cost math per customer |
+| Retention | More customers still completing the job at day 30 and day 90, with lower **churn**, the share who stop using or paying |
+| Trust | Higher **customer satisfaction (CSAT)** after an interaction, stronger recommendation intent, fewer public complaints, or more successful referrals |
+| Market position | Higher **win rate**, the share of competitive sales opportunities the company wins, inside a named segment |
+| Efficiency (B2B) | Shorter **time-to-value**, the elapsed time before a customer receives the promised outcome, plus fewer steps to complete the core job |
 | Risk reduction | Fewer security incidents, closed compliance gaps |
 | Learning (early stage) | Proof that a segment will pay, repeat, or refer before you scale spend |
 
@@ -126,7 +140,7 @@ These writers disagree on details. They agree that PM is outcome ownership under
 
 **Feature factory.** The org celebrates releases while the scoreboard does not move. Perri's seller portal shipped monthly revenue views; sellers needed daily revenue. Four months wasted on the wrong output.
 
-**Project manager with a product hat.** Someone hits the date on the wrong work and calls it discipline. Sales demands SAML by Q3. The PM question is whether BigCo's ARR pays for enterprise identity now, what you cut if capacity is fixed, and whether one design partner teaches you enough before you generalize.
+**Project manager with a product hat.** Someone hits the date on the wrong work and calls it discipline. Sales demands SAML by Q3. The PM question is whether BigCo's **annual recurring revenue (ARR)**, the subscription revenue expected from that account each year, pays for enterprise identity now, what you cut if capacity is fixed, and whether one design partner teaches you enough before you generalize.
 
 **Title without homework.** Founders say "CEO of the product" because it costs no equity. Cagan's [job description template](https://www.svpg.com/product-manager-job-description/) lists what the team cannot delegate: customer knowledge, economics, competition, legal and privacy constraints. [Product leadership and stakeholders](/learn/product/product-leadership) covers the room skills when nobody reports to you.
 
@@ -146,8 +160,7 @@ This lesson orients you. The rest of the PM track teaches each skill when a gap 
 | Judgment, taste, PM work in the AI era | [Product sense, taste, and AI](/learn/product/product-sense-and-ai) |
 | Scoreboard metrics, analytics, go-to-market | [Product analytics and GTM](/learn/product/product-analytics-gtm) |
 | Pricing, packaging, unit economics (viability) | [Pricing as a business case](/learn/product/pricing-business-case) |
-| Vision and branding briefs for design | [Briefing design](/learn/product/design-vision-branding) |
-| Figma, components, front-end lingo for PMs | [Figma for PMs](/learn/product/figma-for-pms) |
+| Vision, brand, and Figma for PMs | [Vision, brand, and Figma](/learn/product/design-vision-branding) |
 | MVP slices and weekly scope | [From MVP to weekly scope](/learn/product/mvp-weekly-scope) |
 
 If you came for technical depth (APIs, data, hosting), the [product engineering track](/learn) opens after this spine.

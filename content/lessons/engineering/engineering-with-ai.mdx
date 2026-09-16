@@ -1,0 +1,137 @@
+---
+title: "Engineering with AI: how to stay relevant"
+summary: "Typing lines is no longer the scarce skill. Specs, verification, and taste are. Vibe coding raises the floor; agentic engineering keeps the quality bar."
+audience: Both
+status: published
+order: 1
+---
+
+Engineers who measure themselves only by how fast they type syntax feel behind. That feeling is accurate about the **workflow**, not about the **job**.
+
+Andrej Karpathy (OpenAI co-founder, former Tesla AI director) said he had never felt more behind as a programmer after agents got good enough to take **macro** work: implement a feature, refactor a subsystem, write and fix tests. The unit of work moved. The person who still only ships by hand-typing every line fights the new default.
+
+This lesson is how to engineer **with** AI tools (Claude Code, Cursor, Codex, and peers) without abandoning the craft. PMs need the same map: you will brief agents the way you brief engineers.
+
+## Vibe coding vs agentic engineering
+
+Karpathy popularized **vibe coding**: prompt loosely, accept output, paste errors back, move fast. Fine for throwaway prototypes and learning. Dangerous as a production habit.
+
+Addy Osmani draws the same line ([Vibe coding is not the same as AI-assisted engineering](https://addyo.substack.com/p/vibe-coding-is-not-the-same-as-ai)): production work needs specs, review, and ownership. He later uses **agentic engineering** for the disciplined end of the spectrum ([Agentic Engineering](https://addyosmani.com/blog/agentic-engineering/)): agents implement under human direction; humans own architecture, security, and correctness.
+
+| | Vibe coding | Agentic engineering |
+|---|---|---|
+| Prompt | Vague wish | Spec: invariants, edge cases, security bounds |
+| Review | Skip the diff | Read the diff; hold the system model |
+| Stop rule | "Looks done" | Tests, build, linter, or screenshot check |
+| Owner | Nobody | You. Always. |
+| Good for | Spikes, demos, learning | Anything that ships to users |
+
+<Key>You can outsource typing. You cannot outsource understanding.</Key> Karpathy’s line from Sequoia Ascent 2026: agents are fallible and stochastic. Speed without a quality bar ships vulnerabilities at agent speed.
+
+## What still makes you valuable
+
+When models write most of the boilerplate, relevance moves up the stack:
+
+1. **Problem framing:** what to build, what to refuse (same muscle as the PM spine)
+2. **Spec design:** requirements, invariants, failure modes, non-goals
+3. **Architecture:** boundaries, data ownership, where state lives
+4. **Diff review:** correctness, security, fit with the rest of the system
+5. **Eval / verification:** tests, builds, checks the agent can run without you
+6. **Taste:** API shape, UX, performance, maintainability
+7. **Security oversight:** agents with broad repo access can introduce bugs at scale
+
+Syntax fluency still helps you **read** and **redirect**. It is no longer the scoreboard by itself.
+
+Junior engineers who only autocomplete without learning concepts dig a hole. Use the agent as a tutor: ask why, change one line by hand, break the test on purpose. Seniors who refuse agents dig a different hole: they lose the new leverage while still owning the same accountability.
+
+## Software 3.0 in one page
+
+Karpathy’s sequence:
+
+- **Software 1.0:** humans write explicit code
+- **Software 2.0:** humans shape data and objectives; weights learn the program
+- **Software 3.0:** humans program models through context: prompts, files, tools, examples, project instructions
+
+The **context window** is the lever. Fill it with the right repo map, rules, and checks. Flood it with noise and the agent degrades. Anthropic’s Claude Code docs say the same thing: context fills fast; performance drops as it fills.
+
+Implication for you: writing a short `CLAUDE.md` / `AGENTS.md` / Cursor rules file is part of engineering now, not documentation theater.
+
+## Playbook: how strong teams run agents
+
+Synthesized from [Claude Code best practices](https://code.claude.com/docs/en/best-practices), Karpathy’s agentic framing, and Osmani’s production bar. Tools differ; the loop does not.
+
+### 1. Explore, then plan, then code
+
+Do not let the agent invent the problem. Read the relevant modules first (or force plan mode). Ask for a plan with files to touch. Approve the plan. Then implement.
+
+### 2. Put standing rules in the repo
+
+A root instruction file the agent loads every session: how to build, test, lint; monorepo map; “never commit secrets”; house style. Keep it short and always-true. Put long procedures in skills or linked docs so you do not blow the context window.
+
+### 3. Give a verification loop
+
+Tests, `tsc`, lint, a script, a screenshot compare. “Looks good” is not a signal the agent can trust. Anthropic’s rule: give Claude a check it can run, or you become the only feedback loop.
+
+### 4. Review the diff like a tech lead
+
+You are merging a fast junior’s PR. Check security, edge cases, and whether the change matches the spec. Reject “clever” mismatches (wrong ID matching, silent error swallows, new dependencies you did not ask for).
+
+### 5. Scope the blast radius
+
+Permissions, hooks, and small PRs beat “fix the codebase.” Parallel agents on independent tasks can work; one agent with unbounded write access is how you get silent damage.
+
+### 6. Prefer verifiable work for agents
+
+Karpathy: models improve fastest where success is checkable (tests pass, build green, benchmark moves). Ambiguous product taste stays with you longer. Pair agent speed with automated checks.
+
+## For PMs on this track
+
+You will not replace engineering. You will **brief** it (human or agent) with the same nouns from [Lesson 11](/learn/product/design-vision-branding): job, constraints, flow, acceptance checks.
+
+Bad: “Make auth work.”  
+Good: “Magic-link login for paid tier only; free lessons stay public; success = email received and session created; kill if support tickets about lockout spike.”
+
+The better your spec and kill rule, the less the agent (or the sprint) invents product for you.
+
+## Specimen: this site
+
+This Portfolio Learn app is built with Cursor-style agents under human direction: Next.js, Fumadocs, TypeScript, lessons in git. Standing rules live in local Cursor skills and repo conventions. Diagrams export to PNG; quizzes and MDX are reviewed before ship. The next lesson ([Why we picked this stack](/learn/engineering/why-this-stack)) covers the stack choices. This lesson covers the **workflow** that produces them.
+
+## How to stay relevant (checklist)
+
+| Do | Avoid |
+|---|---|
+| Write specs and acceptance checks before prompting | Prompt-and-pray into `main` |
+| Read every production diff | Merge because the agent sounded confident |
+| Invest in tests and CI the agent can run | “We’ll add tests later” while agents multiply code |
+| Learn one agent tool deeply (Claude Code, Cursor, Codex, …) | Collecting five tools and mastering none |
+| Use AI to explain and challenge your design | Using AI only to skip learning |
+| Keep system understanding (data flow, failure modes) | Becoming a prompt paste operator |
+
+The scarce skill is **judgment under acceleration**. Agents multiply both good bets and bad ones.
+
+## Exercise
+
+Pick a small change in a real repo (or this one in your head):
+
+1. Write a half-page **spec** (goal, non-goals, files likely touched, security notes, how you will know it works).
+2. Write the **verification** command(s) the agent must run.
+3. Run an agent (or simulate the prompt). Review the diff against the spec.
+4. Note one mistake the agent made that only a human with system context would catch.
+
+## Check
+
+> The scarce eng skill now is ___. Vibe coding is for ___. Agentic engineering requires ___, ___, and ___. I stay accountable for ___.
+
+<InlineLessonQuiz slug="engineering/engineering-with-ai" />
+
+## References
+
+- Andrej Karpathy, [Sequoia Ascent 2026 summary](https://karpathy.bearblog.dev/sequoia-ascent-2026/) (Software 3.0, agentic inflection, verifiability)
+- Addy Osmani, [Vibe coding is not the same as AI-assisted engineering](https://addyo.substack.com/p/vibe-coding-is-not-the-same-as-ai) and [Agentic Engineering](https://addyosmani.com/blog/agentic-engineering/)
+- Anthropic, [Best practices for Claude Code](https://code.claude.com/docs/en/best-practices) (explore → plan → code; verification; CLAUDE.md; context)
+- Anthropic, [Steering Claude Code](https://claude.com/blog/steering-claude-code-skills-hooks-rules-subagents-and-more) (rules vs skills vs hooks)
+- OpenAI Codex / ChatGPT coding agents (same loop: spec, tools, tests; product names change faster than the discipline)
+- Prior PM spine: [Product sense, taste, and AI](/learn/product/product-sense-and-ai); [Vision, brand, and Figma](/learn/product/design-vision-branding)
+
+Next: [Data structures and algorithms](/learn/engineering/cs-fundamentals).

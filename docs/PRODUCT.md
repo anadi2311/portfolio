@@ -26,41 +26,58 @@ One journey. Two entry points. Same case study: this app.
 
 ## Hypothesis (business case #1)
 
-**Assumption:** Many PMs did not come from engineering, want to understand how tech works, and will follow an unstructured, cheap (or free) path if it is tied to a *real* product being built — not a slide deck. Separately, engineers who want to become (or partner with) PMs will follow the same path from the other direction.
+**Assumption:** Many PMs did not come from engineering, want to understand how tech works, and will follow a free path if it is tied to a *real* product — not a slide deck. Separately, engineers who want PM craft will follow the same site from the other direction (pin two).
 
-**Offer:** Free PM lessons that aggregate how good PMs actually work (discovery, strategy, PLG, experiments), using this site as the specimen. Tech lessons come after the PM spine exists. Paid packaging is undecided; we will write the pricing lesson by building a real business case, not by picking `$20`.
+**Offer:** Free PM lessons as trust + portfolio showcase + free education. **Free tech lessons as the beachhead product wedge** for PMs who need stack literacy (reviews, timelines, MVPs/POCs, AI-era relevance). Paid packaging only if demand earns it (pricing lesson builds the case; do not invent `$20`). Dual purpose: if demand is thin, free teaching/showcase may continue — that is not fake PMF.
 
-**We pretend the discovery work is done** (Talking to Humans–style interviews, etc.) and that the insight is: “teach both sides through one live product, start with how PM begins, keep early lessons readable, keep the skeleton public.”
+**We pretend the discovery work is done** (Talking to Humans–style interviews, etc.) and that the insight is: “teach both sides through one live product; free PM builds trust; free tech is the wedge; measure tech interest and waitlist.”
 
-## v1 (this week’s MVP)
+## MVP (prove the beachhead)
 
-- Public home + Learn list (already scaffolded)
-- **No auth, no payments**
-- Learn renders markdown through Fumadocs (themeable later)
-- First lessons are **free reading guides** (how to read, what to extract), not a video platform
-- Lesson 1 is live: **How product management begins?** (`/learn/product/how-pm-begins`)
-- Product lessons stay free (synthesized from public PM practice / books, not a paywall of other people’s chapters)
+Order matters: demand signal before the free tech curriculum.
 
-**Not in v1:** Stripe, login, Kafka, Kubernetes, Figma production files, Higgsfield.
+1. Public home + Learn; both tracks visible; one site
+2. **About author** (`/about`) early — work, education, misc (music, posts) — portfolio trust
+3. Free PM spine (enough published to prove craft)
+4. **Tech-track entry + honest waitlist** (before first tech lesson exists)
+5. Analytics: lesson start/finish, waitlist; tech starts once lessons ship
+6. Outreach-ready URLs
+7. **No auth, no Stripe**
+
+**Not in MVP yet (enters when waitlist earns it):** first free tech lessons (1–3). Still MVP-scoped after demand — not a V1 dump.
+
+**Not in MVP:** login, payments, certificates, cohorts, community-as-growth, full platform curriculum theater.
+
+## V1 (after signal / keep building)
+
+- First free tech lessons live (if not already shipped from waitlist signal)
+- More PM spine + more free tech lessons
+- Better instrumentation; waitlist follow-up / one-question WTP probe
+- PLG loops measured (activation into free tech)
+
+**Later (demand-gated):** paid tech packaging, login if needed, certificates/cohorts.
 
 ## Home (v1 IA)
 
-Teaching first, bio second. Minimal hero, then two track columns.
+1. **Hero** — “Everything I know, you know now.” One supporting line.
+2. **Tracks** — two columns (PM free → lesson 1; eng → waitlist until free tech ships).
 
-1. **Hero** — “Everything I know, you know now.” One line on the four disciplines working in tandem.
-2. **Tracks** — two columns (reference: tier/pricing layout):
-   - **Product management** — free; PM spine bullets; engineers and PM newcomers; CTA to lesson 1.
-   - **Product engineering** — paid at cost only (not live); full-stack and platform curriculum; opens after PM spine.
-3. **About** (`#about`) — two sentences max.
-
-No duplicate lesson cards on home. Link to full catalog. Header: name, Learn, About.
+About lives only at `/about` (header/footer). No home teaser, no “All lessons” link on home — Learn is in the nav.
 
 ## Tracks (packaging)
 
 | Track | Audience | Price (intent) | Status |
 |---|---|---|---|
-| Product management | Engineers, PM fundamentals | Free | Live (PM spine) |
-| Product engineering | PMs needing technical depth | Paid, cost-only (hosting) | After PM spine; no Stripe in v1 |
+| Product management | PM craft; engineers as pin two | Free forever (v1) | Live (PM spine) |
+| Product engineering | PMs needing technical depth (beachhead) | Free wedge later; paid depth if demand | **Waitlist first** in MVP; free lessons after signal; no Stripe until funded |
+
+## About (`/about`)
+
+Public author page (portfolio + trust for Learn):
+
+- Work experience (Obol, Covalent, UBC CIC / AWS, …)
+- Education (UBC MSc; undergrad)
+- Misc: music, blog posts, articles (links as they exist)
 
 ## Curriculum (brainstorm — PM spine first)
 
@@ -70,20 +87,20 @@ Early lessons = reading + a short “what we did on this site” note. **Read ti
 |---|---|---|---|---|
 | 1 | How PM begins | 60m | Name the PM loop and the scoreboard | This document |
 | 2 | The business objective | 60m | Full business case (market, persona, beachhead); Moore | Amazon books beachhead |
-| 3 | Product strategy | 75m | Strategy = choices of *what we will not do* | Free PM spine before paid depth |
+| 3 | Product strategy | 75m | Strategy = choices of *what we will not do* | Tech-for-PMs beachhead; free PM as trust; free tech wedge |
 | 4 | Experiments | 75m | Hypothesis, metric, sample, ship/kill | Weekly MVP bets |
 | 5 | From MVP to weekly scope | 45m | A week’s slice, not a year roadmap | Next code we actually write |
-| 6 | Product leadership | 60m | Stakeholders, influence without authority | Room skills |
-| 7 | Product-led growth | 75m | Free product as the loop; activation as the metric | Learn is the wedge |
-| 8 | Pricing as a PM (business case) | 90m | Willingness to pay, packaging, unit economics | Price is TBD on purpose |
-| 9 | Product sense, taste, and AI | 60m | Judgment when the model drafts first | Product sense over tool fluency |
-| 10 | Product analytics and GTM | 60m | Funnels, cohorts, launch metrics | Measure the wedge, not pageviews |
-| 11 | Briefing design: vision and branding | 60m | A one-page brand/vision a designer can use | Branding brainstorm below |
-| 12 | Figma for PMs | 60m | File structure, components, what to comment on | We will do this when we design |
+| 6 | Product leadership | 75m | Leader job, empowered teams, staff/group, room skills | Dual scoreboard + waitlist before tech |
+| 7 | Product-led growth | 60m | PLG vs sales-led; activation; free forever vs free-to-paid | Waitlist + free tech wedge; dual scoreboard |
+| 8 | Product analytics and GTM | 75m | Stage-based analytics, Goodhart, tools by surface/scope | Measure waitlist/tech starts, not pageviews |
+| 9 | Pricing as a PM (business case) | 75m | WTP, packaging, one-time vs sub; unit economics | $49 one-time tech depth · 10-year access specimen |
+| 10 | Product sense, taste, and AI | 60m | Judgment when the model drafts first | Product sense over tool fluency |
+| 11 | Vision, brand, and Figma for PMs | 90m | Brief, brand system, Figma nouns, AI prompts | Lab-notebook brief + Notion case + diagram follow-along |
+| 12 | Specimen workbook: this site | 45m | Fill every this-site exercise in one place | Combined app specimen drills from L1–11 |
 
 PM spine totals ~10+ hours (planned). Lessons live under `content/lessons/product/` and `content/lessons/engineering/`.
 
-### Product management (12 lessons)
+### Product management (12 items: 11 lessons + workbook)
 
 | # | Slug | Title |
 |---|---|---|
@@ -97,27 +114,30 @@ PM spine totals ~10+ hours (planned). Lessons live under `content/lessons/produc
 | 8 | `product/product-analytics-gtm` | Product analytics and go-to-market |
 | 9 | `product/pricing-business-case` | Pricing as a business case |
 | 10 | `product/product-sense-and-ai` | Product sense, taste, and AI |
-| 11 | `product/design-vision-branding` | Briefing design: vision and branding |
-| 12 | `product/figma-for-pms` | Figma for PMs: files and front-end lingo |
+| 11 | `product/design-vision-branding` | Vision, brand, and Figma for PMs |
+| 12 | `product/specimen-workbook` | Specimen workbook: this site |
 
-### Product engineering (12 lessons, paid later)
+### Product engineering (AI workflow → CS → system design → stack)
 
 | # | Slug | Title |
 |---|---|---|
-| 1 | `engineering/why-this-stack` | Why we picked this stack |
-| 2 | `engineering/frontend` | Frontend: how apps are built |
-| 3 | `engineering/apis` | APIs and how services talk |
-| 4 | `engineering/auth-identity` | Auth, SSL/TLS, and identity |
-| 5 | `engineering/data-and-databases` | Data and databases |
-| 6 | `engineering/platform-gcp` | Platform engineering: deploy on GCP |
-| 7 | `engineering/docker` | Docker and containers |
-| 8 | `engineering/kubernetes-networking` | Kubernetes and VPC networking |
-| 9 | `engineering/kafka` | Kafka for event streams |
-| 10 | `engineering/clickhouse-analytics` | ClickHouse for product analytics |
-| 11 | `engineering/terraform` | Terraform and infrastructure as code |
-| 12 | `engineering/helm-git-cicd` | Helm, Git, and CI/CD |
+| 1 | `engineering/engineering-with-ai` | Engineering with AI: how to stay relevant |
+| 2 | `engineering/cs-fundamentals` | Data structures and algorithms, with product stakes |
+| 3 | `engineering/system-design` | System design: reliability, scale, and how pieces fit |
+| 4 | `engineering/why-this-stack` | Why we picked this stack |
+| 5 | `engineering/frontend` | Frontend: how apps are built |
+| 6 | `engineering/apis` | APIs and how services talk |
+| 7 | `engineering/auth-identity` | Auth, SSL/TLS, and identity |
+| 8 | `engineering/data-and-databases` | Data and databases |
+| 9 | `engineering/platform-gcp` | Platform engineering: deploy on GCP |
+| 10 | `engineering/docker` | Docker and containers |
+| 11 | `engineering/kubernetes-networking` | Kubernetes and VPC networking |
+| 12 | `engineering/kafka` | Kafka for event streams |
+| 13 | `engineering/clickhouse-analytics` | ClickHouse for product analytics |
+| 14 | `engineering/terraform` | Terraform and infrastructure as code |
+| 15 | `engineering/helm-git-cicd` | Helm, Git, and CI/CD |
 
-**Then** the tech rail (still taught on this site): how the page is a frontend, what an API is, what a database is, then hosting, then identity when paid exists. Include **why we picked this stack** (Next.js, Fumadocs) as a specimen, not a shopping list. Auth is a *later* tech lesson, not the start.
+**Then** the tech rail: engineer with AI, data structures and algorithms tied to outcomes, system design (Kleppmann's reliability / scalability / maintainability), then why this stack (Next.js, Fumadocs), frontend, APIs, data, hosting. Auth is later when packaging needs it.
 
 ## Branding vision (PM brief, not pixels yet)
 
@@ -132,9 +152,9 @@ PMs do not pick hex codes first. They write the vision designers execute.
 1. **Specimen, not school** — you are looking at the product you are learning
 2. **Two audiences, one UI** — no “PM track / Eng track” split in the chrome; the lesson says who it is for
 3. **Readable first** — type and spacing over illustration
-4. **Open pieces, then tweak** — how real product design often starts (Fumadocs, a typeface), which we will show in the Figma lesson
+4. **Open pieces, then tweak** — how real product design often starts (Fumadocs, a typeface); Lesson 11 covers how that shows up in Figma
 
-Type on the site is **Poppins** (Latin + Devanagari). Color system and a component kit wait for Figma. Font choice, Hindi, and a later **obol-packages-style** component repo + Storybook (taught to PMs) live in [LATER.md](LATER.md).
+Type on the site is **Poppins** (Latin + Devanagari). Lesson 11 teaches the brand/Figma literacy; a later **obol-packages-style** component repo + Storybook (taught to PMs) lives in [LATER.md](LATER.md).
 
 ## Open
 

@@ -43,7 +43,7 @@ The **business objective** and **business case** are formal. The **idea** behind
 | **Random observation** | You notice an anomaly and cannot let it go | **Amazon** books: huge category, mail-order precedent, catalog beats shelf limits | Bezos letters; Bryar & Carr, [*Working Backwards*](https://www.workingbackwards.com/) |
 | **Data / deals / support** | Patterns in lost deals, churn, tickets | Enterprise PM inherits "we lose when security review slips" — idea is trust infrastructure, not another feature | Perri; Torres |
 
-Paul Graham's essay [How to get startup ideas](https://www.paulgraham.com/startupideas.html) stresses **organic** ideas — problems you understand deeply — over "startup ideas" invented for a pitch competition. Giff Constable's [*Talking to Humans*](https://www.talkingtohumans.com/) is the discipline layer: talk to specific humans before you scale the story.
+Paul Graham's essay [How to get startup ideas](https://www.paulgraham.com/startupideas.html) stresses **organic** ideas — problems you understand firsthand — over "startup ideas" invented for a pitch competition. Giff Constable's [*Talking to Humans*](https://www.talkingtohumans.com/) is the discipline layer: talk to specific humans before you scale the story.
 
 <Key>Ideas are inputs. The case is the pitchable output.</Key> Your PM job is to turn a raw idea — however it arrived — into an objective and case that survive skepticism.
 
@@ -77,7 +77,7 @@ Work in this order. Skip a step and you will ship outputs that sound strategic b
 
 5. **Socialize before the backlog.** One page: diagnosis, proposed outcome, what you would learn in 90 days if wrong. That page is the seed of a business case (below).
 
-**Netflix**, mid-2000s: the diagnosis was postage and inventory economics caps on DVD-by-mail; the guiding policy was streaming; the objective became subscriber growth on a digital cost curve — not "more DVDs." **Adobe**, 2011–2013: diagnosis was boxed software and piracy friction; guiding policy was subscription access; the objective became recurring revenue (ARR) through Creative Cloud — years of migration pain, but the objective was clear before every feature debate ([Adobe investor narrative](https://www.adobe.com/investor-relations.html)).
+**Netflix**, mid-2000s: the diagnosis was postage and inventory economics caps on DVD-by-mail; the guiding policy was streaming; the objective became subscriber growth on a digital cost curve — not "more DVDs." **Adobe**, 2011–2013: diagnosis was boxed software and piracy friction; guiding policy was subscription access; the objective became **annual recurring revenue (ARR)**, the subscription revenue expected each year, through Creative Cloud — years of migration pain, but the objective was clear before every feature debate ([Adobe investor narrative](https://www.adobe.com/investor-relations.html)).
 
 When you propose an objective, you are doing Rumelt's diagnosis and guiding policy in PM language. [Product strategy](/learn/product/product-strategy) goes deeper on refusal and long-term where-to-play; this lesson gets you to a funded case with a **beachhead** you can test.
 
@@ -93,6 +93,25 @@ Before OKRs, SMART goals, or a north-star workshop, the objective must pass a pl
 | Why now? | "It's important" | "We lose 40% of deals when security review slips past 30 days" |
 
 If leadership handed you a weak line, your job is to sharpen it in writing and send it back. If you proposed it yourself, do not publish until you can answer all four without hedging.
+
+### Put a baseline under the target
+
+A target needs a starting point. The **baseline** is the current value measured with the same definition, segment, and time window you will use for the target.
+
+For instance, consider a B2B software company losing mid-market deals during security review:
+
+```text
+Baseline: security review takes 30 days for mid-market prospects
+Target: reduce it to 15 days by the end of Q3
+Business outcome: more qualified prospects complete review and buy
+Guardrail: support work and security incidents do not increase
+```
+
+The objective names a segment, unit, starting value, target, and deadline. "Improve security review by 50%" leaves the reader hunting for the original duration and the customers included.
+
+A **guardrail metric** measures harm the team refuses to create while improving the primary outcome. Cutting review time to 15 days fails if engineers skip controls and security incidents rise. The primary metric says whether the intended result improved; guardrails say whether the company paid an unacceptable price for it.
+
+Keep the business objective separate from one experiment. The quarter may aim to reduce review time from 30 days to 15. One experiment might test whether a self-serve evidence package reduces repeated questions during the first ten reviews. The experiment supplies evidence about one cause; it does not replace the funded outcome.
 
 <OutputsVsOutcomesDiagram />
 
@@ -122,7 +141,7 @@ Not every bet needs every row at equal length. A new product line needs market a
 | **Guiding policy / bet** | Approach in one sentence — not a feature list | The claim you are making |
 | **Hypothesis seeds** | 2–3 falsifiable beliefs ("they will pay if…") | Inputs to [Experiments](/learn/product/experiments) |
 | **Primary metric** | What moves if the bet works | Scoreboard from Lesson 1 |
-| **Guardrails** | What must not get worse (margin, NPS, incidents) | Constraints on the bet |
+| **Guardrails** | What must not get worse, such as margin, recommendation intent, or security incidents | Constraints on the bet |
 | **GTM wedge** | First channel or motion to reach the beachhead | How first users find you |
 | **Business model sketch** | Who pays, how, rough unit economics | Viability preview |
 | **Financial case** | Investment, return, payback timeline | The ask in money |
@@ -233,7 +252,7 @@ The case should hint at **who pays, how, and at what cost** — not a full prici
 
 At case stage you need a **sketch**: revenue model (subscription, usage, seats), who signs the check, rough price logic, and whether the math can work at the beachhead scale you named. You do not need perfect willingness-to-pay research yet — that is the job of the dedicated pricing lesson.
 
-**Pricing depth lives in [Pricing as a business case](/learn/product/pricing-business-case).** That lesson is still growing; we will add packaging, WTP, and unit-economics work there using the standard pricing canon below. For now, link your case to that lesson when the bet hinges on price — and flag "pricing TBD" explicitly instead of hiding it in a TAM slide.
+**Pricing depth lives in [Pricing as a business case](/learn/product/pricing-business-case).** That lesson covers packaging, **willingness to pay (WTP)**, structure (one-time vs subscription), and unit economics — including a specimen for paid tech depth on this site.
 
 | Case-stage pricing question | Answer in the sketch |
 |---|---|
@@ -246,7 +265,7 @@ At case stage you need a **sketch**: revenue model (subscription, usage, seats),
 
 - Madhavan Ramanujam & Georg Tacke, [*Monetizing Innovation*](https://www.simon-kucher.com/en/who-we-are/experts/madhavan-ramanujam) — design the offer around the price, not price around the product
 - Thomas Nagle, John Hogan & Joseph Zale, [*The Strategy and Tactics of Pricing*](https://www.routledge.com/The-Strategy-and-Tactics-of-Pricing/Nagle-Hogan-Zale/p/book/9781032178657) — segmentation, value communication, price structure
-- Hermann Simon, [*Confessions of the Pricing Man*](https://www.confessionsofthepricingman.com/) — how pricing decisions actually get made in companies
+- Hermann Simon, [*Confessions of the Pricing Man*](https://www.confessionsofthepricingman.com/) — how companies make pricing decisions
 - William Poundstone, [*Priceless: The Myth of Fair Value*](https://www.williampoundstone.net/Priceless.html) — psychology of price anchors and perceived value
 - Rafi Mohammed, [*The Art of Pricing*](https://www.artofpricing.com/) — practical pricing moves for product and sales teams
 
@@ -326,66 +345,65 @@ This site is the specimen for the lesson — not a diary of our backlog. Below i
 
 | Part | This product |
 |---|---|
-| **Diagnosis** | PMs and engineers talk past each other. Courses and decks teach abstractions; neither side sees how the other thinks under real constraints. |
-| **Guiding policy** | Teach both crafts through **one live product** — public Portfolio plus a free PM spine — before paid packaging or infra theater. |
-| **Coherent actions** | Ship readable lessons, wire the method (hypothesis → tests → MVP), grow the tech rail only after the PM spine earns attention. |
+| **Diagnosis** | PMs without eng depth cannot judge timelines, eng reviews, or AI-drafted code. Courses teach PM theory or stack dumps — rarely tech literacy on a live product. |
+| **Guiding policy** | Teach both crafts through **one live product** — free PM lessons for trust and showcase; free tech lessons as the beachhead wedge; packaging only if demand earns it. |
+| **Coherent actions** | Ship readable PM + first free tech lessons; capture tech interest (starts, waitlist); measure demand separately from personal teach/showcase. |
 
 ### Business objective (what leadership would fund)
 
-<Key>Prove that a free, readable PM spine on a real portfolio site earns repeat learners — then expand technical depth and packaging.</Key>
+<Key>Earn demand from PMs who need technical depth, taught on a live product — free PM for trust, free tech as the wedge, packaging only if demand earns it.</Key>
 
 Sharpened:
 
 | Question | Answer |
 |---|---|
-| What moves? | Return visitors and **lesson completion** through the PM spine (Lesson 1 → Lesson 2 → …) |
-| For whom? | **Beachhead:** PMs without engineering depth who need to speak credibly with eng; second entry: engineers learning PM craft |
-| By when? | Next planning window — e.g. "12 PM spine lessons live with measurable completion" (adjust to your quarter) |
-| Why now? | AI and speed of build raised the cost of PM↔tech misalignment; unstructured free content exists but rarely ties to a product being built in public |
+| What moves? | **Tech-lesson starts**, waitlist / interest capture, and free-tech completion; PM spine completion as trust signal |
+| For whom? | **Beachhead:** PMs without eng depth who need stack literacy; second entry: engineers learning PM craft |
+| By when? | Next planning window — e.g. "first free tech lessons live + measurable non-friend tech interest" |
+| Why now? | AI and speed of build raised the cost of PM↔tech misalignment; PMs need structure for reviews, MVPs/POCs, and timelines |
 
 ### One-page case (filled in)
 
 ```text
-Diagnosis:          PM↔tech gap; slide-deck learning does not stick; no single
-                    public product that teaches PM method on the thing you are
-                    looking at.
+Diagnosis:          PM↔tech gap; slide-deck PM courses and eng blogs do not
+                    teach stack literacy on a product the reader can see.
 
-Objective link:     Build a credible teaching brand + PLG wedge before monetization.
+Objective link:     Earn tech-for-PMs demand; free PM builds trust; packaging TBD.
 
 Target market:      Professionals crossing the PM↔engineering boundary — global,
                     English-first for v1.
 
-Beachhead:          PM newcomers without eng depth (primary pin); engineers
-                    learning PM as second pin — not "all product people."
+Beachhead:          PMs without eng depth who need tech literacy (primary);
+                    engineers learning PM as second pin — not "all product people."
 
-Personas:           User: PM who owns roadmap but fears technical reviews.
-                    Buyer (later): same person or eng lead self-serving; v1 is
-                    free — "buyer" is future packaging decision.
+Personas:           User: PM who owns roadmap but fears technical reviews and
+                    cannot judge timelines / AI-drafted code.
+                    Buyer (later): same person; v1 is free — packaging waits on demand.
 
-Job / problem:      "I need to sound credible in eng reviews and pick bets
-                    without becoming an engineer."
+Job / problem:      "I need enough stack literacy for eng reviews, timelines,
+                    and small-team MVPs — without becoming an engineer."
 
-Bet:                Free PM spine on a live portfolio; tech rail and price after
-                    spine proves attention.
+Bet:                Free PM spine (trust + showcase) + free tech wedge on one
+                    live portfolio; paid depth only after demand.
 
-Hypothesis seeds:   (1) People finish lessons when the site is the example.
-                    (2) Dual-audience one journey beats two separate sites.
-                    (3) Completion depth beats vanity traffic.
+Hypothesis seeds:   (1) Beachhead PMs start free tech lessons on this product.
+                    (2) Outreach brings non-friend waitlist / tech starters.
+                    (3) Free PM spine still builds trust without being the whole bet.
 
-Primary metric:     % of Lesson 1 starters who complete Lesson 2 within 14 days
-                    (activation through spine).
+Primary metric:     Tech-lesson starts + waitlist from non-friends (demand);
+                    PM Lesson 1→2 as trust/activation guardrail.
 
-Guardrails:         Lesson quality (readable, cited); no feature-factory infra
-                    in v1; do not break trust with paywall on PM spine.
+Guardrails:         Lesson quality; no paywall on free lessons; dual scoreboard
+                    (product demand vs personal teach/showcase) stays honest.
 
-GTM wedge:          Portfolio credibility, LinkedIn/X, word of mouth — product
-                    is the lesson (PLG).
+GTM wedge:          Public URL + LinkedIn / PM communities / meetups; free tech
+                    lesson is the product experience (PLG).
 
-Ask:                Founder time: lesson writing + site iteration; hosting cost
-                    at MVP scale; no paid GTM in v1.
+Ask:                Founder time: PM + first tech lessons; thin waitlist + events;
+                    hosting at MVP scale; no paid GTM in v1.
 
-90-day learning:    Do return visitors complete the next lesson? Which lesson
-                    loses readers? Will engineers enter from the same home page?
+90-day learning:    Do non-friend PMs start free tech? Does waitlist reply?
+                    Does PM spine still earn completion as trust?
 ```
 
 <PortfolioCaseCardDiagram />
@@ -394,14 +412,14 @@ Pricing and unit economics stay **TBD** on purpose — that is a [Pricing as a b
 
 ### Eight-minute pitch (script outline)
 
-1. **Hook:** "PMs ship PRDs engineers ignore, and engineers ship code PMs cannot defend — because neither side learned on the same product."
-2. **Diagnosis:** Gap is structural; free content is either pure PM theory or pure code, rarely both on one live site.
-3. **Beachhead:** PM without eng depth first — they feel the pain in every sprint review.
-4. **Bet:** Public Portfolio + free PM spine; you learn PM on the product in front of you.
-5. **Why now:** Build cycles shortened; misalignment costs rose.
-6. **Proof plan:** Ship spine lessons; measure Lesson 1 → 2 completion; interviews on what made them stay.
-7. **Ask:** Time to write and ship lessons; defer Stripe, auth, and platform curriculum until spine signal exists.
-8. **Close:** "Success this quarter is repeat learners through the spine — not homepage hits."
+1. **Hook:** "PMs sit in eng reviews they cannot follow — and AI drafts code they cannot judge — because nobody taught stack literacy on a live product."
+2. **Diagnosis:** Gap is structural; free content is either pure PM theory or eng blogs, rarely tech-for-PMs on one live site.
+3. **Beachhead:** PM without eng depth who needs reviews, timelines, MVPs/POCs.
+4. **Bet:** Free PM lessons for trust and showcase; free tech lessons as the wedge; packaging only if demand shows up.
+5. **Why now:** Build cycles shortened; AI raised the bar for PM tech literacy.
+6. **Proof plan:** Ship first free tech lessons; measure tech starts + waitlist from non-friends; keep PM spine as trust.
+7. **Ask:** Time to write PM + tech lessons; thin waitlist and events; defer Stripe and login until demand funds packaging.
+8. **Close:** "Success this quarter is tech interest from the beachhead — not homepage hits or a fake paywall."
 
 Read that aloud. If step 4 still sounds like a vision statement, tighten the beachhead sentence until a skeptic can repeat it.
 
@@ -409,8 +427,8 @@ Read that aloud. If step 4 still sounds like a vision statement, tighten the bea
 
 After the pitch lands, a team might write:
 
-- **Objective:** Become the default free PM spine for technical credibility at the junior/mid PM level.
-- **Key results (example):** Lesson 1→2 completion rate ≥ X%; 12 spine lessons published; median read depth ≥ Y% on Lesson 1; qualitative N from 10 target readers.
+- **Objective:** Become the default free path for PMs who need tech literacy on a live product.
+- **Key results (example):** N non-friend tech-lesson starters; waitlist reply ≥ X%; first free tech lessons live; PM Lesson 1→2 completion as trust guardrail.
 
 OKRs do not replace the diagnosis above. They translate an **already argued** objective into a quarter.
 
@@ -419,6 +437,8 @@ OKRs do not replace the diagnosis above. They translate an **already argued** ob
 Pick a product you know. Fill the **one-page case shape**, then outline an **8-minute pitch** using the structure above (hook → ask). Rehearse it once out loud. Mark what you would validate in 30 days.
 
 Bring guesses to [Experiments](/learn/product/experiments) when you want tests.
+
+<InlineLessonQuiz slug="product/business-objective" />
 
 ## References
 

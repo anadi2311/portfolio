@@ -9,7 +9,7 @@ export function SiteFooter() {
           <Link href="/learn" className="hover:text-black">
             Learn
           </Link>
-          <Link href="/#about" className="hover:text-black">
+          <Link href="/about" className="hover:text-black">
             About
           </Link>
         </div>

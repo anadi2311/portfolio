@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { TrackOptions } from "@/components/TrackOptions";
 
 export default function Home() {
@@ -16,26 +15,6 @@ export default function Home() {
       </section>
 
       <TrackOptions />
-
-      <section className="mx-auto flex w-full max-w-3xl flex-col gap-3">
-        <Link
-          href="/learn"
-          className="text-sm text-zinc-600 underline decoration-zinc-300 underline-offset-4 hover:text-black"
-        >
-          All lessons
-        </Link>
-      </section>
-
-      <section
-        id="about"
-        className="mx-auto w-full max-w-3xl scroll-mt-20 border-t border-zinc-200 pt-10"
-      >
-        <h2 className="text-sm font-medium text-zinc-900">About</h2>
-        <p className="mt-3 max-w-lg leading-7 text-zinc-600">
-          Anadi Pandharkar. Product strategy, GTM, and the systems behind what
-          ships. This site is the classroom, built in public.
-        </p>
-      </section>
     </main>
   );
 }

@@ -1,0 +1,301 @@
+---
+title: Product analytics and go-to-market
+summary: Analytics follow the stage of the bet. Collect data that can kill a hypothesis, watch Goodhart's Law, pick tools by surface and scope, and measure channels the same way you measure the product.
+audience: Both
+status: published
+order: 8
+---
+
+[Lesson 4](/learn/product/experiments) chose the instrument. [Lesson 7](/learn/product/product-led-growth) put activation first. This lesson is the **measurement craft**: what to collect, what to analyze, which metrics fit which stage, how tools map to the job, and how go-to-market shows up in the same scoreboard.
+
+You do not need a warehouse to start. You need a metric tied to a hypothesis and a stop rule. The tech rail ([ClickHouse for product analytics](/learn/engineering/clickhouse-analytics) and later platform lessons) shows how to plug pipelines in. Here you learn what a PM asks for before anyone writes SQL.
+
+## Outcome first, then the metric
+
+A metric is a proxy for an outcome. <Key>Goodhart's Law:</Key> when a measure becomes a target, it ceases to be a good measure ([Goodhart 1975](https://en.wikipedia.org/wiki/Goodhart%27s_law); Strathern's later phrasing is the one teams quote).
+
+PMs break this constantly:
+
+| Outcome you wanted | Proxy you optimized | What happened |
+|---|---|---|
+| Users get value | Signup count | Empty accounts |
+| Retention | Daily opens | Notification spam; opens without jobs done |
+| Revenue health | Short-term conversion | Discount addiction; churn next month |
+| Lesson quality | Time on page | Longer, worse prose |
+
+**Guardrails** sit next to the primary metric: quality, cost, trust, support load. [Lesson 2](/learn/product/business-objective) already put guardrails in the case. Analytics make them visible every week.
+
+**North Star** thinking (Amplitude's popular framing, [Amplitude North Star](https://amplitude.com/blog/product-north-star-metric)): one input metric that predicts long-term value for the beachhead, plus inputs you can move this quarter. The Star is not a vanity KPI. If gaming the Star hurts the user job, you picked the wrong Star.
+
+**Spotify** shifted scoreboards as the product matured (ownership of listening, then engagement quality). The lesson is not their exact metric names. It is that the scoreboard tracks the **job**, and leaders change the proxy when the proxy stops predicting the job.
+
+### Leading vs lagging (input vs output)
+
+[*Lean Analytics*](https://leananalyticsbook.com/) and OKR practice split measures the same way:
+
+| Kind | What it is | Example |
+|---|---|---|
+| **Lagging (output)** | Shows whether the outcome happened | Revenue, retention D30, churn |
+| **Leading (input)** | Moves earlier; predicts the lag if the model is right | Activation rate, weekly jobs completed, invite sends that convert |
+
+Lead with inputs you can change this week. Keep the lagging outcome on the scoreboard so you notice when the input stopped predicting the job. That pairing is Goodhart insurance: if activation rises and D30 falls, your activation definition is wrong.
+
+## Named lenses (use them; do not worship them)
+
+Three frames every PM meets. They overlap. Pick one primary lens for the bet; do not run twelve dashboards because an acronym exists.
+
+### OMTM and metrics by business model
+
+Croll and Yoskovitz's **One Metric That Matters** (OMTM): at a given stage, one metric owns the conversation. Everything else is supporting cast.
+
+OMTM changes with **business model**. Same company can need a different OMTM after a model shift.
+
+| Model | Early OMTM candidates | Later OMTM candidates |
+|---|---|---|
+| **SaaS / seats** | Activated accounts; time-to-value | Net retention; expansion |
+| **Marketplace** | Liquidity (match rate); successful transactions | Repeat transactions both sides |
+| **Media / content** | Return readers; completion | Engagement quality; paid conversion if that is the model |
+| **Transactional / e-commerce** | Purchase completion; repeat purchase | Contribution margin after returns |
+| **Developer / API** | First successful API call; time-to-hello-world | Retained keys; paid usage |
+
+This site (education / PLG content): early OMTM is non-friend waitlist or tech-lesson start, not homepage hits.
+
+### HEART (UX and product quality)
+
+Google's [HEART framework](https://research.google/pubs/pub36299/) (Rodden, Hutchinson, Fu): **Happiness, Engagement, Adoption, Retention, Task success**. Pair each with **Goals → Signals → Metrics** so you do not invent numbers without a goal.
+
+Use HEART when the bet is experience quality (onboarding friction, task completion, satisfaction). Skip it when the bet is still "does anyone care?" at 0→1 interviews.
+
+### AARRR (Pirate metrics)
+
+Dave McClure's **Acquisition, Activation, Retention, Referral, Revenue**. Useful as a funnel checklist for growth conversations. Dangerous as a vanity stack: teams polish Acquisition while Activation is dead.
+
+Rule: do not spend on Acquisition until Activation is defined and moving ([Lesson 7](/learn/product/product-led-growth)).
+
+### Follow one customer journey
+
+For instance, consider a scheduling product such as Calendly. The numbers below are illustrative, but the journey is concrete: someone discovers the product, schedules a meeting, returns for another meeting, brings in a colleague, and may pay.
+
+- **Acquisition** means bringing a target customer into the product through a channel such as search, a recommendation, an advertisement, or a sales conversation. Count an event that represents arrival, such as a qualified visit or account creation. If 1,000 qualified visitors land and 250 create an account, signup conversion is `250 ÷ 1,000 = 25%`. This funnel stage differs from customer acquisition cost: pricing calculates that cost using new paying customers.
+- **Activation** means the customer reaches first value. Account creation is preparation; a completed scheduling link that books a meeting proves the job. If 150 of those 250 accounts book a meeting, account-to-activation is `150 ÷ 250 = 60%`. [Product-led growth](/learn/product/product-led-growth) owns the full activation definition.
+- **Retention** means customers return after they have had a fair opportunity to repeat the job. If 60 of the 150 activated accounts schedule another meeting within four weeks, four-week retention is `60 ÷ 150 = 40%`. The denominator contains activated accounts because inactive signups never received the value being tested.
+- **Referral** means an existing customer causes another target customer to arrive and reach value. Invitations sent measure an input. If shared links bring 20 recipients and 12 book a meeting, the product created 12 referred activations.
+- **Revenue** means money the company earns from customers before subtracting costs. If 15 accounts buy a $10 plan, monthly revenue from that group is `$150`. [Pricing as a business case](/learn/product/pricing-business-case) explains contribution, acquisition cost, lifetime value, and payback.
+
+The sequence reveals where the product leaks. More visitors cannot repair weak activation, and a signup campaign can make acquisition look healthy while retained customers remain flat.
+
+## Stage picks the analytics
+
+Reuse the stage idea from Lesson 4. Analytics maturity follows the **bet**, not the age of the logo on the building.
+
+| Stage of the bet | What you collect | What you analyze | Experiments that fit |
+|---|---|---|---|
+| **0→1 / pre-product** | Interview notes, waitlist emails, prototype task success, manual counts | Themes, willingness to act, "friends vs strangers" | Interviews, fake door, concierge, landing demand |
+| **Early product** | Activation event, return within N days, completion, support themes | Tiny funnels, qualitative + quantitative together | Mixed discovery; underpowered A/B is theater |
+| **PMF pursuit** | Activation, retention cohorts, channel → activate, early revenue or expansion | Cohort curves, drop-off steps, segment by beachhead | Funnel fixes; thin A/B if volume allows |
+| **Continuous product** | Full event taxonomy, experiments platform, revenue, reliability | Causal A/B, holdouts, funnel + power analysis | Online controlled experiments ([Kohavi](https://experimentguide.com/)) |
+| **New line in a mature company** | Separate events for the new beachhead; do not drown in parent metrics | 0→1 analytics for the new bet; parent traffic only when the question is causal on a live surface | Discovery first; steal the parent's A/B stack only when earned |
+
+Follow the scheduling product through those stages:
+
+1. **Before product:** interview target customers about the last scheduling failure, test a prototype, and count commitments such as connecting a real calendar or joining a pilot. Revenue forecasts and lifetime value rest on assumptions at this point.
+2. **Early product:** measure whether target customers book a first meeting, how long that takes, where setup fails, and whether support themes reveal a broken promise. Thin traffic calls for customer observation beside the numbers.
+3. **Product-market-fit pursuit:** compare retention cohorts, interview customers who stop, and trace each acquisition channel through activation. More signups from a weak channel can hide falling product quality.
+4. **Growth:** measure **customer acquisition cost (CAC)** by channel, contribution, payback, and estimated **customer lifetime value (LTV)** from observed cohorts. Run controlled experiments on onboarding or pricing when the sample can detect a change large enough to matter. [Pricing as a business case](/learn/product/pricing-business-case) owns the formulas and worked economics.
+5. **Continuous product or new line:** use mature experimentation tools for established journeys, but reset to early-stage evidence for a new customer or job. Company scale does not prove a new bet.
+
+### Read customers who started together
+
+A **cohort** groups customers who share a starting event during the same period. Picture two school intake classes. Comparing the January class with the February class tells you more than averaging every student in the school, because each class started under different conditions.
+
+Suppose a scheduling product changes onboarding on February 1:
+
+- The January cohort contains 100 accounts that activated in January. After four weeks, 35 have scheduled another meeting: 35% four-week retention.
+- The February cohort contains 100 accounts that activated in February. After four weeks, 50 have scheduled another meeting: 50% four-week retention.
+
+The newer onboarding may have improved repeat value, but the cohort comparison does not prove cause by itself. February could contain a stronger acquisition channel or a seasonal surge. Segmenting both cohorts by channel and running a controlled experiment can separate the onboarding effect from those other explanations.
+
+Do not compare January after eight weeks with February after two weeks. Give each cohort the same opportunity to return.
+
+### Analytics for testing (by stage)
+
+An experiment needs three metric roles:
+
+- The **primary metric** decides whether the hypothesis won. A scheduling experiment might use the percentage of eligible accounts that book their first meeting within one day.
+- A **diagnostic metric** explains where the journey changed. Form completion and scheduling-link creation can show why activation moved, but they cannot replace activation after results arrive.
+- A **guardrail metric** catches damage outside the target outcome. Cancellation rate, support contacts, page latency, and wrong bookings can stop a rollout even when activation rises.
+
+For example, a simpler booking flow raises one-day activation from 30% to 36%. Form completion rises, which supports the proposed mechanism. Wrong bookings also rise from 1% to 5%, breaching a 2% guardrail. The team does not ship the variant as-is; it keeps the learning and fixes the error path. [Experiments](/learn/product/experiments) explains how to set the baseline, threshold, sample, and stop rule before exposure.
+
+**0→1 testing analytics**
+
+- Count: interviews completed, unprompted theme frequency, waitlist from non-friends, prototype task pass rate
+- Do **not**: demand statistical tests, multi-variate tools, or a **customer data platform (CDP)** that combines customer data from many systems before the first honest event
+- Decision: ship a thin Now, pivot the claim, or kill
+
+**Early / continuous testing analytics**
+
+- Pre-register primary metric + guardrails before the test
+- Sample: who counts (beachhead only?), exposure, duration
+- Read: absolute lift, not only relative %; check segments that can hide harm
+- Newer instruments many PMs skip until late (learn the names; earn the volume):
+  - **Holdouts:** long-term effect of a "winning" short-term metric
+  - **Staged rollouts / kill switches:** blast radius control
+  - **Switchback / time-split:** when users cannot be A/B'd cleanly (marketplaces, shared inventory)
+  - **Geo or cluster experiments:** when interference kills user-level randomization
+  - **Trigger analysis:** which week-1 behavior predicts retention (feeds the next card)
+
+Familiar instruments stay useful: interviews when the metric moves and nobody knows why; funnel inspection before you A/B the wrong step.
+
+**Statistical significance** asks how surprising an experiment difference would be if the change had no real effect. It does not report the probability that the product idea is true. **Power analysis** estimates how many observations a test needs to detect the smallest change worth shipping. Teams with thin traffic should choose a cheaper experiment instead of waiting months for an underpowered A/B test.
+
+**Twyman's law** (used heavily in Kohavi's experimentation work): any figure that looks interesting or different is usually wrong. Surprising A/B wins get a trust check first: sample ratio mismatch, bad logging, peeking, bots, one giant customer. Celebrate after the result survives scrutiny, not after the dashboard turns green.
+
+## How to collect data (without boiling the ocean)
+
+1. **Name the decision** the data must unlock (Lesson 4 card).
+2. **Write a tracking plan:** event name, description, properties, owner, when it fires, client vs server. This is the contract between PM and eng (see [Segment's tracking plan guidance](https://segment.com/docs/protocols/tracking-plan/) or Amplitude's taxonomy docs for shape).
+3. **Write the event** in product language: `lesson_started`, `waitlist_joined`, `api_key_created`, not `button_42_click`.
+4. **Define properties:** who (beachhead tag), where (channel), when, success/fail.
+5. **Validate:** fire once in staging; check duplicates and missing user keys.
+6. **Pair with qualitative:** support tickets, session replay (sparingly), follow-up interviews when numbers confuse you.
+7. **Respect privacy and consent:** know what you may collect, where users are, and what the cookie/consent banner allows. Analytics that ignore GDPR/CCPA/consent are a product risk, not a "later legal" footnote. Collect the minimum that can kill the hypothesis.
+
+Sources PMs use:
+
+| Source | Good for | Weak for |
+|---|---|---|
+| Product events (client + server) | Activation, funnels, experiments | Motives ("why") |
+| Warehouse / logs | Joins, revenue, API truth | Fast product iteration if only eng can query |
+| Surveys / interviews | Why and language | Representative rates |
+| Sales and **customer relationship management (CRM)** systems | Potential deals, **annual contract value (ACV)**, and reasons the company lost deals | Self-serve product-led growth behavior |
+| Support and **Net Promoter Score (NPS)** surveys, which ask recommendation likelihood | Pain themes and trust signals | Leading the product without behavioral evidence |
+| Marketing analytics | Channel volume and cost | Confusing click with activation |
+
+**Server events beat client-only events** when money, permissions, or API success matter. Frontend clicks lie when the request fails.
+
+## Metrics map (what to watch)
+
+### Product scoreboard
+
+| Layer | Examples | Notes |
+|---|---|---|
+| **Input / North Star candidate** | Weekly activated beachhead users; jobs completed | Predicts retention or revenue |
+| **Activation** | First value event within time T | Lesson 7 |
+| **Retention** | D1 / D7 / D30; cohort curves | Segment by beachhead |
+| **Engagement quality** | Depth, repeat job success | Guard against empty opens |
+| **Monetization** | Conversion, expansion, payback | After value; pricing lesson owns depth |
+| **Guardrails** | Errors, latency, refunds, **customer satisfaction (CSAT)**, and cost to serve | Shows whether progress on the primary metric creates unacceptable harm |
+
+### Go-to-market scoreboard
+
+GTM is not a separate religion. Channel quality shows up in product metrics.
+
+| GTM question | Metric |
+|---|---|
+| Does this channel bring the beachhead? | Activate rate by channel (not signup alone) |
+| Is acquisition efficient? | Cost per **activated** user (not per click) |
+| Does the promise match the product? | Early churn or support themes by campaign |
+| Is sales helping or fighting PLG? | Self-serve activate vs sales-assisted activate; win reasons |
+
+Launch analytics: pre-register success (activation + guardrails), watch the first 48 hours for instrumentation bugs, then read cohorts, not a war-room vanity spike.
+
+## Metrics by PM scope
+
+Same company, different altitude ([Lesson 6](/learn/product/product-leadership)).
+
+| Scope | You live in | You glance at | You refuse to drown in |
+|---|---|---|---|
+| **IC / feature PM** | Activation and funnel for your surface; experiment results; qualitative on your flow | Team OKR; error rate on your path | Company-wide vanity dashboards with no decision |
+| **Growth / product analytics PM** | Full funnel, cohorts, experiment design, channel → activate | Revenue and retention quality | Shipping without a pre-registered metric |
+| **Platform / API PM** | Latency, error rate, adoption of endpoints, partner integrate time, breaking-change rate | Downstream product activation that depends on your API | Only frontend session replay |
+| **Strategy / group / Head of** | Portfolio outcomes, bet mix, shared North Star, cost to serve, motion health (PLG vs sales) | Team-level experiment wins | Ticket throughput as the company scoreboard |
+
+If you are a **consumer or UI PM**, you watch session funnels, time-to-value, UX drop-offs. If you are a **platform or infra-facing PM**, you watch SLIs (latency, availability), quota, developer activation (first successful API call), and version adoption. The craft is the same: hypothesis → metric → stop rule. The **surface** changes the events.
+
+## Tools (common set, no tool creep)
+
+Tools follow the question. Do not install five analytics products because a blog said so.
+
+| Job | Common tools PMs touch | When you need it |
+|---|---|---|
+| Product behavior (UI) | Amplitude, Mixpanel, PostHog, Heap | Funnels, retention, simple experiments on product surfaces |
+| Experimentation platform | Statsig, Optimizely, LaunchDarkly + analytics, in-house | Continuous product with enough traffic for honest A/B |
+| Warehouse + BI | BigQuery / Snowflake / ClickHouse + Looker / Hex / Metabase | Joins across billing, API, product; group-level truth |
+| Marketing / web | GA4, marketing automation, attribution tools | Channel volume; always reconnect to activation |
+| Qualitative | Dovetail, Notion, spreadsheets | Interview synthesis |
+| Errors / performance | Sentry, Datadog, Grafana | Guardrails; platform PMs live here |
+| CRM | Salesforce, HubSpot | Sales-led motion metrics |
+
+**Rule of thumb:** one product analytics source of truth for behavioral events. Warehouse for money and API truth. Do not duplicate the same event in three tools "for convenience."
+
+We will teach **how to plug these into this stack** in the engineering rail (events → pipeline → [ClickHouse](/learn/engineering/clickhouse-analytics) / warehouse → dashboards). This lesson stops at: what to demand from eng, what "done" means for an event, and which tool class matches your surface.
+
+### Small practice tree (use tools without worshipping them)
+
+1. Write the activation event in one line.
+2. Ask eng: client or server? properties? identity?
+3. Verify one successful fire in the tool or a log.
+4. Build one funnel: land → activate → return.
+5. Only then discuss A/B tooling.
+
+If step 3 fails, no dashboard will save you.
+
+## Specimen: this site
+
+Early product. Thin traffic. No login wall on free lessons.
+
+| Need | Do now | Later (when volume earns it) |
+|---|---|---|
+| Collect | Lesson start/finish; waitlist join; friends vs public tag; **UTM campaign parameters**, labels added to a link so analytics can identify its source | Full CDP; experimentation platform |
+| Analyze | Weekly counts; activate by channel; qualitative on drop-off | Cohort charts; A/B on lesson structure |
+| Primary | Non-friend waitlist / tech starts | Retention into free-tech lesson 2 |
+| Guardrails | Lesson quality; no paywall on free spine | Cost, abuse, bot filtering |
+| Tools | Lightweight events + spreadsheet or simple analytics | Warehouse path in eng lessons |
+| GTM read | Which community post brought activated readers | Paid acquisition (refused for now) |
+
+Pageviews alone are not the scoreboard. That is Goodhart bait for a teaching site.
+
+## Common mistakes
+
+| Mistake | What is happening |
+|---|---|
+| Optimize the proxy, forget the job | Goodhart |
+| A/B at n=40 | Theater |
+| Tool creep (three analytics products) | No source of truth |
+| Only frontend events for API products | False success |
+| Group PM reading ticket velocity | Wrong altitude |
+| Channel vanity without activation | GTM / product disconnect |
+| Blend old and new customers into one retention rate | A falling new cohort hides behind strong older customers |
+| Choose the primary metric after seeing results | The team promotes whichever number happened to rise |
+| Diagnostic metric rises while the primary outcome stays flat | The mechanism moved without producing customer value |
+| Surprising win, no trust check | Twyman's law ignored |
+| No tracking plan | Eng and PM disagree what fired |
+| Collect data without a named decision | Privacy risk and noise grow without increasing useful evidence |
+
+## Before you go on
+
+1. Write your **outcome**, **OMTM**, two **guardrails**, and whether the OMTM is leading or lagging.
+2. Name the **stage of the bet** and the analytics that fit (not the company's founding year).
+3. Pick a lens for this month: **HEART**, **AARRR**, or neither (and why).
+4. Draft a five-row **tracking plan** (event, properties, owner, client/server).
+5. Circle your **scope** (IC, growth, platform, group) and the metrics you will ignore this month.
+6. Pick **one** analytics tool class you need now. Write what "event done" means before anyone buys a second tool.
+7. Draw one customer journey from acquisition through revenue. Put the event and denominator under each measured step.
+8. Compare two cohorts after the same amount of time and name one alternative explanation for the difference.
+
+<InlineLessonQuiz slug="product/product-analytics-gtm" />
+
+## References
+
+- Charles Goodhart, monetary targeting / Goodhart's Law (1975); Marilyn Strathern's later formulation
+- Ronny Kohavi et al., [*Trustworthy Online Controlled Experiments*](https://experimentguide.com/) (A/B at scale; Twyman's law in practice)
+- Alistair Croll & Benjamin Yoskovitz, [*Lean Analytics*](https://leananalyticsbook.com/) (OMTM; metrics by business model; leading vs lagging)
+- Kerry Rodden, Hilary Hutchinson, Xin Fu, [HEART / Goals-Signals-Metrics](https://research.google/pubs/pub36299/) (Google Research)
+- Dave McClure, AARRR / Pirate Metrics (startup funnel checklist; use after activation is real)
+- Amplitude, [North Star playbook](https://amplitude.com/blog/product-north-star-metric) (inputs + Star; use carefully under Goodhart)
+- Segment, [Tracking plans](https://segment.com/docs/protocols/tracking-plan/) (event contract with eng)
+- Teresa Torres, [*Continuous Discovery Habits*](https://www.producttalk.org/continuous-discovery-habits/) (qualitative alongside metrics)
+- Wes Bush, [*Product Led Growth*](https://www.productled.com/product-led-growth-book) (activation before acquisition vanity)
+
+Previous: [Product-led growth](/learn/product/product-led-growth). Next: [Pricing as a business case](/learn/product/pricing-business-case).

@@ -1,0 +1,207 @@
+---
+title: "System design: reliability, scale, and how pieces fit"
+summary: "Kleppmann's reliability, scalability, and maintainability in product words, then how caches, databases, queues, and APIs compose when features leave a single process."
+audience: Both
+status: published
+order: 3
+---
+
+[DS&A fundamentals](/learn/engineering/cs-fundamentals) covered structures and algorithms inside a problem. **System design** is what happens when the product spans many machines, data stores, and failure modes. The feature still has an `n`. Now load, faults, and human change cost sit in the room with you.
+
+This lesson starts with Martin Kleppmann's lens from *Designing Data-Intensive Applications* (DDIA): **reliability**, **scalability**, and **maintainability**. Then it maps the building blocks PMs hear in design reviews: caches, databases, queues, and APIs. **Optional details** panels hold mechanisms. We point into DDIA chapters instead of pasting them.
+
+**Who this is for**
+
+- **PMs:** brief eng with load parameters, percentile latency, degrade behavior, and appetite.
+- **Engineers learning the PM side:** tie every box on the whiteboard to a scoreboard risk.
+
+Previous: [DS&A fundamentals](/learn/engineering/cs-fundamentals). Next: [Why this stack](/learn/engineering/why-this-stack).
+
+## From one algorithm to a system
+
+A single hash map in one process is a DS&A choice. A product that stores millions of sessions, fans out notifications, and survives a dead disk is a **system**. Eng draws boxes: clients, API, cache, primary DB, replicas, workers, queue, search.
+
+Your job in that review is not to pick Redis vs Memcached by brand. It is to name:
+
+1. What the user must feel (activation, pay, trust)  
+2. What `n` and load look like  
+3. What happens when a box dies  
+4. How expensive the next change will be  
+
+## Three words from Kleppmann
+
+When engineers say "data-intensive," they often mean the hard part is not the UI. The hard part is keeping data **correct**, serving it under **growing load**, and letting humans **change** the system without heroics. Kleppmann opens DDIA with three concerns.
+
+<DdiaThreeConcernsDiagram />
+
+### Reliability
+
+**Plain English:** the system keeps doing the right thing when something goes wrong: machine dies, network blips, bad deploy, disk full, human error.
+
+**Product translation:** trust and support load. Users forgive a slow day more than silent data loss. Double charges, vanished progress, and dropped waitlist emails are reliability failures. They show up as tickets, chargebacks, and churn.
+
+| Fault type | Everyday example | Product smell |
+|---|---|---|
+| Hardware / infra | Server dies | Sudden 500s; "is the site down?" |
+| Software bug | Bad null check; bad deploy | Wrong totals; missing rows |
+| Human | Wrong table deleted; bad config | Instant outage or corruption |
+
+Reliable systems **expect** faults. They recover or degrade. Unreliable systems assume sunny weather.
+
+<TechDepth>
+
+**Fault vs failure (DDIA).** A *fault* is one component misbehaving. A *failure* is when the whole service stops doing what the user needs. Good design contains faults so they do not become failures.
+
+Words you will hear: retries (careful with double side effects), **idempotent** writes (retrying pay must not charge twice), backups, redundancy, graceful degradation (read-only mode, cached homepage).
+
+**PM question:** "If this path is down, what do we show, what do we log, and what money or trust is at risk?"
+
+</TechDepth>
+
+### Scalability
+
+**Plain English:** if load grows, can latency and cost stay acceptable by adding resources in a planned way, or does the design fall over?
+
+**Load is not one number.** Describe load with **parameters** that match the product:
+
+- reads per second on the lesson page  
+- writes per second to the waitlist  
+- read/write ratio  
+- peak concurrent users on launch day  
+- size of the hot working set  
+
+**Then describe performance with percentiles**, not only averages. The average can look fine while the worst 5% have a terrible day.
+
+| Term | Meaning | Why a PM cares |
+|---|---|---|
+| p50 (median) | Half of requests faster than this | Typical feel |
+| p95 | 95% faster; 5% slower | Peak and power users live here |
+| p99 | Slowest 1% | Tickets and "app is broken" posts |
+
+<LatencyPercentilesDiagram />
+
+**Named scene: Twitter fan-out (DDIA classic, simplified).** When someone posts, push into every follower's timeline at write time, or pull from people you follow at read time? Write cost vs read latency vs celebrity accounts. The PM stake is "home feed feels instant" vs "posting must not melt the write path."
+
+<TechDepth>
+
+**Vertical vs horizontal.** Vertical = bigger machine (simple until the ceiling). Horizontal = more machines (needs the software to split work: sharding, partitioning).
+
+**Why averages lie.** Ninety-nine requests at 50ms and one at 10 seconds still averages "okay" while one user had a disaster.
+
+**PM brief line:** "p95 lesson load under 400ms at 10× current daily starts; degrade to cached list if ranking is down."
+
+</TechDepth>
+
+### Maintainability
+
+**Plain English:** can humans operate and change this system without heroics?
+
+Kleppmann's three habits:
+
+1. **Operability:** can eng see health, debug, and recover? (logs, metrics, alerts)  
+2. **Simplicity:** can a new engineer understand it? Accidental complexity burns roadmap.  
+3. **Evolvability:** can you change the product later without a rewrite?  
+
+**Product translation:** maintainability is the cost of the next feature. A clever path only one engineer understands is schedule risk. "Ship naive this week; replace when `n` forces us" is often right, if you name the kill criteria.
+
+<TechDepth>
+
+Accidental complexity is complexity the problem did not require. Essential complexity is real business rules (pricing, permissions, tax). PMs create accidental complexity when they demand five special cases with no default path.
+
+**PM question:** "If the author of this path leaves, can someone else change the ranking rule in a week?"
+
+</TechDepth>
+
+## Building blocks you will see on the whiteboard
+
+DS&A gave you maps, queues, and trees. System design places them across processes.
+
+| Box | Plain English | Product stake |
+|---|---|---|
+| **API / app servers** | Handle requests; run business rules | Latency; error rate; release risk |
+| **Database** | Durable source of truth (usually) | Correctness; query cost; migrations |
+| **Cache** | Fast copy of hot data | Speed vs staleness; stampede risk |
+| **Queue + workers** | Do work off the click path | Fairness; delay; backpressure |
+| **Search / analytics store** | Specialized read models | Relevance; freshness; extra cost |
+| **CDN / edge** | Static assets near users | First paint; global feel |
+
+Later lessons on this track go deeper on frontend, APIs, auth, data, and infra. Here you only need the composition story.
+
+### Cache
+
+**Feature scene:** hot lesson pages; session blobs; "popular this week."
+
+A **cache** stores a fast copy so you do not hit the database every time. Wins latency and DB cost. Costs you **invalidation** (when is the copy wrong?) and **stampede** (cache expires, everyone hits DB at once).
+
+**PM questions:** how stale is acceptable? What is the degrade if cache is empty?
+
+### Database (and replicas)
+
+**Feature scene:** durable progress, purchases, waitlist rows.
+
+Primary database holds truth. **Replicas** often serve reads so the primary is not crushed. Replication lag is a freshness product decision: is "eventual" OK for the feed, or must checkout see the write immediately?
+
+Indexes (from the DS&A lesson) live here. So do migrations and schema change risk (maintainability).
+
+### Queue and workers
+
+**Feature scene:** send email; generate export; fan-out notifications.
+
+The user click enqueues work; workers drain the queue. Reliability: retries and idempotency. Scalability: more workers. Product UX: "we're on it" vs silent delay.
+
+### API boundaries
+
+**Feature scene:** mobile + web share one backend; partner integrations.
+
+APIs define contracts. Versioning and backwards compatibility are maintainability. Rate limits are scalability and fairness. Auth belongs in [auth and identity](/learn/engineering/auth-identity) later; the design review still asks who can call what.
+
+## A short design-review script
+
+1. User job and success metric  
+2. Load parameters (not "lots of users")  
+3. Latency bar (prefer p95) and freshness  
+4. Failure / degrade story (reliability)  
+5. Data ownership: what is source of truth  
+6. Appetite and evolvability (what we can change next quarter)  
+
+## Specimen: this Learn site (early scale)
+
+| Concern | Honest v1 shape |
+|---|---|
+| Reliability | Static/MDX lessons; waitlist writes need durable store and dedupe |
+| Scalability | Low traffic; naive paths OK until `n` forces indexes/cache |
+| Maintainability | One Next.js app; avoid extra services until a hypothesis needs them |
+
+Early traffic rewards simplicity. Literacy is knowing which Kleppmann concern fires first when growth or incidents arrive.
+
+## Path into more detail
+
+| If you want… | Start here |
+|---|---|
+| Full DDIA path | Kleppmann: after R/S/M, storage/retrieval, replication, partitioning, derived data |
+| Interview-style system design | Alex Xu *System Design Interview* as drill, not gospel |
+| This track's stack choices | [Why this stack](/learn/engineering/why-this-stack) |
+| Structures under the queries | [DS&A fundamentals](/learn/engineering/cs-fundamentals) |
+
+## Exercise
+
+Pick a product feature that spans more than one box (e.g. "signup → email → first lesson"):
+
+1. Draw the boxes (even as a list).  
+2. Name load parameters and a p95 bar.  
+3. Say what fails if the queue or DB is down.  
+4. Mark one maintainability risk (who can change this?).  
+
+## Check
+
+> Feature ___. Load params: ___. p95 bar: ___. If ___ fails, we degrade by ___. Next change cost risk: ___.
+
+<InlineLessonQuiz slug="engineering/system-design" />
+
+## References
+
+- Martin Kleppmann, *Designing Data-Intensive Applications* (especially reliability, scalability, maintainability; then replication and partitioning as you go deeper)  
+- [DS&A fundamentals](/learn/engineering/cs-fundamentals) for structures and algorithms under each box  
+- [Why this stack](/learn/engineering/why-this-stack) for concrete technology choices on this site  
+
+Previous: [DS&A fundamentals](/learn/engineering/cs-fundamentals). Next: [Why this stack](/learn/engineering/why-this-stack).

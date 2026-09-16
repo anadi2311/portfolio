@@ -11,7 +11,7 @@ export function SiteHeader() {
           <Link href="/learn" className="text-zinc-600 hover:text-black">
             Learn
           </Link>
-          <Link href="/#about" className="text-zinc-600 hover:text-black">
+          <Link href="/about" className="text-zinc-600 hover:text-black">
             About
           </Link>
         </div>

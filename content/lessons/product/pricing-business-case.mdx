@@ -1,0 +1,211 @@
+---
+title: Pricing as a business case
+summary: Price is a hypothesis. Learn value-based pricing, willingness to pay, packaging, and unit economics, then run a one-time, long-lived access case for this site's paid tech depth instead of a monthly subscription.
+audience: Both
+status: published
+order: 9
+---
+
+[Lesson 2](/learn/product/business-objective) left price as a sketch. [Lesson 7](/learn/product/product-led-growth) separated free forever from free-to-paid. This lesson is the **pricing case**: willingness to pay, packaging, structure (one-time vs recurring), and unit economics you can defend.
+
+Price is not a spreadsheet afterthought. <Key>Price is a hypothesis about value.</Key> You test it like any other bet.
+
+## Price follows value (not cost, not vibes)
+
+Three common logics. Only one should lead.
+
+| Logic | Question | Failure mode |
+|---|---|---|
+| **Cost-plus** | What did it cost us + margin? | Ignores what the buyer values |
+| **Competition** | What do peers charge? | Copies someone else's beachhead |
+| **Value-based** | What is the outcome worth to this buyer? | Needs research; worth it |
+
+Madhavan Ramanujam and Georg Tacke's [*Monetizing Innovation*](https://www.simon-kucher.com/en/who-we-are/experts/madhavan-ramanujam) is the modern product book: design the **offer and price** before you finish the product. Feature factories price last and then wonder why conversion is flat.
+
+Thomas Nagle, John Hogan, and Joseph Zale's [*The Strategy and Tactics of Pricing*](https://www.routledge.com/The-Strategy-and-Tactics-of-Pricing/Nagle-Hogan-Zale/p/book/9781032178657) is the classic: segmentation, value communication, price structure, and why "average cost" pricing destroys margin.
+
+Hermann Simon's [*Confessions of the Pricing Man*](https://www.confessionsofthepricingman.com/) shows how companies make pricing decisions. William Poundstone's [*Priceless*](https://www.williampoundstone.net/Priceless.html) covers behavioral traps (anchors, decoys). Rafi Mohammed's [*The Art of Pricing*](https://www.artofpricing.com/) is practical field craft for product and sales teams.
+
+Read them as a spine. Do not quote them as wallpaper on a pricing slide.
+
+## Willingness to pay (WTP)
+
+WTP is a range, not a single number. You learn it with cheap tests before Stripe.
+
+| Method | What you learn | Watch out |
+|---|---|---|
+| **Problem interviews** | Whether the job is worth money at all | Leading with "would you pay $X?" |
+| **Van Westendorp** | Too cheap / bargain / expensive / too expensive bands | Needs enough respondents; not gospel |
+| **Purchase intent / fake door** | Behavior toward a stated price; conversation alone cannot show purchase intent | Honesty gap |
+| **Conjoint / tradeoff** | Which features pull WTP | Expensive; earn it later |
+| **Live price test** | Real conversion | Needs traffic and ethics |
+
+Van Westendorp (price sensitivity meter) is the chart most PMs meet first: four questions that sketch a band. Use it as a **map**, then validate with behavior.
+
+<PricingValueStackDiagram />
+
+## Packaging and structure
+
+Packaging answers: what is free, what is paid, what is bundled.
+
+Structure answers: how money moves over time.
+
+| Structure | Fits when | Weak when |
+|---|---|---|
+| **One-time / long-lived access** | Durable knowledge or a finished artifact; buyer wants ownership | You owe continuous service that grows cost with usage |
+| **Subscription** | Ongoing value, updates, hosting tied to active use, seat expansion | The product is a book of knowledge people finish once |
+| **Usage** | Cost and value track consumption (API calls) | Unpredictable bills scare the beachhead |
+| **Seats** | Value scales with people in an org | Solo buyer; seat games |
+
+**Adobe Creative Cloud** moved from boxed software (one-time) to subscription because the value became continuous cloud + updates. **Basecamp** kept simple, opinionated pricing instead of enterprise maze pricing. Different jobs, different structures.
+
+For a **knowledge product** (lessons, methods, reference), one-time long-lived access often matches the job better than monthly: the buyer pays when they commit to learning, then returns for years without a meter on every reread. Monthly billing fits Netflix-style ongoing entertainment or SaaS that dies when you cancel. It fights "I bought a book of craft."
+
+## Unit economics (the case must close)
+
+Before you publish a price, write the math:
+
+1. **Price** (what the buyer pays)
+2. **Variable cost per buyer** (payments fees, support, bandwidth)
+3. **Contribution** = price − variable cost
+4. **Fixed cost to cover** (hosting, domain, tools for N years)
+5. **Break-even buyers** = fixed cost / contribution
+6. **Demand hypothesis** = how many beachhead buyers in the planning window
+
+If break-even needs a fantasy funnel, the price or the cost is wrong. Change one of them. Do not invent TAM.
+
+### When acquisition starts: cost, lifetime value, and payback
+
+For instance, consider a subscription product charging $30 per month. Each paying customer creates $6 per month in payment, support, and usage costs.
+
+- **Revenue** is the $30 collected before costs.
+- **Contribution dollars** are the money left after variable costs: `$30 - $6 = $24` per customer per month. This money can cover fixed costs and profit.
+- **Contribution margin** is contribution divided by revenue: `$24 ÷ $30 = 80%`. The percentage makes products with different prices easier to compare.
+
+Now add acquisition. **Customer acquisition cost (CAC)** measures how much sales and marketing spend the company used to acquire each new paying customer:
+
+```text
+CAC = sales and marketing spend ÷ new paying customers
+```
+
+If one channel costs $36,000 during a quarter and brings 300 new paying customers, CAC is `$36,000 ÷ 300 = $120`. Keep the spend, customers, channel, and time period aligned. Blending a cheap referral channel with an expensive advertising channel hides where the company loses money.
+
+**Customer lifetime value (LTV)** estimates the contribution a customer will generate before leaving:
+
+```text
+LTV = contribution per period × expected paid lifetime
+```
+
+If customers contribute $24 per month and stay for an estimated 18 months, estimated LTV is `$24 × 18 = $432`. This is an assumption until enough customer cohorts have completed a meaningful part of their lifetime. Calling $540 of lifetime revenue "LTV" would ignore the costs required to serve that customer.
+
+Two comparisons turn those numbers into decisions:
+
+- **CAC payback** asks how long contribution takes to recover acquisition cost: `$120 ÷ $24 = 5 months`. A long payback consumes cash before the company earns its spend back.
+- **LTV:CAC** compares expected lifetime contribution with acquisition cost: `$432 ÷ $120 = 3.6`. The ratio is useful only when both numbers use the same customer segment and honest cost assumptions.
+
+Product stage controls which number deserves trust:
+
+- **Before paid acquisition:** test willingness to pay, pricing comprehension, and purchase intent. You cannot measure observed CAC until the company spends money on acquisition and gains paying customers.
+- **Early paid product:** measure conversion, contribution per purchase, refunds, support cost, and CAC by channel. Treat LTV as a range built from retention assumptions.
+- **After repeat behavior appears:** estimate LTV from customer cohorts, update it as more customers renew or leave, and compare it with CAC and payback.
+
+A pricing experiment should measure economic value rather than celebrate conversion alone. Suppose a $20 offer converts 10% of eligible visitors and leaves $15 contribution per purchase. It creates `$1.50` contribution per eligible visitor. A $30 offer converts 8% and leaves $25 contribution, creating `$2.00` per eligible visitor. Conversion fell, but the second offer funds more value per opportunity. Refunds, later churn, support contacts, and trust remain guardrails.
+
+## Specimen: pricing paid tech depth on this site
+
+### Strategy constraints (from Lesson 3)
+
+- Free PM spine stays free (trust + showcase)
+- Free tech wedge / waitlist first; paid depth only after demand
+- No login wall on free lessons
+- Dual scoreboard: teaching may continue even if paid demand is thin
+
+### The offer we price
+
+**Paid:** long-lived access to the **product engineering** depth (structured tech-for-PMs curriculum beyond the free wedge).
+
+**Not sold monthly.** Knowledge is closer to a book than to a streaming feed. Pay once when the value is clear; keep access for a decade while the site stays up.
+
+**Access window:** **10 years** from purchase (assumption: we keep the portfolio hosted that long; renew the promise in plain language if hosting reality changes).
+
+### Why not $10/month
+
+| Monthly subscription | One-time long-lived |
+|---|---|
+| Implies ongoing drip of new product every month | Matches "I learn the craft; I return when I need it" |
+| Feels like SaaS tax on knowledge | Feels like buying a durable reference |
+| Churn anxiety for both sides | Clear break-even math on hosting |
+| Fights PLG trust on a teaching site | Aligns with free forever PM + paid depth |
+
+Monthly can be right for cohorts, live office hours, or a community that costs every month to run. That is a different offer. This specimen is **curriculum access**, not a membership club.
+
+### Price hypothesis: **$49 one-time** (10-year access)
+
+Not $10 forever-access if we want hosting covered without heroic volume. Not $199 before waitlist proof. **$49** sits in the band we already floated on the waitlist WTP probe (~$50) and clears a sober cost case.
+
+Illustrative economics (assumptions; update when real costs land):
+
+| Line | Assumption |
+|---|---|
+| Hosting + domain + basic tools | **$20 / month** → **$2,400 over 10 years** |
+| Stripe-ish fee | ~3% + $0.30 → ~**$1.80** per $49 sale |
+| Support / refunds reserve | **$3** per buyer (assumption) |
+| Variable cost per buyer | ~**$5** |
+| Contribution per buyer | $49 − $5 = **$44** |
+| Break-even buyers (hosting only) | $2,400 / $44 ≈ **55 buyers** |
+| Demand hypothesis | From waitlist: if **400** non-friend waitlist joins and **15%** convert → **60** buyers → covers 10-year hosting with a thin cushion |
+
+If conversion is 10% you need ~550 waitlist joins or a higher price. If hosting is $10/month, break-even drops. **Write the real numbers when you have invoices.** The method stays: fixed cost ÷ contribution = buyers you must earn.
+
+$19 one-time is possible as a "tip jar" price; break-even jumps to ~140+ buyers at the same costs. $79 raises contribution and lowers break-even if WTP holds. Start with the waitlist WTP question, then A/B only when traffic is honest ([Lesson 8](/learn/product/product-analytics-gtm)).
+
+<PricingOneTimeEconomicsDiagram />
+
+### Case narrative (eight lines)
+
+1. **Buyer:** PM without eng depth who finished free trust lessons and wants structured tech depth.
+2. **Job:** stack literacy for reviews, timelines, MVPs/POCs.
+3. **Offer:** one-time $49 for ~10 years of paid tech curriculum access.
+4. **Why not monthly:** knowledge product; ownership over meter.
+5. **Cost case:** ~$2,400 hosting over 10 years; ~55 buyers at $49 cover it.
+6. **Demand gate:** waitlist + WTP probe before Stripe ([Lesson 4](/learn/product/experiments)).
+7. **Guardrails:** free PM spine stays free; no dark patterns on the waitlist.
+8. **Kill:** if non-friend WTP is near zero, keep free teaching; do not invent a price from vanity clicks.
+
+## Common mistakes
+
+| Mistake | What is happening |
+|---|---|
+| Price the product after build | Monetizing Innovation failure mode |
+| Cost-plus only | Buyer does not care about your AWS bill |
+| Monthly by default | Structure fights the job (knowledge vs stream) |
+| $0 or $999 with no WTP | Avoidance or vanity |
+| Ignore payment fees and support | Fake contribution margin |
+| Use lifetime revenue as LTV | Serving costs disappear from the calculation |
+| Blend every channel into one CAC | An expensive channel hides behind referrals or organic traffic |
+| Extrapolate years of LTV from one month | A fragile retention assumption looks like observed value |
+| Compare CAC and LTV from different segments or periods | The ratio combines customers with different economics |
+| Paywall the free trust layer | Breaks Lesson 3 refusals |
+
+## Before you go on
+
+1. Write the **value** in one sentence for your beachhead buyer.
+2. Pick **structure**: one-time, subscription, usage, or seats, and why.
+3. Draft a **Van Westendorp or waitlist WTP** question (no live charge yet).
+4. Fill the **unit economics** six lines (price, variable cost, contribution, fixed cost, break-even, demand hypothesis).
+5. Name what stays **free** so trust does not collapse.
+6. If paid acquisition exists, calculate contribution margin and CAC by channel. Estimate LTV and payback with the assumptions written beside them.
+
+<InlineLessonQuiz slug="product/pricing-business-case" />
+
+## References
+
+- Madhavan Ramanujam & Georg Tacke, [*Monetizing Innovation*](https://www.simon-kucher.com/en/who-we-are/experts/madhavan-ramanujam)
+- Thomas Nagle, John Hogan & Joseph Zale, [*The Strategy and Tactics of Pricing*](https://www.routledge.com/The-Strategy-and-Tactics-of-Pricing/Nagle-Hogan-Zale/p/book/9781032178657)
+- Hermann Simon, [*Confessions of the Pricing Man*](https://www.confessionsofthepricingman.com/)
+- William Poundstone, [*Priceless: The Myth of Fair Value*](https://www.williampoundstone.net/Priceless.html)
+- Rafi Mohammed, [*The Art of Pricing*](https://www.artofpricing.com/)
+- Van Westendorp price sensitivity meter (classic WTP band method)
+- Wes Bush, [*Product Led Growth*](https://www.productled.com/product-led-growth-book) (free vs paid packaging)
+
+Previous: [Product analytics and GTM](/learn/product/product-analytics-gtm). Next: [Product sense, taste, and AI](/learn/product/product-sense-and-ai).

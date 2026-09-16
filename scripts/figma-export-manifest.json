@@ -1,5 +1,17 @@
 {
   "fileKey": "iottVWFVm1cG4lbEFoqkVY",
   "fileUrl": "https://www.figma.com/design/iottVWFVm1cG4lbEFoqkVY/Temporary",
-  "frames": []
+  "frames": [
+    { "nodeId": "18:2", "slug": "big-o-growth" },
+    { "nodeId": "18:17", "slug": "structure-lookup" },
+    { "nodeId": "18:45", "slug": "feature-to-algorithm" },
+    { "nodeId": "18:77", "slug": "performance-outcomes" },
+    { "nodeId": "19:2", "slug": "ddia-three-concerns" },
+    { "nodeId": "19:19", "slug": "latency-percentiles" },
+    { "nodeId": "19:35", "slug": "queue-vs-stack" },
+    { "nodeId": "19:58", "slug": "index-vs-scan" },
+    { "nodeId": "20:2", "slug": "dsa-pattern-map" },
+    { "nodeId": "22:2", "slug": "recursion-to-dp" },
+    { "nodeId": "22:58", "slug": "lsm-vs-btree" }
+  ]
 }

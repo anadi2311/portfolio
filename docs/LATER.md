@@ -9,6 +9,7 @@ Spec for what is in v1: [PRODUCT.md](PRODUCT.md).
 - **Cite sources in every lesson.** Books, Substack posts, and articles that a claim came from go in a References / Further reading list, named so a reader can find them. Do not quote chapters.
 - **Import minimal UI skill.** [MengTo/skills](https://github.com/MengTo/skills) `web-design/landing-page` (or tailwindcss) for landing polish when we do a design pass. Keep pages minimal: one headline, one proof line, no filler sections.
 - **Experiments lesson diagrams.** Shipped: `hypothesis-before-build`, `product-kata`, `opportunity-solution-tree`. Delete Temporary frames after commit if desired.
+- **AI evals for PMs.** Add a PM-facing section or lesson explaining why probabilistic AI features need repeatable evaluations before launch and after model, prompt, tool, or data changes. Define evaluation sets, expected answers, scoring rubrics, human review, model-as-judge, offline evals, online experiments, regression tests, hallucination checks, safety checks, latency, and cost. Show how a PM turns the customer promise into test cases and release thresholds, then connects eval scores to product outcomes rather than treating model accuracy as the final metric. Use a worked feature example and cite the relevant Lenny's Newsletter sources instead of attributing the idea to Lenny in general.
 
 ## Design (branding / Figma lessons)
 
@@ -34,6 +35,7 @@ After the PM spine.
 
 - **Why this stack:** Next.js (App Router) for the product shell; Fumadocs for Learn markdown we can restyle. Specimen, not a shopping list.
 - Then: frontend, APIs, data, hosting, identity when paid exists.
+- **Deploy on Cloudflare (and own a domain).** Lesson or specimen walkthrough once the site is ready to leave localhost: why Cloudflare (or similar edge host) matters for a public product (global CDN, HTTPS, DNS in one place); how to deploy this Next app there; how DNS works at a PM level (what an A record vs a **CNAME** does); buying or pointing a custom domain so `yourname.com` resolves to the deploy. Include failure modes (SSL pending, wrong CNAME target, apex vs `www`). Do not start until the hosting lesson slot on the rail is open.
 
 ## Product (undecided, still open)
 

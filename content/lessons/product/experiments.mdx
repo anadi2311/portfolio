@@ -34,8 +34,6 @@ Same job, three pictures. Use all three without turning them into competing reli
 
 <ProductKataDiagram />
 
-### Opportunity Solution Tree
-
 Teresa Torres's [*Continuous Discovery Habits*](https://www.producttalk.org/continuous-discovery-habits/) draws a tree: **outcome** at the top, **opportunities** (customer needs) below, **solutions** under an opportunity, **experiments** under a solution. You do not brainstorm features into a backlog. You climb down the tree until the next test is obvious.
 
 <OpportunitySolutionTreeDiagram />
@@ -107,15 +105,13 @@ After cards pass, the PM writes a short **now / next / later**:
 
 [From MVP to weekly scope](/learn/product/mvp-weekly-scope) teaches how to cut **Now** into a week of delivery. This lesson stops at: do not invent that list until the hypothesis earned it.
 
-### This site
-
-You do not start with "auth, Stripe, certificates, twelve engineering lessons" as the roadmap. Strategy refused most of that for now. Experiments test **beachhead tech demand** (free tech starts, waitlist) and keep the free PM spine as trust. The MVP is whatever makes the free tech wedge and demand signal real: first free tech lessons, thin waitlist, instrumentation, outreach. Payment enters only after demand funds packaging.
+On this site, you do not start with "auth, Stripe, certificates, twelve engineering lessons" as the roadmap. Strategy refused most of that for now. Experiments test **beachhead tech demand** (free tech starts, waitlist) and keep the free PM spine as trust. The MVP is whatever makes the free tech wedge and demand signal real: first free tech lessons, thin waitlist, instrumentation, outreach. Payment enters only after demand funds packaging.
 
 ## Form the hypothesis
 
 A hypothesis is a claim specific enough that evidence can kill it. [Lesson 1](/learn/product/how-pm-begins) named the step. [Lesson 2](/learn/product/business-objective) put **hypothesis seeds** in the business case. Here you finish the seed into a testable card.
 
-### Template
+### The six-line card
 
 Write all six lines:
 
@@ -161,7 +157,7 @@ An **A/B test** assigns comparable eligible customers to a control experience or
 
 Do not replace a flat primary metric with a rising diagnostic after seeing results. The preview can attract clicks without creating more qualified demand.
 
-### Strong vs weak
+### Strong and weak hypotheses side by side
 
 | Weak | Strong |
 |---|---|
@@ -171,7 +167,7 @@ Do not replace a flat primary metric with a rising diagnostic after seeing resul
 
 Perri's seller-portal vignette in *Escaping the Build Trap* is the classic miss: a team ships dashboards and workflows while the outcome (daily revenue the seller can act on) does not move. The weak hypothesis was "sellers need more tools." The strong one names the behavior and the scoreboard.
 
-### Cases
+### Three hypotheses that lived or died
 
 **Dropbox**, early: Drew Houston's demo video tested demand for sync before the full product existed. Signups answered the belief "people will want this enough to join a waitlist." Production sync followed the signal.
 
@@ -185,7 +181,7 @@ Product experiments are <Key>decision tools</Key>, not science-fair proofs. You 
 
 Perri's Product Kata asks for the **next** experiment toward a target condition, then a comparison of expected vs actual. The test earns its keep when it changes what the team does next week.
 
-### Bar for a good experiment
+### The bar every experiment must clear
 
 Write yes on every line before you start:
 
@@ -207,7 +203,7 @@ The goal of week-one discovery is direction. The goal of a later A/B is confiden
 
 The same company uses different experiments at different stages. <Key>Stage picks the instrument</Key>. A 0→1 bet needs viability and value tests. A live product with traffic can run A/B and data-science-grade experiments. Copying Booking.com's experimentation stack onto a twelve-person startup burns months. Running only coffee chats when you have millions of weekly users leaves causal questions on the table.
 
-### Stage map
+### Which instrument fits which stage
 
 | Stage | What you are unsure about | Experiments that fit | Experiments that waste time |
 |---|---|---|---|
@@ -243,9 +239,7 @@ Growth and analytics PMs live here most of the week. They return to interviews w
 
 A mature app can run **platform A/B** on checkout and **0→1 discovery** on a new persona in the same quarter. Do not force one instrument on both clocks. Tag the card with the stage of **the bet**, not the age of the company.
 
-### This site today
-
-This product is early: public lessons, thin traffic, no login wall on free lessons. Fit: interviews, free-tech starts, waitlist, PM-spine completion as trust. Not fit yet: multi-variate pricing A/B or a data-science experimentation platform. When free-tech volume is steady and events are clean, A/B on lesson structure becomes honest. Until then, lean cards beat fake rigor.
+This product is early today: public lessons, thin traffic, no login wall on free lessons. Fit: interviews, free-tech starts, waitlist, PM-spine completion as trust. Not fit yet: multi-variate pricing A/B or a data-science experimentation platform. When free-tech volume is steady and events are clean, A/B on lesson structure becomes honest. Until then, lean cards beat fake rigor.
 
 ## Ways to run the experiment
 
@@ -294,7 +288,7 @@ That order keeps you lean. Reversing it (ship a full track, then ask why nobody 
 
 Roles below assume a small product team. Titles vary. The ownership does not.
 
-### Product manager
+**Product manager**
 
 - Writes the six-line hypothesis card and the decision the test will unlock.
 - Names sample, success, and stop **before** kickoff.
@@ -306,7 +300,7 @@ Roles below assume a small product team. Titles vary. The ownership does not.
 - Protects the team from turning every stakeholder request into a parallel "experiment."
 - Escalates to the GM when a popular idea fails the stop rule.
 
-### Designer
+**Designer**
 
 - Turns the belief into something a human can react to: script prompts, prototype frames, fake-door label, empty state, waitlist confirmation.
 - Keeps fidelity matched to the risk (ugly sketch for problem fit; clearer UI for usability).
@@ -314,7 +308,7 @@ Roles below assume a small product team. Titles vary. The ownership does not.
 - Flags when the CTA over-promises (ethics and trust).
 - Hands engineering a thin, buildable path, not a vision deck.
 
-### Engineer
+**Engineer**
 
 - Builds the **smallest** instrumentation or path that makes the metric real: route, click event, waitlist form, feature flag, cohort tag.
 - Estimates whether the "one week" test fits; pushes back when the brief is a quarter of platform work in disguise.
@@ -322,22 +316,20 @@ Roles below assume a small product team. Titles vary. The ownership does not.
 - Owns data quality at the event layer (no duplicate fires, no lost waitlist rows).
 - Implements the kill switch: turn the fake door off, remove the flag, archive the prototype.
 
-### Data / analytics (or the PM wearing that hat)
+**Data and analytics**, or the PM wearing that hat
 
 - Defines the metric in one sentence and where it is counted.
 - Checks sample validity (friends vs beachhead, bots, internal traffic).
 - Says when an A/B is underpowered and recommends a cheaper design instead.
 - Delivers a one-pager at the time box: expected vs actual, decision options.
 
-### Founder / GM
+**Founder or GM**
 
 - Sets the objective / OKR the kata serves.
 - Gives air cover to kill a loud idea.
 - Does not override a failed stop rule with "ship it anyway" without rewriting the strategy memo.
 
-### Who does not own the experiment
-
-Sales does not redefine success mid-test to protect a deal. Marketing does not change the CTA copy without updating the hypothesis card. Engineering does not expand scope into a platform rewrite "while we are here."
+**Nobody else owns the experiment.** Sales does not redefine success mid-test to protect a deal. Marketing does not change the CTA copy without updating the hypothesis card. Engineering does not expand scope into a platform rewrite "while we are here."
 
 ## Sample, success, stop, and how many
 
@@ -386,7 +378,7 @@ The pain: "I cannot follow the eng conversation, judge the timeline, or trust AI
 
 **Intuition you want:** a coded list of top jobs. If "lack eng knowledge" is the common thread **without you planting it**, the free tech wedge has a problem worth solving. If the common thread is "my CEO changes priority every Monday," you are solving the wrong product.
 
-### Card 2: waitlist / tech interest (before the curriculum)
+### Card 2: waitlist before the curriculum
 
 **Demand hypothesis (not payment, not twelve lessons yet):** beachhead PMs will raise a hand for structured tech depth on this product. This card runs **before** you ship free tech lessons. It does **not** ship Stripe.
 
@@ -399,7 +391,7 @@ The pain: "I cannot follow the eng conversation, judge the timeline, or trust AI
 
 **Who:** PM owns N and the follow-up. Designer owns waitlist states. Engineer owns form, store, friends vs public tag. Data validates bots.
 
-### Card 3: free tech wedge on the live product
+### Card 3: the free tech wedge
 
 1. **We believe** beachhead PMs (especially waitlist members)
 2. **will** start (and often finish) a free tech lesson on this site
@@ -428,7 +420,7 @@ The pain: "I cannot follow the eng conversation, judge the timeline, or trust AI
 5. **Cheapest test:** one home page, both tracks; measure PM completion with tech entry present
 6. **If wrong:** tech messaging is crowding out trust; rewrite home copy before you kill the PM spine
 
-### Card 6: pin two on the same home page
+### Card 6: pin two on one home page
 
 1. **We believe** engineers learning PM
 2. **will** find the PM spine credible without a second site
@@ -437,7 +429,7 @@ The pain: "I cannot follow the eng conversation, judge the timeline, or trust AI
 5. **Cheapest test:** one home page, one spine, optional track choice; measure completion by self-tagged audience
 6. **If wrong:** revisit dual-audience copy before you split products
 
-### Order for this product
+### The order we ran them
 
 Run **Card 1** and **Card 2** on the critical path (pain + **waitlist before curriculum**). Run **Card 3** after waitlist (or interviews) earn the first free tech lessons. **Card 4** checks capture. **Card 5** is the trust guardrail. **Card 6** is pin two. Pricing depth stays in the pricing lesson after waitlist data exists.
 
@@ -466,7 +458,7 @@ Run **Card 1** and **Card 2** on the critical path (pain + **waitlist before cur
 | Fake door that charges money on the free spine | Strategy refusal broken |
 | Testing a refused strategy as a side quest | Strategy and discovery fighting each other |
 
-## Before you go on
+## Exercise
 
 Pick one belief inside a product you know. Fill the six-line card. Then answer:
 
@@ -481,6 +473,12 @@ Pick one belief inside a product you know. Fill the six-line card. Then answer:
 9. If this card passes, what thin scope would enter **Now** on a now/next/later board (not a twelve-feature roadmap)?
 
 If you cannot name the stop rule, you are not ready to ask engineering for time. If you hold a dated feature roadmap and no hypothesis cards, start by turning each near-term feature into a belief or deleting it.
+
+## Check
+
+Finish this sentence with specifics:
+
+> We believe ___ will ___ because ___. We will know we are right when ___ moves from ___ to ___ within ___, while ___ stays within ___. The cheapest test is ___. If we are wrong we will ___.
 
 <InlineLessonQuiz slug="product/experiments" />
 

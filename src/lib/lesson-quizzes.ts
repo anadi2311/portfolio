@@ -423,7 +423,7 @@ export const LESSON_QUIZZES: Record<string, LessonQuiz> = {
       {
         id: "load",
         label:
-          "Load parameters, a p95 bar, the freshness rule, what we show when a box is down, and appetite",
+          "Load parameters, p95, freshness, degrade behavior, architecture style, SLO, and appetite",
       },
       {
         id: "brand",
@@ -439,12 +439,107 @@ export const LESSON_QUIZZES: Record<string, LessonQuiz> = {
       },
     ],
     correctOptionId: "load",
-    successMessage: "Great. Next is why this stack.",
+    successMessage: "Great. Next is the stack for the app.",
     nextLessonHref: "/learn/engineering/why-this-stack",
-    nextLessonLabel: "Eng 4 · Why this stack",
+    nextLessonLabel: "Eng 4 · The stack for the app",
     readAgainHref: "/learn/engineering/system-design#lesson-top",
     readAgainHint:
-      "Re-read reliability, scalability, and maintainability, then the design-review script.",
+      "Re-read load parameters, architecture styles, SLOs, and the design-review script.",
+  },
+  "engineering/why-this-stack": {
+    lessonHeading: "Eng 4 · The stack for the app",
+    question:
+      "A PM hears eng debate Rails vs Go vs Next for a new product. What should decide the stack?",
+    options: [
+      {
+        id: "jobs",
+        label:
+          "The user job, team size, what must be correct vs what must ship, and what the team can maintain",
+      },
+      {
+        id: "hackernews",
+        label: "Whatever language ranked highest on Hacker News this month",
+      },
+      {
+        id: "mern",
+        label: "Always MERN, including Mongo, because it is a complete acronym",
+      },
+      {
+        id: "rust",
+        label: "Rust for every MVP so the resume looks strong",
+      },
+    ],
+    correctOptionId: "jobs",
+    successMessage: "Great. Next is frontend.",
+    nextLessonHref: "/learn/engineering/frontend",
+    nextLessonLabel: "Eng 5 · Frontend",
+    readAgainHref: "/learn/engineering/why-this-stack#lesson-top",
+    readAgainHint:
+      "Re-read how to choose, the stack families, and the specimen for this Learn site.",
+  },
+  "engineering/frontend": {
+    lessonHeading: "Eng 5 · Frontend",
+    question:
+      "This site’s cinematic home uses a client component, breakpoints, and a GSAP cuboid. Which review question matches how it was built?",
+    options: [
+      {
+        id: "accept",
+        label:
+          "What is the first-viewport job, which widths change nav and pathways, what runs only in the browser, and what happens under reduced motion?",
+      },
+      {
+        id: "webgl",
+        label: "Start in Three.js so the brand feels premium from day one",
+      },
+      {
+        id: "screenshot",
+        label:
+          "Paste a screenshot into an AI tool and ship the output as the design system",
+      },
+      {
+        id: "pixels",
+        label:
+          "Comment only on pixel spacing and leave empty, loading, and error states to QA",
+      },
+    ],
+    correctOptionId: "accept",
+    successMessage: "Great. Next is APIs.",
+    nextLessonHref: "/learn/engineering/apis",
+    nextLessonLabel: "Eng 6 · APIs",
+    readAgainHref: "/learn/engineering/frontend#lesson-top",
+    readAgainHint:
+      "Re-read the cinematic home specimen: layers, breakpoints, client state, and the cuboid.",
+  },
+  "engineering/apis": {
+    lessonHeading: "Eng 6 · APIs",
+    question:
+      "In an API review, which brief lets eng choose between REST, gRPC, GraphQL, and webhooks?",
+    options: [
+      {
+        id: "caller",
+        label:
+          "Who the caller is, payload and p95 appetite, what a retry must not do, and whether this is pull or push",
+      },
+      {
+        id: "grpc",
+        label: "Pick gRPC because it is faster and more modern",
+      },
+      {
+        id: "endpoints",
+        label: "The number of endpoints on the wiki",
+      },
+      {
+        id: "json",
+        label: "Always JSON in the browser, for every internal call too",
+      },
+    ],
+    correctOptionId: "caller",
+    successMessage: "Great. Next is auth and identity.",
+    nextLessonHref: "/learn/engineering/auth-identity",
+    nextLessonLabel: "Eng 7 · Auth and identity",
+    readAgainHref: "/learn/engineering/apis#lesson-top",
+    readAgainHint:
+      "Re-read who the caller is, the four styles, and the API-review questions.",
   },
 };
 

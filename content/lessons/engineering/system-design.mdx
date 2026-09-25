@@ -1,6 +1,6 @@
 ---
 title: "System design: reliability, scale, and how pieces fit"
-summary: "Kleppmann's reliability, scalability, and maintainability in product words, then how caches, databases, queues, and APIs compose when features leave a single process."
+summary: "Reliability, scalability, and maintainability in product words, then the whole design surface: sizing load, architecture styles, replication and partitioning, batch and streaming pipelines, operating with SLOs, and shipping platform products engineers choose to adopt."
 audience: Both
 status: published
 order: 3
@@ -8,37 +8,42 @@ order: 3
 
 [DS&A fundamentals](/learn/engineering/cs-fundamentals) covered structures and algorithms inside a problem. **System design** is what happens when the product spans many machines, data stores, and failure modes. The feature still has an `n`. Now load, faults, and human change cost sit in the room with you.
 
-This lesson starts with Martin Kleppmann's lens from *Designing Data-Intensive Applications* (DDIA): **reliability**, **scalability**, and **maintainability**. Then it maps the building blocks PMs hear in design reviews: caches, databases, queues, and APIs. **Optional details** panels hold mechanisms. We point into DDIA chapters instead of pasting them.
+One hash map in one process is a decision a single engineer makes in an afternoon. A product that stores millions of sessions, fans out notifications, feeds a warehouse, survives a dead disk, and lets forty engineers deploy without coordinating is a decision a team lives inside for years. The choices are less about cleverness and more about what you are willing to pay: in latency, in money, in operational pain, and in the cost of changing your mind later.
 
 **Who this is for**
 
-- **PMs:** brief eng with load parameters, percentile latency, degrade behavior, and appetite.
-- **Engineers learning the PM side:** tie every box on the whiteboard to a scoreboard risk.
+- **Engineers** facing design reviews and design interviews. The vocabulary here is what the whiteboard runs on, and the decision frames are what separates a defensible answer from a pile of boxes.
+- **PMs on platform, infrastructure, and API products**, where the customer is another engineer and the roadmap is made of quotas, latency promises, deprecations, and migration cost you impose on people who did not ask for it.
+- **PMs on any product**, who need to brief engineering with load parameters, percentile latency, degrade behavior, and appetite instead of "make it fast."
 
-Previous: [DS&A fundamentals](/learn/engineering/cs-fundamentals). Next: [Why this stack](/learn/engineering/why-this-stack).
+Martin Kleppmann's *Designing Data-Intensive Applications* (DDIA) supplies the spine for the data chapters. **Optional details** panels hold mechanisms, so the product argument stays readable if you skip them. Where a technology deserves a full treatment of its own, later lessons on this track take it, and this lesson stops at the decision that picks it.
 
 ## From one algorithm to a system
 
-A single hash map in one process is a DS&A choice. A product that stores millions of sessions, fans out notifications, and survives a dead disk is a **system**. Eng draws boxes: clients, API, cache, primary DB, replicas, workers, queue, search.
+Eng draws boxes: clients, API, cache, primary DB, replicas, workers, queue, search. Your job in that review is to say what the user must feel, how much load the feature carries, what happens when one of those boxes dies, which architecture you are buying and why, and how expensive the next change will be.
 
-Your job in that review is not to pick Redis vs Memcached by brand. It is to name:
+Four forces push a design away from the simple version. Name which force is pushing before you add a box:
 
-1. What the user must feel (activation, pay, trust)  
-2. What `n` and load look like  
-3. What happens when a box dies  
-4. How expensive the next change will be  
+- **Load.** More users, more data, or more requests per user than the current shape survives.
+- **Latency.** The answer is correct but arrives too late to be worth having.
+- **Blast radius.** One failure takes down more of the product than the business can accept.
+- **Team throughput.** The code works, but too many people need to touch the same thing to ship.
 
-## Three words from Kleppmann
+Only the first two are about computers. The last two are about money and organizations, which is why senior engineers and platform PMs end up in the same arguments. A system that is technically elegant and impossible to deploy on Fridays is a failed design.
 
-When engineers say "data-intensive," they often mean the hard part is not the UI. The hard part is keeping data **correct**, serving it under **growing load**, and letting humans **change** the system without heroics. Kleppmann opens DDIA with three concerns.
+<Key>Every architecture decision is a purchase.</Key> You spend complexity to buy latency, isolation, or independence. The failure mode is paying without knowing what you bought.
+
+## Three concerns behind every design review
+
+Engineers call a product data-intensive when keeping data **correct**, serving it under **growing load**, and letting humans **change** the system without heroics is the work. Kleppmann opens DDIA with those three concerns.
 
 <DdiaThreeConcernsDiagram />
 
 ### Reliability
 
-**Plain English:** the system keeps doing the right thing when something goes wrong: machine dies, network blips, bad deploy, disk full, human error.
+Reliability means the system keeps doing the right thing when something goes wrong: a machine dies, the network blips, a bad deploy ships, a disk fills, or a person deletes the wrong table.
 
-**Product translation:** trust and support load. Users forgive a slow day more than silent data loss. Double charges, vanished progress, and dropped waitlist emails are reliability failures. They show up as tickets, chargebacks, and churn.
+That is a trust and support problem. Users forgive a slow day more than silent data loss. Double charges, vanished progress, and dropped waitlist emails are reliability failures. They show up as tickets, chargebacks, and churn.
 
 | Fault type | Everyday example | Product smell |
 |---|---|---|
@@ -54,21 +59,27 @@ Reliable systems **expect** faults. They recover or degrade. Unreliable systems 
 
 Words you will hear: retries (careful with double side effects), **idempotent** writes (retrying pay must not charge twice), backups, redundancy, graceful degradation (read-only mode, cached homepage).
 
-**PM question:** "If this path is down, what do we show, what do we log, and what money or trust is at risk?"
+Ask in the room: if this path is down, what do we show, what do we log, and what money or trust is at risk?
 
 </TechDepth>
 
 ### Scalability
 
-**Plain English:** if load grows, can latency and cost stay acceptable by adding resources in a planned way, or does the design fall over?
+Scalability asks whether latency and cost stay acceptable as load grows, by adding resources in a planned way, or whether the design falls over.
 
-**Load is not one number.** Describe load with **parameters** that match the product:
+Engineers say "scale" and people hear "more users." That is the wrong unit. A million people who open one cached homepage are a different machine problem than ten thousand people who each write a comment, and a different problem again than fifty people who each export a million-row spreadsheet. **Load** is the mix of work the system has to do, described with numbers that match the product, not with a single headcount.
 
-- reads per second on the lesson page  
-- writes per second to the waitlist  
-- read/write ratio  
-- peak concurrent users on launch day  
-- size of the hot working set  
+A **read** is a request that looks up data without changing it: opening a lesson, loading a profile, showing search results. A **write** is a request that changes stored data: joining a waitlist, posting a comment, recording a payment. Those two kinds of work stress different parts of the system. Reads can be served from copies. Writes have to land in one place that stays correct.
+
+Describe load with parameters that match the product in front of you:
+
+- **Reads per second** on the hot path. For this Learn site, that is how many times a lesson page is opened each second. A popular lesson at 9am is a read problem. Adding a new waitlist row is not.
+- **Writes per second** on the path that changes data. For this site, that is how many people join the waitlist each second. Those writes are rarer than reads, and more expensive, because each one must be stored durably and must not double-count.
+- **Read/write ratio**, the number of reads for each write. A lesson catalog might see a hundred page opens for every waitlist join. A chat product might see one write for every read. The first shape can hide behind copies of the data. The second shape needs a write path that does not fall over when traffic spikes.
+- **Peak concurrent users**, how many people are using the product at the same moment, not how many visited this month. Launch day, a tweet, or a TV mention can put a week's traffic into ten minutes. Average daily users hide that spike, and the spike is what breaks the site.
+- **Size of the hot working set**, the slice of data being touched right now. Picture a library with a million books and fifty people browsing the new-releases shelf. Memory and cache need to fit the shelf, not the whole building. On this site, the working set is the live lessons and recent waitlist rows, not every draft ever written.
+
+A brief that says "we will have lots of users" cannot be designed against. A brief that says "p95 lesson load under 400ms at 200 reads per second, waitlist writes under 20 per second, hot catalog about 500 lessons" can.
 
 **Then describe performance with percentiles**, not only averages. The average can look fine while the worst 5% have a terrible day.
 
@@ -80,7 +91,7 @@ Words you will hear: retries (careful with double side effects), **idempotent** 
 
 <LatencyPercentilesDiagram />
 
-**Named scene: Twitter fan-out (DDIA classic, simplified).** When someone posts, push into every follower's timeline at write time, or pull from people you follow at read time? Write cost vs read latency vs celebrity accounts. The PM stake is "home feed feels instant" vs "posting must not melt the write path."
+For instance, take Twitter's home feed. When someone posts, the system can push that post into every follower's timeline at write time, or pull from the people you follow at read time. Write cost, read latency, and celebrity accounts pull in different directions. The product question is whether the home feed feels instant, or whether posting melts the write path.
 
 <TechDepth>
 
@@ -88,13 +99,13 @@ Words you will hear: retries (careful with double side effects), **idempotent** 
 
 **Why averages lie.** Ninety-nine requests at 50ms and one at 10 seconds still averages "okay" while one user had a disaster.
 
-**PM brief line:** "p95 lesson load under 400ms at 10× current daily starts; degrade to cached list if ranking is down."
+A brief that works sounds like: p95 lesson load under 400ms at 10× current daily starts; degrade to a cached list if ranking is down.
 
 </TechDepth>
 
 ### Maintainability
 
-**Plain English:** can humans operate and change this system without heroics?
+Maintainability asks whether humans can operate and change this system without heroics.
 
 Kleppmann's three habits:
 
@@ -102,106 +113,470 @@ Kleppmann's three habits:
 2. **Simplicity:** can a new engineer understand it? Accidental complexity burns roadmap.  
 3. **Evolvability:** can you change the product later without a rewrite?  
 
-**Product translation:** maintainability is the cost of the next feature. A clever path only one engineer understands is schedule risk. "Ship naive this week; replace when `n` forces us" is often right, if you name the kill criteria.
+That is the cost of the next feature. A clever path only one engineer understands is schedule risk. "Ship naive this week; replace when `n` forces us" is right, if you name the kill criteria.
 
 <TechDepth>
 
 Accidental complexity is complexity the problem did not require. Essential complexity is real business rules (pricing, permissions, tax). PMs create accidental complexity when they demand five special cases with no default path.
 
-**PM question:** "If the author of this path leaves, can someone else change the ranking rule in a week?"
+Ask in the room: if the author of this path leaves, can someone else change the ranking rule in a week?
 
 </TechDepth>
 
+## Sizing the system before you design it
+
+Most bad designs are not wrong about computers. They are wrong about how much work there is. A team argues for a distributed queue to handle a job that runs eleven times an hour, or puts a single database behind a write path that will see forty thousand inserts a second on launch day. Both mistakes come from skipping five minutes of arithmetic.
+
+Engineers call this **back-of-the-envelope estimation**, and it is the first thing a design interviewer looks for. Platform PMs need the same habit for a different reason: the estimate is what tells you whether a feature costs a week or a quarter, and whether it costs fifty dollars a month to run or fifty thousand.
+
+### The numbers worth knowing by heart
+
+Two sets of numbers make estimation fast. The first is how long operations take, in orders of magnitude rather than precise figures. What matters is the size of the gaps between them.
+
+| Operation | Rough time | What it means in practice |
+|---|---|---|
+| Read from main memory | ~100 nanoseconds | Effectively free. Millions per second per core. |
+| Read randomly from an SSD | ~100 microseconds | About a thousand times slower than memory, still fast enough for most requests. |
+| Round trip across a data center network | ~0.5 milliseconds | Cheap once, expensive if a single request makes two hundred of them. |
+| Seek on a spinning disk | ~10 milliseconds | A hundred times slower than SSD. This is why databases fight to avoid random disk reads. |
+| Round trip between continents | ~150 milliseconds | Physics, not engineering. No amount of optimization removes it, which is why CDNs and regional deployments exist. |
+
+The practical lesson sits in the last two rows. A feature that makes one cross-continent call feels fine. A feature that makes ten sequential cross-continent calls is a second and a half of waiting, and no database tuning will fix it. A page that feels slow while the queries look fast has too many round trips.
+
+The second set is capacity. A single ordinary server handles thousands of simple requests per second. A single well-indexed relational database handles tens of thousands of simple reads per second when the working set fits in memory, and far fewer when it does not. An in-memory store like Redis handles hundreds of thousands of simple operations per second. These are rough ceilings, and the point of knowing them is to recognize when a proposal is nowhere near a limit, which is most of the time.
+
+### Running the estimate
+
+The method is four numbers, each derived from the one before it. Useful conversions: a day is about 86,400 seconds, which rounds to 100,000 for mental math, and a month is about 2.5 million seconds.
+
+1. **Requests per second.** Divide the daily volume by 86,400 for the average, then multiply by three to five for the peak. Traffic is never flat; it clusters in working hours and around launches.
+2. **Storage growth.** Multiply the write volume by the size of one record, then by the retention window. Multiply again by the replica count, because three copies of the data cost three times the disk.
+3. **Bandwidth.** Multiply requests per second by the payload size. Images, video, and exports drive that number, and cloud providers charge for data leaving their network.
+4. **Working set.** Estimate how much of the data is hot, meaning read enough that it should live in memory. If the hot set fits in RAM, the design is easy. If it does not, you are choosing which misses are acceptable.
+
+For instance, take a product-analytics ingest service, the kind of pipeline the later sections of this lesson build on. Suppose customer applications send **20 million events per day**, each event about **1 kilobyte** of JSON, retained for **a year**, with **three copies** for durability.
+
+```text
+Average writes:  20,000,000 ÷ 86,400        ≈ 230 events/second
+Peak writes:     230 × 3                    ≈ 700 events/second
+Raw per day:     20,000,000 × 1 KB          ≈ 20 GB/day
+Raw per year:    20 GB × 365                ≈ 7.3 TB/year
+With 3 copies:   7.3 TB × 3                 ≈ 22 TB/year
+Ingest bandwidth: 230 × 1 KB                ≈ 230 KB/second
+```
+
+Read those results before designing anything. Seven hundred writes per second is unremarkable; a single node can absorb it, so the ingest path does not need a distributed queue to survive. The bandwidth is a rounding error. **22 terabytes a year** is a storage and cost problem. Throughput is already fine.
+
+That reframes the whole design. The interesting questions become how long raw events must be kept, whether older data can be rolled up into summaries, and whether the query side can read compressed columns instead of whole rows. Now suppose five hundred people open dashboards and run twenty queries each per day. That is roughly 10,000 queries a day, well under one per second, but each one may scan billions of rows. The write path is high-frequency and cheap per operation; the read path is low-frequency and expensive per operation. A single database tuned for one will be bad at the other, which is the reason analytical stores exist at all.
+
+<Key>Estimate first, then argue.</Key> The estimate shows which number is the bill and which number is theater.
+
+<TechDepth>
+
+**Where the peak multiplier comes from.** Three to five times average is a working default for consumer and business products with human usage patterns. Products driven by scheduled jobs, batch integrations, or sports and sales events see far spikier shapes, sometimes twenty times average for a few minutes. Ask for the shape of the traffic, not the total.
+
+**Little's Law** relates three quantities in any queue: the number of requests in the system equals the arrival rate multiplied by the average time each request spends there. If 500 requests arrive per second and each takes 200 milliseconds, roughly 100 requests are in flight at any moment. That number tells you how many concurrent workers, threads, or connections you need, and it is why a slow dependency quietly exhausts a connection pool even though throughput looks unchanged.
+
+**Utilization destroys tail latency before it destroys throughput.** As a server approaches full utilization, queueing theory says waiting time grows without bound. A system at 50% utilization has comfortable p99 latency. The same system at 90% utilization has the same average and a p99 several times worse, because requests now wait behind others. This is why capacity planning targets something like 60 to 70% utilization rather than 95%, and why "we have headroom on CPU" is not a defense when the tail is bad.
+
+**Head-of-line blocking** is the related failure: one slow item at the front of a queue delays everything behind it, even when the rest would have been fast. It appears in single-threaded workers, in ordered message partitions, and in connection pools, and the fix is to separate slow work onto its own path rather than to add capacity.
+
+</TechDepth>
+
+Ask before you design: what is the daily volume, and what is the shape of the peak? What does one record cost in storage across the retention window? Which number grows with customers, and which grows with usage per customer? If this feature succeeds beyond plan, which of those four numbers breaks first?
+
 ## Building blocks you will see on the whiteboard
 
-DS&A gave you maps, queues, and trees. System design places them across processes.
+DS&A gave you maps, queues, and trees. System design places them across processes. The table is the tour. The sections after it are the decisions.
 
-| Box | Plain English | Product stake |
+| Box | What it does | Product stake |
 |---|---|---|
-| **API / app servers** | Handle requests; run business rules | Latency; error rate; release risk |
-| **Database** | Durable source of truth (usually) | Correctness; query cost; migrations |
-| **Cache** | Fast copy of hot data | Speed vs staleness; stampede risk |
-| **Queue + workers** | Do work off the click path | Fairness; delay; backpressure |
-| **Search / analytics store** | Specialized read models | Relevance; freshness; extra cost |
-| **CDN / edge** | Static assets near users | First paint; global feel |
+| **Load balancer** | Spreads incoming requests across several servers so one machine is not the whole product | One dead server should not take the site down; uneven spread shows up as random slowness |
+| **API / app servers** | Handle requests and run business rules | Latency, error rate, and release risk |
+| **Database** | Durable source of truth for most products | Correctness, query cost, and the pain of changing the schema later |
+| **Cache** | Fast copy of hot data | Speed versus staleness, plus stampede risk when the copy expires |
+| **Queue and workers** | Do slow work off the click path | Fairness, delay, and what the user sees while they wait |
+| **Object storage** | Holds files, images, video, and exports that do not belong in a database row | Cost of storing and sending large files; missing files break the job even when the database is healthy |
+| **Search / analytics store** | Specialized read models for finding or summarizing | Relevance, freshness, and a second bill |
+| **CDN / edge** | Copies static assets onto machines near the user | First paint and whether a global launch feels local |
 
-Later lessons on this track go deeper on frontend, APIs, auth, data, and infra. Here you only need the composition story.
+Search stores and CDNs get their own treatment in later lessons on this track. The four boxes below are the ones a PM is expected to weigh in on during a design review. Replication, partitioning, and pipelines get their own sections after architecture, because those choices cut across several boxes at once.
 
-### Cache
+**Cache.** Hot lesson pages, session blobs, and "popular this week" all live here. A cache stores a fast copy so the product does not hit the database every time, which wins latency and database cost. It charges you **invalidation**, the problem of knowing when the copy went stale, and **stampede**, where the copy expires and every request hits the database at once. Ask how stale an answer is acceptable, and what the page shows when the cache is empty.
 
-**Feature scene:** hot lesson pages; session blobs; "popular this week."
+**Database and replicas.** Durable progress, purchases, and waitlist rows belong in the primary database, which holds the truth. **Replicas** are copies that serve reads so the primary is not crushed. The delay between a write landing on the primary and appearing on a replica is **replication lag**, and how much of it you tolerate is a product decision: a feed can be a few seconds behind, while checkout must see its own write immediately. Indexes from the DS&A lesson live here, and so does the risk of changing the schema later.
 
-A **cache** stores a fast copy so you do not hit the database every time. Wins latency and DB cost. Costs you **invalidation** (when is the copy wrong?) and **stampede** (cache expires, everyone hits DB at once).
+**Queue and workers.** Sending email, generating an export, and fanning out notifications do not belong on the click path. The click adds a job to a **queue**, and **workers** drain it in the background. Reliability shows up as retries and idempotency, scalability as adding more workers, and product craft as telling the user "we're on it" instead of leaving them in silence.
 
-**PM questions:** how stale is acceptable? What is the degrade if cache is empty?
+**API boundaries.** When mobile and web share one backend, or a partner integrates, the **API** is the contract between them. The common styles are REST (JSON over HTTP, nouns you can read in a log), gRPC (a named function, often packed with protobuf), GraphQL (the client names the fields), and webhooks (we call them when something happens). Versioning and backwards compatibility are maintainability questions. Rate limits are scalability and fairness questions. [APIs](/learn/engineering/apis) is how you pick a style. [Auth and identity](/learn/engineering/auth-identity) covers who is allowed to call what.
 
-### Database (and replicas)
+**Load balancer.** Picture a restaurant with one door and four kitchens. A host at the door sends each party to a kitchen that still has capacity. If the host disappears, every party piles onto kitchen one. If one kitchen burns down and the host does not notice, parties still get sent there. Ask what happens to a request when a server is sick, and whether sticky sessions (sending the same user back to the same server) are a product requirement or a leftover.
 
-**Feature scene:** durable progress, purchases, waitlist rows.
+**Object storage.** Lesson diagrams, user avatars, and CSV exports are blobs: large, infrequently queried as a whole, expensive to copy through a database. They live in object storage, and the database stores a pointer. The product failure is a page that loads with a broken image, or an export email whose link 404s. Ask how long files are kept, who may download them, and what the bill does at 10× uploads.
 
-Primary database holds truth. **Replicas** often serve reads so the primary is not crushed. Replication lag is a freshness product decision: is "eventual" OK for the feed, or must checkout see the write immediately?
+## Architecture styles
 
-Indexes (from the DS&A lesson) live here. So do migrations and schema change risk (maintainability).
+The boxes can sit in one program or in many. That choice is the **architecture**: how you slice the work, who can deploy without waiting for whom, and how far a failure travels. You buy independence, and you pay for it in operational pain.
 
-### Queue and workers
+Hold one product in your head while you read the five styles: a person lands, joins a waitlist, receives an email, and opens a first lesson. Every style below can ship that job. They differ in who has to coordinate, what dies together, and how expensive the next change is.
 
-**Feature scene:** send email; generate export; fan-out notifications.
+<ArchitectureStylesDiagram />
 
-The user click enqueues work; workers drain the queue. Reliability: retries and idempotency. Scalability: more workers. Product UX: "we're on it" vs silent delay.
+### Monolith
 
-### API boundaries
+A **monolith** is one deployable: one codebase, one release, one process (or a small cluster of identical copies) that handles the waitlist, the email, and the lesson page. This Learn site is a monolith. Next.js serves the pages; the waitlist write goes to one store; there is no separate "email service" to page at 2am.
 
-**Feature scene:** mobile + web share one backend; partner integrations.
+The gain is honesty. A new engineer can find the path. A change that touches landing copy and the waitlist form ships together. The cost is that one bad deploy can take the whole product down, and that too many people contend for the same release.
 
-APIs define contracts. Versioning and backwards compatibility are maintainability. Rate limits are scalability and fairness. Auth belongs in [auth and identity](/learn/engineering/auth-identity) later; the design review still asks who can call what.
+For instance, early Shopify ran as a Rails monolith for years while merchants checked out. The company later extracted pieces, but the monolith is why a small team could ship the whole merchant job without a fleet of services to keep in sync. Reported in Shopify engineering writing on the modular monolith they later named.
 
-## A short design-review script
+**Product decision**
 
-1. User job and success metric  
-2. Load parameters (not "lots of users")  
-3. Latency bar (prefer p95) and freshness  
-4. Failure / degrade story (reliability)  
-5. Data ownership: what is source of truth  
-6. Appetite and evolvability (what we can change next quarter)  
+- **Used in:** early products, internal tools, and any surface where one team owns the whole job.
+- **Prefer a monolith when:** the team is small, the domain is one job, and `n` still fits on a few machines.
+- **Avoid a monolith when:** unrelated jobs must scale or fail independently, or when every release requires a meeting because too many teams share the binary.
+
+### Modular monolith
+
+A **modular monolith** is still one deployable, with hard walls inside it. Waitlist code may not import lesson-ranking code. Email sending lives behind a module boundary. You get the isolation of "this is not your folder" without paying the network tax of a second service.
+
+Picture a house with rooms and doors versus a warehouse with tape on the floor. The rooms are modules. You can still hear a fire in the kitchen, because it is one building, but you stop tripping over each other's furniture.
+
+Teams reach for this when a monolith has grown messy and microservices would be a fake solution: the same five people, now on-call for eight repos. The later [Docker](/learn/engineering/docker) and [Kubernetes](/learn/engineering/kubernetes-networking) lessons are how you *run* split services. They do not decide whether you should split.
+
+**Product decision**
+
+- **Used in:** growing products that still share one release train, and platforms that want boundaries before they have the staff to operate many services.
+- **Prefer a modular monolith when:** you need clearer ownership and test boundaries, and the network hop would dominate the user job.
+- **Avoid a modular monolith when:** the walls are only folders, and anyone can import anything. That is a monolith with extra adjectives.
+
+### Microservices
+
+A **microservice** is a small system that can be deployed on its own, talks to others over the network, and owns the data for its job. Each team ships on its own calendar. A bad deploy in one service does not have to take the rest of the product down.
+
+Name a job that has a different failure cost, a different load shape, or a different release calendar from the rest of the product. That job can be a service.
+
+For instance, take Uber. Matching a rider to a driver is one job: maps, latency, surge. Charging the card is another: money, retries, disputes. A matching experiment must not stop people paying for a ride that already happened. Those two slices earn separate services. Splitting the same ride flow into GetRide and GetRideV2 still leaves you with one job.
+
+Slices that survive the same test look like this:
+
+- **Payments and billing.** Checkout, refunds, invoices, tax. The homepage can wobble for a minute. A double charge cannot.
+- **Notifications.** Email, push, SMS. Launch day is a burst. The lesson page should still load if the mail vendor is down.
+- **Media.** Upload, transcode (turn a video into sizes that play on a phone), thumbnails. Slow, CPU-heavy, a different machine than serving a page.
+- **Search.** A copy of the catalog built for finding things, allowed to lag by seconds. Ranking experiments should not wait on a catalog release.
+- **Identity.** Login, session tokens (the proof you are logged in), and single sign-on across apps. Other teams call it. One on-call owns Friday night.
+
+On this Learn site, welcome email is the slice that would earn a service first: a different vendor, bursty load, and a failure (no mail) that should not take the lesson page down. Splitting "write the waitlist row" from "show the confirmation" still leaves you with one job, plus a network tax.
+
+You buy blast-radius control and team throughput. You pay with partial failure: the waitlist can succeed, the email service can be down, and the user sees "you're on the list" with no email. You also pay with **distributed transactions**, the problem of two services disagreeing about whether the join happened. There is no longer one database row to look at.
+
+Amazon's two-pizza team lore is the organizational version of this choice: a service small enough that a handful of people can own it, including the on-call. The product mistake is copying the org chart onto the architecture before the org exists. A five-person company with twelve microservices has not bought independence. It has bought a distributed monolith: the same coupling, plus network timeouts.
+
+[APIs](/learn/engineering/apis) is how those services talk (contracts, versioning, auth on the wire). This section is only the decision to split.
+
+<TechDepth>
+
+Each network hop adds latency, retries, and a new way to fail. A monolith function call either works or throws. A service call can succeed, fail, hang, or return a stale answer from a cache you did not know about.
+
+**Saga** is the usual substitute for a single transaction: a sequence of local writes with compensating steps if a later step fails (join waitlist, then send email, or mark the join as "email pending"). The PM has to name the user-visible state for each incomplete path.
+
+**Distributed monolith** is the failure mode: services that cannot deploy without one another because they share a database, a lockstep release, or a chatty call graph. You paid the complexity price and kept the coupling.
+
+</TechDepth>
+
+**Product decision**
+
+- **Used in:** products with several domains, several teams, and load that is not uniform: payments, notifications, media, search, identity.
+- **Prefer microservices when:** two jobs must fail and scale independently, and you have the people to operate the extra machines, dashboards, and on-call rotations.
+- **Avoid microservices when:** the team is small, the job is one path, or you cannot name the owner of each service on a Friday night.
+
+### Serverless functions
+
+**Serverless** means you ship a function, and a cloud platform starts it when an event arrives: a waitlist join, a file upload, a nightly job. You do not keep a server warm all day. You pay per run.
+
+The gain is that bursty work (a launch-day spike of welcome emails) does not need a fleet sitting idle in between. The cost is cold starts (the first request waits while the function wakes), time and memory limits, and debugging that now spans a vendor's logs. A product that needs a long-lived connection, or a 30-minute video encode, will fight the model.
+
+**Product decision**
+
+- **Used in:** spikes, glue between systems, image variants, webhook receivers, and scheduled jobs.
+- **Prefer serverless when:** the work is event-shaped, idle time would waste money, and a timeout of seconds to a few minutes is enough.
+- **Avoid serverless when:** the job is a steady, latency-sensitive request path, or you need fine control over the machine.
+
+### Event-driven
+
+An **event-driven** design publishes facts ("waitlist_joined") and lets other parts react, instead of waiting on the phone for each downstream step to finish. The click path writes the waitlist row and emits the event. Email, analytics, and "welcome to lesson one" each subscribe.
+
+Picture a bulletin board. The front desk pins "Anadi joined." Mail, analytics, and the lesson team each read the board on their own time. The user is not standing at the desk while all three finish.
+
+The gain is decoupling: email being slow does not block the join response. The cost is **eventual consistency**, a delay before every consumer has seen the fact, and a debugging story that now spans several logs. If the product promise is "you will have the email before you close this tab," events are the wrong shape.
+
+[Kafka](/learn/engineering/kafka) is one way to store and replay those events. This section is the decision to communicate by facts instead of by synchronous calls.
+
+**Product decision**
+
+- **Used in:** notifications, analytics ingest, fan-out to several consumers, and workflows that can lag the click.
+- **Prefer events when:** several independent jobs must react to one fact, and the user can accept a short delay on the side paths.
+- **Avoid events when:** the user is waiting on the result of the downstream work in the same request (checkout confirmation, permission check).
+
+Ask in the room: which of the four forces is pushing us, load, latency, blast radius, or team throughput? If you cannot name it, stay with the simpler style.
+
+## Copying and splitting data
+
+Once you have more than one machine, you either copy the data, split the data, or both. Copying is **replication**. Splitting is **partitioning** (also called **sharding** when each piece lives on its own server). They solve different problems. Mixing them up is how a team buys a sharded cluster to fix a read spike that replicas would have handled.
+
+<Key>Replication copies the same data. Partitioning slices it.</Key>
+
+<ReplicationVsPartitionDiagram />
+
+### Replication
+
+Replication means keeping several copies of the same data. The usual shape is a **primary** (also called a leader) that accepts writes, and **replicas** (followers) that copy those writes and serve reads.
+
+Picture a restaurant recipe card. The head chef writes a change on the master card. Line cooks work from photocopies. If a photocopy is ten minutes behind, a cook might still plate the old garnish. That delay is replication lag. For a home feed, ten seconds late is fine. For "did my payment succeed?", it is not.
+
+You copy data for three product reasons:
+
+- **Reads.** Many replicas absorb page-open traffic so the primary is not crushed.
+- **Survival.** If the disk under the primary dies, a replica can be promoted. That is reliability, not speed.
+- **Distance.** A replica in another region makes reads faster for people far from the primary, at the cost of lag and of a harder story when a write must be global.
+
+<TechDepth>
+
+**Leader and follower** is the common setup: one writer, many readers. **Multi-leader** lets more than one place accept writes, and then you have to merge conflicts (two users edit the same lesson title on different replicas). **Quorum** writes wait until several copies have the data before calling the write a success, which trades latency for a stronger durability promise.
+
+Failover is a product event. Promoting a replica takes time. During that time, writes may fail or queue. Name the user-visible behavior before you need it: read-only mode, "try again in a minute," or a cached homepage.
+
+</TechDepth>
+
+**Product decision**
+
+- **Used in:** read-heavy catalogs, regional reads, and any store you cannot afford to lose.
+- **Prefer replication when:** reads outnumber writes, or losing the only copy is unacceptable.
+- **Avoid adding replicas when:** the pain is write throughput or data size on one disk. Copies of a full dataset do not make a too-large table smaller.
+
+### Partitioning
+
+Partitioning splits the dataset so each machine holds a slice. Users A-M on shard 1, users N-Z on shard 2. Or events from January on one partition, February on another. Each shard can be smaller, cheaper to keep in memory, and independently overloaded.
+
+Picture a library that outgrew one building. You do not photocopy every book into a second building (that is replication). You send fiction to building A and non-fiction to building B. A reader who wants one author still goes to one building. A reader who wants "every book mentioned this week" has to visit both.
+
+The product cost is the **cross-partition query**: anything that is not "look up this user's row" gets harder. Leaderboards, "all unpaid invoices," and "search every lesson" want either a scatter-gather across shards or a separate read model. Hot partitions appear when one customer, one celebrity account, or one viral lesson lives on a single shard and takes all the traffic. Twitter's celebrity fan-out is this problem with a product costume.
+
+[Data and databases](/learn/engineering/data-and-databases) goes into engines and schema. Here you only need the split: copies for reads and survival, slices for size and write throughput.
+
+<TechDepth>
+
+The **partition key** is the field you split on (user ID, tenant ID, timestamp). Choose the key that matches how you look data up. A key that dumps 40% of writes onto one shard fails that test.
+
+Rebalancing (moving a slice to a new machine) is a maintenance event that can starve customer traffic. Ask when it runs and what the user feels during it.
+
+</TechDepth>
+
+**Product decision**
+
+- **Used in:** multi-tenant platforms, large event logs, and any table that no longer fits in one machine's memory or disk.
+- **Prefer partitioning when:** the working set or the write rate has outgrown one store, and lookups have a natural key.
+- **Avoid partitioning when:** the dataset still fits, or almost every query would have to hit every shard. Estimate first.
+
+### Consistency and freshness
+
+**Consistency**, in this room, means whether two reads can disagree. After you join the waitlist, does the confirmation page see your row? Does the admin dashboard? Does a replica in another region?
+
+There is no universal right answer. There is a freshness rule per path:
+
+- Checkout, permissions, and "did I already pay?" need the write they made. That is **read-your-writes**.
+- A lesson catalog, a feed, or "how many people joined today?" can lag by seconds. That is **eventual consistency**: copies catch up, and the product is honest about the delay.
+- Analytics can lag by minutes or hours if the promise is a daily number, not a live ticker.
+
+For instance, take a ride-hailing ping. The driver's location on the map can be a second behind. The charge at drop-off cannot. Same company, two freshness rules.
+
+Ask in the room: after this write, which screens must see it, and how stale may the others be? If you cannot answer, you will fight lag in production and call it a database bug.
+
+## Moving data
+
+Not every useful answer lives in the database that took the click. Dashboards, emails, search indexes, and warehouses are **derived data**: copies shaped for a different job. The way you move facts from the source of truth to those copies is a pipeline. The 20 million events per day in the estimate above are this problem.
+
+Three shapes cover almost every design review. [Kafka](/learn/engineering/kafka) and [ClickHouse](/learn/engineering/clickhouse-analytics) are specific tools for two of them.
+
+<Key>A pipeline is a freshness promise.</Key>
+
+<BatchVsStreamDiagram />
+
+### Batch pipelines
+
+A **batch** pipeline wakes on a schedule, reads a chunk of source data, transforms it, and writes a result. Nightly revenue by country. Weekly lesson-completion email. A warehouse table rebuilt every hour.
+
+**ETL** means extract, transform, load: clean and shape the data *before* it lands in the warehouse. **ELT** means extract, load, transform: dump raw events in first, shape them with warehouse queries. ELT is common when storage is cheap and analysts want to change the question without re-running the extract. ETL is common when you must redact, join, or enforce a schema before anything else may see the rows.
+
+Picture a mailroom that sorts the day's letters at 6pm. Everyone who arrived today is in tomorrow morning's bundle. Nobody who arrived at 6:01 is. Batch is the right shape when "as of last night" is an honest product promise, and the wrong shape when the user is staring at a live dashboard you billed as live.
+
+**Product decision**
+
+- **Used in:** finance closes, daily emails, warehouse reporting, search index rebuilds that can lag.
+- **Prefer batch when:** the consumer accepts a delay measured in minutes or hours, and running once on a chunk is cheaper than staying awake all day.
+- **Avoid batch when:** the user-facing number is supposed to move within seconds of the event.
+
+### Streaming
+
+A **stream** is a continuous flow of events, processed as they arrive rather than at 6pm. Each waitlist join, each lesson start, each payment attempt is a small message. Consumers update a dashboard, trigger an email, or raise a fraud flag within seconds.
+
+Streaming costs you always-on workers, a story for events that arrive twice or out of order, and backpressure when a consumer is slower than the producer. It buys you a product that can react while the user still cares.
+
+The same analytics ingest from the estimate is a good test. Seven hundred events per second is easy to stream. The hard part is the read side: five hundred people running heavy queries, which is why the stream lands in a store built for scans ([ClickHouse](/learn/engineering/clickhouse-analytics)), not in the primary product database.
+
+<TechDepth>
+
+**At-least-once** delivery means a consumer might see the same event twice; make the handler idempotent. **At-most-once** means you might drop one; rarely acceptable for money. **Exactly-once** is a property you pay for in complexity, and still need to define at the product layer (what is "once"? one click, one payment, one email?).
+
+A **consumer group** splits a stream across workers. A poison event (a message that crashes the worker every time) can stall a partition. The product question is whether one bad payload may delay everyone else on that slice.
+
+</TechDepth>
+
+**Product decision**
+
+- **Used in:** live dashboards, fraud checks, notification fan-out, activity feeds, and metering.
+- **Prefer streaming when:** acting within seconds changes the outcome, and you can state what a duplicate or a delay does to the user.
+- **Avoid streaming when:** a nightly batch already meets the promise, or the team cannot yet operate an always-on pipeline.
+
+### Change data capture
+
+**Change data capture (CDC)** is a pipeline whose source is the database itself. Every insert, update, and delete on waitlist rows becomes an event, without asking the application to remember to emit one.
+
+Picture a notary who photocopies every signed page as it is signed, instead of asking each clerk to send a memo. The application keeps writing to the primary store. Downstream search, warehouse, and cache invalidation follow the photocopies.
+
+CDC is how you add a derived store without rewriting every write path. The cost is that you now depend on the database's change log, and a schema change can break consumers you forgot existed.
+
+**Product decision**
+
+- **Used in:** keeping search in sync, feeding a warehouse, cache invalidation, and migrating from one store to another with both running.
+- **Prefer CDC when:** the application already writes the truth to a database, and several consumers need the same facts.
+- **Avoid CDC when:** the event has meaning the row does not (a "user intended to invite a teammate" that never became a row), or you do not yet have a consumer that would use it.
+
+Ask in the room: who is allowed to be late, and by how much? If the answer is "nobody," you do not have a pipeline yet. You have a second write on the click path.
+
+## Operating the promise
+
+A design that works on the whiteboard still has to be lived in. Operating is how you say what "working" means, how you shed load when it is not, and how you treat other engineers as customers when the product *is* the platform.
+
+<SloErrorBudgetDiagram />
+
+### SLI, SLO, and SLA
+
+Three related promises, collapsed into one slide:
+
+- An **SLI** (service level indicator) is what you measure: the ratio of lesson page loads faster than 400ms, or the ratio of waitlist writes that succeed.
+- An **SLO** (service level objective) is the target you hold yourselves to: 99.9% of lesson loads under 400ms over 28 days. It is internal. It tells the team when to stop shipping features and fix reliability.
+- An **SLA** (service level agreement) is what you owe a customer in a contract, with credits attached. Most products should not have an SLA until an SLO has survived a year of honest measurement.
+
+The leftover budget between 100% and the SLO is the **error budget**. If the SLO is 99.9%, you may spend 0.1% of requests on bad deploys, experiments, and ordinary faults. When the budget is gone, you freeze risky changes. Google's SRE books popularized this; the PM move is to treat the budget as a product constraint, not as a tax engineering invented.
+
+A platform PM lives here. The product is the promise other teams consume: "auth will verify a token in under 50ms at p95." Miss it, and their onboarding pages fail, and they will build a workaround you cannot see.
+
+**Product decision**
+
+- **Used in:** any path a customer or a sibling team treats as a given (login, checkout, an internal API).
+- **Prefer an SLO when:** you can name the indicator, the window, and what you will stop doing when the budget burns.
+- **Avoid an SLA when:** you have never measured the SLI, or the number was picked because it looked like a competitor's marketing page.
+
+### Rate limits, quotas, and backpressure
+
+Load that exceeds what you can serve well leaves three honest moves. **Rate limiting** caps how fast one client may call you (100 requests per minute per API key). A **quota** caps how much they may consume in a period (10,000 waitlist emails per day, 5GB of exports). **Backpressure** is the system saying "slower, please" to a producer when a queue is full, instead of eating memory until the process dies.
+
+Rate limits, quotas, and backpressure are product decisions. Engineering implements them. A rate limit that trips during a customer's launch day is a support incident. A quota with no self-serve upgrade path is a sales conversation you did not staff. Silent drops are worse than a clear 429.
+
+Ask: who gets throttled first, the abusive client or the launch-day customer we wanted? What does the error say? Who can raise the cap, and in what time?
+
+### Platform products
+
+The customer of a platform is another engineer, so the architecture *is* the product. Multi-tenancy, deprecation, and paved roads are the roadmap.
+
+**Multi-tenancy** means one running system serves many customers, with isolation so that tenant A's query does not read tenant B's rows, and tenant A's traffic spike does not take tenant B down. Isolation can be a `tenant_id` on every row (cheap, easy to get wrong), a schema per tenant, or a cluster per tenant (expensive, isolated). The scoreboard is time-to-first-successful-call, quota-related tickets, and whether a noisy neighbor caused a multi-tenant outage.
+
+**Deprecation** is a product launch in reverse. You announce a date, run old and new side by side, measure remaining traffic, and only then turn the old path off. The cost you impose is engineering time at every consuming team. A platform PM who skips that sequence is taxing the company.
+
+A **paved road** is the default way to do a job (deploy, log, authenticate) that is easier than inventing a special case. Exceptions exist; they should be expensive enough that people think twice. Feature factories for internal tools fail the same way as consumer ones: output without adoption.
+
+<Key>A platform's customer is another team's roadmap.</Key> Every breaking change you ship is a feature they did not ask for.
+
+**Product decision**
+
+- **Used in:** internal developer platforms, public APIs, data platforms, and shared auth.
+- **Prefer a shared multi-tenant platform when:** the job is the same across teams and you can name isolation and quota rules.
+- **Avoid forcing a platform when:** two teams do not share a job, or you cannot staff the on-call and the migration.
+
+Ask in the room: who is the customer of this service, what do they do after a 500, and what would make them bypass us?
+
+## Running the design review
+
+Eight questions, in this order. Ask them out loud and the whiteboard fills itself in.
+
+1. What is the user job, and which metric proves it worked?
+2. What are the load parameters? "Lots of users" is not one.
+3. What is the latency bar, stated as p95, and how fresh must the data be?
+4. What fails, and what does the user see when it does?
+5. Who owns the data? Which store is the source of truth?
+6. Which architecture style are we buying, and which of the four forces (load, latency, blast radius, team throughput) is paying for it?
+7. What is the SLO on the critical path, and what do we freeze when the error budget is gone?
+8. What is the appetite, and what do we need to be able to change next quarter?
+
+If the feature is a model, the quality bar is an evaluation suite the way a service's quality bar is an SLO. That craft lives with [product sense and AI](/learn/product/product-sense-and-ai), not on this whiteboard.
 
 ## Specimen: this Learn site (early scale)
 
 | Concern | Honest v1 shape |
 |---|---|
-| Reliability | Static/MDX lessons; waitlist writes need durable store and dedupe |
-| Scalability | Low traffic; naive paths OK until `n` forces indexes/cache |
-| Maintainability | One Next.js app; avoid extra services until a hypothesis needs them |
+| Reliability | Static/MDX lessons; waitlist writes need a durable store and dedupe |
+| Scalability | Low traffic; naive paths are fine until `n` forces indexes or a cache |
+| Maintainability | One Next.js app; extra services wait until a hypothesis needs them |
+| Architecture | Monolith. Microservices would buy a paging rotation this product cannot staff |
+| Data | One store; no replicas or partitions until the estimate says the working set or write rate is the problem |
+| Pipelines | No warehouse stream. Lesson analytics can start as events in the product database or a nightly batch |
+| SLO | None published. When traffic is real, start with an SLI on lesson load and waitlist write success, then an internal SLO, then any customer-facing SLA |
 
-Early traffic rewards simplicity. Literacy is knowing which Kleppmann concern fires first when growth or incidents arrive.
+Early traffic rewards simplicity. Literacy is knowing which Kleppmann concern, and which of the four forces, would fire first if this site had to become a platform other teams depend on.
 
-## Path into more detail
+## Common mistakes
 
-| If you want… | Start here |
+| Mistake | What is actually going wrong |
 |---|---|
-| Full DDIA path | Kleppmann: after R/S/M, storage/retrieval, replication, partitioning, derived data |
-| Interview-style system design | Alex Xu *System Design Interview* as drill, not gospel |
-| This track's stack choices | [Why this stack](/learn/engineering/why-this-stack) |
-| Structures under the queries | [DS&A fundamentals](/learn/engineering/cs-fundamentals) |
+| Microservices for a five-person team | You bought a distributed monolith: same coupling, extra network failures |
+| Streaming because Kafka is on the resume | A nightly batch already met the promise; you are now on-call for a pipeline |
+| "Lots of users" as the load brief | No reads/second, writes/second, peak, or working set, so eng cannot choose a box |
+| SLO with no SLI | A number on a slide that nobody measures, so it cannot stop a risky launch |
+| Partitioning to fix a read spike | Replicas would have absorbed reads; you split the data and broke every reporting query |
+| Platform work with no adoption metric | Internal customers never migrated; you shipped a cluster they bypass |
+| Average latency as the bar | p50 looks fine while p95 users file tickets |
+| Eventual consistency on checkout | The confirmation page and the charge disagree, and support cannot tell which is true |
 
 ## Exercise
 
-Pick a product feature that spans more than one box (e.g. "signup → email → first lesson"):
+Pick a product feature that spans more than one box (for example, "signup → email → first lesson"):
 
-1. Draw the boxes (even as a list).  
-2. Name load parameters and a p95 bar.  
-3. Say what fails if the queue or DB is down.  
-4. Mark one maintainability risk (who can change this?).  
+1. Draw the boxes, even as a list.
+2. Name load parameters (reads/second, writes/second, peak, working set) and a p95 bar.
+3. Say what fails if the queue or database is down, and what the user sees.
+4. Pick an architecture style and name the force that justifies it (load, latency, blast radius, or team throughput).
+5. Write one SLO for the critical path, including the SLI and what you freeze when the budget is gone.
+6. Mark one maintainability risk: who can change this, and what would a deprecation cost other teams?
 
 ## Check
 
-> Feature ___. Load params: ___. p95 bar: ___. If ___ fails, we degrade by ___. Next change cost risk: ___.
+> Feature ___. Load: ___ reads/s, ___ writes/s, peak ___, working set ___. p95 bar ___. Style ___, because ___. If ___ fails, we show ___. SLO: ___ . Next-quarter change we must still be able to make: ___.
 
 <InlineLessonQuiz slug="engineering/system-design" />
 
 ## References
 
-- Martin Kleppmann, *Designing Data-Intensive Applications* (especially reliability, scalability, maintainability; then replication and partitioning as you go deeper)  
-- [DS&A fundamentals](/learn/engineering/cs-fundamentals) for structures and algorithms under each box  
-- [Why this stack](/learn/engineering/why-this-stack) for concrete technology choices on this site  
+Pick the next source by the gap you want to close.
 
-Previous: [DS&A fundamentals](/learn/engineering/cs-fundamentals). Next: [Why this stack](/learn/engineering/why-this-stack).
+| Learning goal | Start here | What it adds beyond this lesson |
+|---|---|---|
+| Work through data systems properly | Martin Kleppmann, *Designing Data-Intensive Applications* | After the three concerns: storage and retrieval, replication, partitioning, and derived data (batch, stream, CDC). |
+| Practise design questions under time pressure | Alex Xu, *System Design Interview* | Drill format with worked whiteboard answers. Treat it as practice, not as how every real system should look. |
+| Write SLOs that change behavior | Beyer, Jones, Petoff, Murphy, *Site Reliability Engineering* (Google) | Error budgets, SLI/SLO/SLA, and why 100% is the wrong target. |
+| Decide whether to split a system | Martin Fowler, [Microservices](https://martinfowler.com/articles/microservices.html) | When independent deployability is worth the operational cost; read the cautions, not only the diagram. |
+| See the structures underneath each box | [DS&A fundamentals](/learn/engineering/cs-fundamentals) | The maps, queues, trees, and indexes that make each box fast or slow. |
+| See concrete technology choices | [The stack for the app](/learn/engineering/why-this-stack) | Why this site stays a monolith, dual scoreboards, and what it deliberately left out. |
+| Go deeper on one box | [APIs](/learn/engineering/apis), [data and databases](/learn/engineering/data-and-databases), [Kafka](/learn/engineering/kafka), [ClickHouse](/learn/engineering/clickhouse-analytics) | Contracts, engines, one stream system, one analytics store. |
+
+Previous: [DS&A fundamentals](/learn/engineering/cs-fundamentals). Next: [The stack for the app](/learn/engineering/why-this-stack).

@@ -1,0 +1,204 @@
+---
+title: "The stack for the app"
+summary: "A stack is the toolkit for a product job. Rails, MERN, FastAPI, Spring Boot, Go, and Rust each show up for different shapes of work. This Learn site bought Next.js and Fumadocs so one person can teach and ship content fast."
+audience: Both
+status: published
+order: 4
+---
+
+A **stack** is the set of languages, frameworks, databases, and hosting choices a team runs a product on. People name stacks the way they name cars: MERN, Rails, Spring Boot, "we're a Go shop." The brand is not the point. The point is which problems that toolkit is good at, and which ones it fights.
+
+PMs do not have to write the code. They do have to hear when eng says "we should rewrite in Rust" and ask which job broke. Engineers reading this page get the same map from the other side: which stack fits the product in front of you, not the one that won last year's Hacker News thread.
+
+<Key>A stack is a bet on a shape of work.</Key> Change the work, and the bet should change with it.
+
+## What a stack includes
+
+Picture a restaurant kitchen. The stack is the stove, the knives, the ticket system, and the way tickets reach the pass. You can cook many dishes with one kitchen. You cannot run a ghost kitchen and a tasting-menu dining room with identical gear.
+
+Most product stacks cover the same layers:
+
+- **Language and framework** for the app (Rails, Next.js, Spring Boot, FastAPI)
+- **Data store** for durable truth (Postgres is the default in many shops; others appear when the job is different)
+- **How the UI is built** (server-rendered pages, a single-page app, a mobile client)
+- **How you deploy** (one host, containers, a cloud platform)
+
+[System design](/learn/engineering/system-design) named the forces that push you off the simple kitchen: load, latency, blast radius, team throughput. Stack choice is those forces plus **who will maintain this**, and **how fast you need to learn**.
+
+## How to choose without a fashion contest
+
+Ask four questions before anyone opens a greenfield repo:
+
+1. **What is the user job this quarter?** A content site, a marketplace, a trading bot, and an internal admin tool want different kitchens.
+2. **How many people will own it on a Friday night?** One person, a two-pizza team, or twelve services with twelve on-calls.
+3. **What must be correct vs what must be shipping?** Money and safety push toward boring, typed, well-staffed ecosystems. An MVP that tests a teaching hypothesis pushes toward the toolkit that writes pages fastest.
+4. **What does the team already know?** A great stack you cannot hire for is a slow product.
+
+Then pick. If the jobs change, you can add a box later. You do not have to pretend the first choice was eternal.
+
+## Stacks you will hear in the room
+
+These are the names that show up in interviews, vendor decks, and design reviews. Each one is a *family*, not a single binary. Hold one product question while you read: what job would make this the honest default?
+
+### Ruby on Rails
+
+**Rails** is a full-stack web framework in Ruby. It assumes you want a database-backed product with forms, accounts, and admin screens, and it generates a lot of that path for you. Convention over configuration: put the file where Rails expects it, and the framework wires the route.
+
+For instance, early Shopify and GitHub grew on Rails. Basecamp still ships products that way. The pattern is the same: a small team, a transactional product (orders, issues, messages), and a need to ship features every week without inventing a new architecture for every page.
+
+**Product decision**
+
+- **Used in:** SaaS, marketplaces, content tools, internal apps where CRUD (create, read, update, delete) is the job.
+- **Prefer Rails when:** one app owns the whole product, the team is small, and speed to a correct MVP matters more than squeezing every millisecond.
+- **Choose something else when:** you need a specialized ingest path, a polyglot mobile suite with a thin API, or a team that does not want Ruby on the resume.
+
+Laravel (PHP) and Django (Python) sit in the same neighborhood: batteries-included web frameworks for product teams that live in one codebase.
+
+### MERN and the JavaScript full stack
+
+**MERN** means MongoDB, Express, React, Node.js: a JavaScript story from the browser to the server. In practice, many teams now say "JS full stack" and mean **React** (or Next.js) on the front, **Node** on the server, and **Postgres** instead of Mongo for anything relational. The shared idea is one language across the UI and the API, and a huge hiring pool.
+
+This is the default for a lot of startups building interactive web apps: dashboards, collaboration tools, consumer sites with rich clients. **Next.js** sits in this family. It adds a structured way to render pages on the server or at the edge, which helps marketing sites and content products that care about first paint and SEO (search engines reading the page).
+
+Mongo fits document-shaped blobs. Postgres fits users, orders, and joins. Plenty of "MERN" shops quietly run Postgres and still call themselves a JavaScript shop. Ask which store holds the money.
+
+**Product decision**
+
+- **Used in:** interactive web products, SPAs (single-page apps), content sites that want React components, teams that already speak TypeScript.
+- **Prefer this family when:** the UI is a big part of the product, one language across client and server reduces context switching, and you can hire React/Node people.
+- **Choose something else when:** the hard problem is a compute-heavy backend with no rich UI, or the team is already deep in another ecosystem (JVM, Python data, Rails).
+
+### Python: Django and FastAPI
+
+**Django** is Python's batteries-included web framework, close to Rails in spirit: admin, auth helpers, ORM (object-relational mapper: talk to the database in Python instead of raw SQL for most paths). News orgs, science products, and many SaaS backends landed here because the team already wrote Python for data or ML.
+
+**FastAPI** is a newer Python toolkit for APIs: typed request and response models, automatic docs, fast to write service endpoints. Data and ML teams use it to wrap models behind HTTP without standing up a full Django app. Instagram's early growth and countless internal tools rode Django. Model-serving and microservice-style APIs ride FastAPI in many shops.
+
+**Product decision**
+
+- **Used in:** products next to data science or ML, content and publishing, API layers in front of Python models.
+- **Prefer Django when:** you want a full product app in Python. Prefer FastAPI when the job is "expose this Python logic over HTTP" and the UI lives elsewhere.
+- **Choose something else when:** the UI team lives in React and you already have a Node or Rails core with no Python talent on call.
+
+### Java and Spring Boot
+
+**Spring Boot** is the common way to build services on the **JVM** (Java Virtual Machine: runs Java and Kotlin). Banks, large enterprises, and long-lived platforms lean here. The ecosystem is deep: security libraries, transaction handling, hiring pipelines that have hired Java for twenty years.
+
+The cost is ceremony and startup time compared with Rails or FastAPI for a tiny MVP. The gain is a stack that regulators, banks, and big companies already trust, with types and tooling that scale to large teams without everyone inventing structure.
+
+Kotlin pairs with Spring when teams want a more modern language on the same JVM.
+
+**Product decision**
+
+- **Used in:** enterprise backends, fintech, large org platforms, services that must live for a decade.
+- **Prefer Spring Boot when:** compliance, hiring, and long-term maintainability beat "ship a landing page this week," and the org already runs on the JVM.
+- **Choose something else when:** a one-person MVP or a content site would spend more time on framework ceremony than on the hypothesis.
+
+### Go
+
+**Go** (Golang) is a language from Google with a small standard library for networking and concurrency. Teams use it for APIs, proxies, CLI tools, and infrastructure: Docker and Kubernetes themselves are written in Go. The bet is clear code, fast deploys, cheap concurrency for many connections.
+
+Go is a weak default for a design-heavy content UI. It is a strong default for a service that accepts a lot of traffic, sits between systems, or must ship as a single binary in a container.
+
+**Product decision**
+
+- **Used in:** backend APIs, ingest, developer tooling, cloud infrastructure, latency-sensitive services without a heavy ORM culture.
+- **Prefer Go when:** the product *is* the service, not the marketing site, and the team wants simple deployables.
+- **Choose something else when:** the main job is pages, MDX, and design-system components. Put Go behind those pages when a service job appears.
+
+### Rust
+
+**Rust** is a systems language aimed at safety and control without a garbage collector. Browsers (parts of Firefox), developer tools, performance-critical services, and crypto/infrastructure teams reach for it when bugs are expensive and throughput matters. The learning curve is real. Hiring is harder than for JavaScript or Python.
+
+For instance, teams building wallets, chains, or high-performance networking put Rust on the critical path because a memory bug is a security incident. A lesson site does not have that job.
+
+**Product decision**
+
+- **Used in:** systems software, security-sensitive paths, performance-critical services, parts of crypto and infrastructure tooling.
+- **Prefer Rust when:** correctness under load is the product, and you can staff people who write Rust well.
+- **Choose something else when:** you are testing a teaching or CRUD hypothesis with one author. Rust will slow the wrong scoreboard.
+
+## If the product were different
+
+Same company name, different job, different kitchen.
+
+| Product job | Stack that shows up | Why |
+|---|---|---|
+| Teach lessons and ship MDX weekly, one author | Next.js + Fumadocs + TypeScript | Pages and content in git; one deployable |
+| Classic SaaS with accounts and billing | Rails or Django + Postgres | Batteries-included product loops |
+| Interactive dashboard startup | React/Next + Node + Postgres | UI-heavy, one language, hiring depth |
+| Bank or large enterprise core service | Java/Kotlin + Spring Boot | Ecosystem, hiring, longevity |
+| API in front of ML models | FastAPI + Python | Same language as the models |
+| High-traffic ingest or infra service | Go (+ Postgres or a specialized store) | Simple binaries, concurrency |
+| Crypto wallet or chain-adjacent service | **Solidity** for EVM smart contracts; **Rust** for Solana programs and security-sensitive libraries; **Go** for many node clients, tooling, and backends | On-chain logic, adversarial security, and infra clients are different jobs than a content site |
+
+A crypto app is not "Rails but with coins." **Solidity** is the common language for contracts on Ethereum and other EVM chains. Rust shows up on Solana and in libraries where a memory bug is a theft. Go shows up in clients and tooling (for example parts of the Ethereum ecosystem). Custody, signing, and adversarial traffic push you toward those languages and review practices. A content MVP does not have that job. The PM move is to name the surface (wallet UI vs contracts vs node infra vs education site) before anyone copies a GitHub trendy stack.
+
+## Specimen: this Learn site
+
+**Jobs for this product right now**
+
+- Teach PM and eng craft on a live site
+- Let one person write and publish lessons quickly (MDX in git)
+- Ship an MVP that tests whether free lessons earn attention (waitlist, lesson starts)
+- Stay maintainable by a single author on a Friday night
+
+**Stack we bought**
+
+| Piece | Why it fits those jobs |
+|---|---|
+| **Next.js** (App Router) | One app for home, About, Learn, waitlist. Pages and server in one release |
+| **TypeScript + React** | Components for UI and for lesson embeds (diagrams, quizzes) |
+| **Tailwind CSS** | Style without a second design-system repo in v1 |
+| **Fumadocs** | Learn chrome and MDX pipeline so curriculum files become routes |
+| **Poppins** (Latin + Devanagari) | Readable body type; Hindi can land later without a second display face |
+
+This is the JavaScript full-stack neighborhood, tilted toward **content and teaching**, not toward a MERN tutorial that starts with Mongo for its own sake. Lessons are files. The waitlist is a public form. When login and highlights earn a hypothesis, [auth](/learn/engineering/auth-identity) and [data](/learn/engineering/data-and-databases) own that path. When we chart lesson events at volume, [ClickHouse](/learn/engineering/clickhouse-analytics) owns that path. When we teach deploy for real, platform and CI lessons own that path.
+
+We could have used Rails or Nuxt and still taught. We use Next and Fumadocs because this repo already lives there, and the job is "publish lessons and keep one deployable," not "prove we can rewrite the classroom in Go."
+
+**Product decision**
+
+- **Used in:** this site, and products like it: docs, courses, portfolios that teach.
+- **Prefer this stack when:** one person must write content and ship the product shell together, and the UI is pages plus MDX.
+- **Choose something else when:** the product job is custody, high-frequency trading, or a regulated core ledger. Then start from that job's table row above, not from this specimen.
+
+## Common mistakes
+
+| Mistake | What is actually going wrong |
+|---|---|
+| Picking a stack from a popularity chart | No job named; fashion bought the kitchen |
+| MERN with Mongo because the acronym requires it | The data is relational; you optimized the logo |
+| Rewriting a content MVP in Rust | You slowed scoreboard "ship lessons" for a job you do not have |
+| Spring Boot for a one-person landing-page test | Ceremony beat learning speed |
+| "We're a Go shop" for a design-system-heavy UI | Wrong default for the main surface |
+| Copying a crypto stack onto an education site | Adversarial security needs are not the same as MDX needs |
+
+## Exercise
+
+1. Name a product you know (this site, or one you use at work).
+2. Write the user job in one sentence.
+3. Pick two stacks from this lesson and argue which fits better, using team size and what must be correct.
+4. Write one sentence for a counterfactual: if the product were X instead, which stack would you open with?
+
+## Check
+
+> Product job: ___. Team size: ___. Stack I would open with: ___, because ___. Wrong stack for this job: ___, because ___.
+
+<InlineLessonQuiz slug="engineering/why-this-stack" />
+
+## References
+
+| Learning goal | Start here | What it adds beyond this lesson |
+|---|---|---|
+| Forces behind the purchase | [System design](/learn/engineering/system-design) | Load, latency, blast radius, team throughput |
+| Rails mindset | [Ruby on Rails](https://rubyonrails.org/) | Convention-over-configuration product apps |
+| Next.js / App Router | [Next.js docs](https://nextjs.org/docs) | The framework this specimen runs |
+| Fumadocs | [Fumadocs](https://www.fumadocs.dev/) | MDX Learn on Next |
+| FastAPI | [FastAPI](https://fastapi.tiangolo.com/) | Typed Python APIs |
+| Spring Boot | [Spring Boot](https://spring.io/projects/spring-boot) | JVM services at org scale |
+| Go | [Go](https://go.dev/) | Services and infra tooling |
+| Rust | [Rust](https://www.rust-lang.org/) | Safety-focused systems language |
+| How pages work on this site | [Frontend](/learn/engineering/frontend) | Browser and rendering on this app |
+
+Previous: [System design](/learn/engineering/system-design). Next: [Frontend](/learn/engineering/frontend).

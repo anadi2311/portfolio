@@ -28,7 +28,7 @@ Addy Osmani draws the same line ([Vibe coding is not the same as AI-assisted eng
 
 <Key>You can outsource typing. You cannot outsource understanding.</Key> Karpathy’s line from Sequoia Ascent 2026: agents are fallible and stochastic. Speed without a quality bar ships vulnerabilities at agent speed.
 
-## What still makes you valuable
+## Where your value moves
 
 When models write most of the boilerplate, relevance moves up the stack:
 
@@ -44,60 +44,7 @@ Syntax fluency still helps you **read** and **redirect**. It is no longer the sc
 
 Junior engineers who only autocomplete without learning concepts dig a hole. Use the agent as a tutor: ask why, change one line by hand, break the test on purpose. Seniors who refuse agents dig a different hole: they lose the new leverage while still owning the same accountability.
 
-## Software 3.0 in one page
-
-Karpathy’s sequence:
-
-- **Software 1.0:** humans write explicit code
-- **Software 2.0:** humans shape data and objectives; weights learn the program
-- **Software 3.0:** humans program models through context: prompts, files, tools, examples, project instructions
-
-The **context window** is the lever. Fill it with the right repo map, rules, and checks. Flood it with noise and the agent degrades. Anthropic’s Claude Code docs say the same thing: context fills fast; performance drops as it fills.
-
-Implication for you: writing a short `CLAUDE.md` / `AGENTS.md` / Cursor rules file is part of engineering now, not documentation theater.
-
-## Playbook: how strong teams run agents
-
-Synthesized from [Claude Code best practices](https://code.claude.com/docs/en/best-practices), Karpathy’s agentic framing, and Osmani’s production bar. Tools differ; the loop does not.
-
-### 1. Explore, then plan, then code
-
-Do not let the agent invent the problem. Read the relevant modules first (or force plan mode). Ask for a plan with files to touch. Approve the plan. Then implement.
-
-### 2. Put standing rules in the repo
-
-A root instruction file the agent loads every session: how to build, test, lint; monorepo map; “never commit secrets”; house style. Keep it short and always-true. Put long procedures in skills or linked docs so you do not blow the context window.
-
-### 3. Give a verification loop
-
-Tests, `tsc`, lint, a script, a screenshot compare. “Looks good” is not a signal the agent can trust. Anthropic’s rule: give Claude a check it can run, or you become the only feedback loop.
-
-### 4. Review the diff like a tech lead
-
-You are merging a fast junior’s PR. Check security, edge cases, and whether the change matches the spec. Reject “clever” mismatches (wrong ID matching, silent error swallows, new dependencies you did not ask for).
-
-### 5. Scope the blast radius
-
-Permissions, hooks, and small PRs beat “fix the codebase.” Parallel agents on independent tasks can work; one agent with unbounded write access is how you get silent damage.
-
-### 6. Prefer verifiable work for agents
-
-Karpathy: models improve fastest where success is checkable (tests pass, build green, benchmark moves). Ambiguous product taste stays with you longer. Pair agent speed with automated checks.
-
-## For PMs on this track
-
-You will not replace engineering. You will **brief** it (human or agent) with the same nouns from [Lesson 11](/learn/product/design-vision-branding): job, constraints, flow, acceptance checks.
-
-Bad: “Make auth work.”  
-Good: “Magic-link login for paid tier only; free lessons stay public; success = email received and session created; kill if support tickets about lockout spike.”
-
-The better your spec and kill rule, the less the agent (or the sprint) invents product for you.
-
-## Specimen: this site
-
-This Portfolio Learn app is built with Cursor-style agents under human direction: Next.js, Fumadocs, TypeScript, lessons in git. Standing rules live in local Cursor skills and repo conventions. Diagrams export to PNG; quizzes and MDX are reviewed before ship. The next lesson ([Why we picked this stack](/learn/engineering/why-this-stack)) covers the stack choices. This lesson covers the **workflow** that produces them.
-
-## How to stay relevant (checklist)
+Day to day, the difference between the two holes looks like this:
 
 | Do | Avoid |
 |---|---|
@@ -109,6 +56,42 @@ This Portfolio Learn app is built with Cursor-style agents under human direction
 | Keep system understanding (data flow, failure modes) | Becoming a prompt paste operator |
 
 The scarce skill is **judgment under acceleration**. Agents multiply both good bets and bad ones.
+
+## Three generations of software
+
+Karpathy’s sequence:
+
+- **Software 1.0:** humans write explicit code
+- **Software 2.0:** humans shape data and objectives; weights learn the program
+- **Software 3.0:** humans program models through context: prompts, files, tools, examples, project instructions
+
+The **context window** is the lever. Fill it with the right repo map, rules, and checks. Flood it with noise and the agent degrades. Anthropic’s Claude Code docs say the same thing: context fills fast; performance drops as it fills.
+
+Implication for you: writing a short `CLAUDE.md` / `AGENTS.md` / Cursor rules file is part of engineering now, not documentation theater.
+
+## How strong teams run agents
+
+Six habits separate teams who get leverage from agents from teams who get mess. They come from [Claude Code best practices](https://code.claude.com/docs/en/best-practices), Karpathy’s agentic framing, and Osmani’s production bar. Tools differ; the loop does not.
+
+1. **Explore, then plan, then code.** Do not let the agent invent the problem. Read the relevant modules first, or force plan mode. Ask for a plan with the files it intends to touch, approve that plan, and only then let it implement.
+2. **Put standing rules in the repo.** Keep a root instruction file the agent loads every session: how to build, test, and lint, the monorepo map, “never commit secrets,” and house style. Keep it short and always true. Long procedures belong in skills or linked docs so they do not crowd out the context window.
+3. **Give a verification loop.** Tests, `tsc`, lint, a script, a screenshot compare. “Looks good” is not a signal the agent can act on. Give it a check it can run itself, or you become the only feedback loop in the system.
+4. **Review the diff like a tech lead.** You are merging a fast junior’s pull request. Check security, edge cases, and whether the change matches the spec. Reject clever mismatches: wrong ID matching, silently swallowed errors, dependencies you never asked for.
+5. **Scope the blast radius.** Permissions, hooks, and small pull requests beat “fix the codebase.” Parallel agents on independent tasks work fine. One agent with unbounded write access is how silent damage happens.
+6. **Prefer verifiable work for agents.** Models improve fastest where success is checkable: tests pass, build goes green, a benchmark moves. Ambiguous product taste stays with you longer, so pair agent speed with automated checks.
+
+## Briefing agents the way you brief engineers
+
+You will not replace engineering. You will **brief** it (human or agent) with the same nouns from [Lesson 11](/learn/product/design-vision-branding): job, constraints, flow, acceptance checks.
+
+Bad: “Make auth work.”  
+Good: “Magic-link login for paid tier only; free lessons stay public; success = email received and session created; kill if support tickets about lockout spike.”
+
+The better your spec and kill rule, the less the agent (or the sprint) invents product for you.
+
+## Specimen: this site
+
+This Portfolio Learn app is built with Cursor-style agents under human direction: Next.js, Fumadocs, TypeScript, lessons in git. Standing rules live in local Cursor skills and repo conventions. Diagrams export to PNG; quizzes and MDX are reviewed before ship. [The stack for the app](/learn/engineering/why-this-stack) covers what those choices bought. This lesson covers the **workflow** that produces them.
 
 ## Exercise
 

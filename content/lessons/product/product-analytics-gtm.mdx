@@ -12,6 +12,8 @@ You do not need a warehouse to start. You need a metric tied to a hypothesis and
 
 ## Outcome first, then the metric
 
+### Why the proxy drifts from the outcome
+
 A metric is a proxy for an outcome. <Key>Goodhart's Law:</Key> when a measure becomes a target, it ceases to be a good measure ([Goodhart 1975](https://en.wikipedia.org/wiki/Goodhart%27s_law); Strathern's later phrasing is the one teams quote).
 
 PMs break this constantly:
@@ -29,7 +31,7 @@ PMs break this constantly:
 
 **Spotify** shifted scoreboards as the product matured (ownership of listening, then engagement quality). The lesson is not their exact metric names. It is that the scoreboard tracks the **job**, and leaders change the proxy when the proxy stops predicting the job.
 
-### Leading vs lagging (input vs output)
+### Leading and lagging measures
 
 [*Lean Analytics*](https://leananalyticsbook.com/) and OKR practice split measures the same way:
 
@@ -40,7 +42,7 @@ PMs break this constantly:
 
 Lead with inputs you can change this week. Keep the lagging outcome on the scoreboard so you notice when the input stopped predicting the job. That pairing is Goodhart insurance: if activation rises and D30 falls, your activation definition is wrong.
 
-## Named lenses (use them; do not worship them)
+## Named lenses and where each fits
 
 Three frames every PM meets. They overlap. Pick one primary lens for the bet; do not run twelve dashboards because an acronym exists.
 
@@ -117,7 +119,7 @@ The newer onboarding may have improved repeat value, but the cohort comparison d
 
 Do not compare January after eight weeks with February after two weeks. Give each cohort the same opportunity to return.
 
-### Analytics for testing (by stage)
+### What to test at each stage
 
 An experiment needs three metric roles:
 
@@ -151,7 +153,7 @@ Familiar instruments stay useful: interviews when the metric moves and nobody kn
 
 **Twyman's law** (used heavily in Kohavi's experimentation work): any figure that looks interesting or different is usually wrong. Surprising A/B wins get a trust check first: sample ratio mismatch, bad logging, peeking, bots, one giant customer. Celebrate after the result survives scrutiny, not after the dashboard turns green.
 
-## How to collect data (without boiling the ocean)
+## How to collect data
 
 1. **Name the decision** the data must unlock (Lesson 4 card).
 2. **Write a tracking plan:** event name, description, properties, owner, when it fires, client vs server. This is the contract between PM and eng (see [Segment's tracking plan guidance](https://segment.com/docs/protocols/tracking-plan/) or Amplitude's taxonomy docs for shape).
@@ -174,7 +176,9 @@ Sources PMs use:
 
 **Server events beat client-only events** when money, permissions, or API success matter. Frontend clicks lie when the request fails.
 
-## Metrics map (what to watch)
+## The metrics map
+
+Two scoreboards sit side by side. The product scoreboard tracks whether people reach and repeat value. The go-to-market scoreboard tracks whether the channels bringing them in bring the right people.
 
 ### Product scoreboard
 
@@ -213,7 +217,7 @@ Same company, different altitude ([Lesson 6](/learn/product/product-leadership))
 
 If you are a **consumer or UI PM**, you watch session funnels, time-to-value, UX drop-offs. If you are a **platform or infra-facing PM**, you watch SLIs (latency, availability), quota, developer activation (first successful API call), and version adoption. The craft is the same: hypothesis → metric → stop rule. The **surface** changes the events.
 
-## Tools (common set, no tool creep)
+## Tools without tool creep
 
 Tools follow the question. Do not install five analytics products because a blog said so.
 
@@ -231,7 +235,7 @@ Tools follow the question. Do not install five analytics products because a blog
 
 We will teach **how to plug these into this stack** in the engineering rail (events → pipeline → [ClickHouse](/learn/engineering/clickhouse-analytics) / warehouse → dashboards). This lesson stops at: what to demand from eng, what "done" means for an event, and which tool class matches your surface.
 
-### Small practice tree (use tools without worshipping them)
+Before any of that matters, run this loop once:
 
 1. Write the activation event in one line.
 2. Ask eng: client or server? properties? identity?
@@ -273,7 +277,7 @@ Pageviews alone are not the scoreboard. That is Goodhart bait for a teaching sit
 | No tracking plan | Eng and PM disagree what fired |
 | Collect data without a named decision | Privacy risk and noise grow without increasing useful evidence |
 
-## Before you go on
+## Exercise
 
 1. Write your **outcome**, **OMTM**, two **guardrails**, and whether the OMTM is leading or lagging.
 2. Name the **stage of the bet** and the analytics that fit (not the company's founding year).
@@ -283,6 +287,12 @@ Pageviews alone are not the scoreboard. That is Goodhart bait for a teaching sit
 6. Pick **one** analytics tool class you need now. Write what "event done" means before anyone buys a second tool.
 7. Draw one customer journey from acquisition through revenue. Put the event and denominator under each measured step.
 8. Compare two cohorts after the same amount of time and name one alternative explanation for the difference.
+
+## Check
+
+Finish this sentence with specifics:
+
+> The outcome is ___ and the proxy I chose is ___. The leading measure I can move this week is ___, and the lagging measure that keeps me honest is ___. The guardrail is ___. If the proxy rises while ___ falls, the definition is wrong.
 
 <InlineLessonQuiz slug="product/product-analytics-gtm" />
 

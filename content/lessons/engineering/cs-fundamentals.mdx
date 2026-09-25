@@ -1,6 +1,6 @@
 ---
 title: "Data structures and algorithms, with product stakes"
-summary: "The working set of DS&A: complexity, every core structure, and the algorithm patterns interview prep drills, each tied to a feature, a metric, and a cost. Optional details panels and a reading path for the rest."
+summary: "Core data structures and algorithms for product judgment, with language-neutral pseudocode, worked traces, product consequences, and a path to coding practice."
 audience: Both
 status: published
 order: 2
@@ -8,7 +8,32 @@ order: 2
 
 Engineers reach for data structures and algorithms when a feature has a speed, memory, cost, or correctness problem. If all you hear is "we need to optimize," you cannot choose between shipping the slow version now and paying for the fast one.
 
-Every term below is defined the first time it appears, and every idea carries the product decision it belongs to. A PM leaves able to name `n`, the metric at risk, and the appetite. An engineer working through interview material gets the same structures and patterns, plus the reason each one exists in a shipped product. Mechanisms sit inside **Optional details** panels, closed by default; the product story holds without them, and the reading path at the end goes further than one page can.
+Every term below is defined the first time it appears, and every idea carries the product decision it belongs to. A PM leaves able to name `n`, the metric at risk, and the appetite. **Optional details** panels use language-neutral pseudocode and worked traces to show how each mechanism operates. They remain closed by default.
+
+This lesson builds technical judgment for product work:
+
+- recognize the problem shape behind an engineering proposal
+- understand why an engineer chooses one structure or algorithm
+- connect that choice to speed, cost, correctness, and customer experience
+
+Open **Optional details** when you want the implementation model. **Pseudocode** describes the steps without the punctuation and library rules of a programming language. It exposes pointer movement and array state, including the condition that stops each loop. Pseudocode does not compile into a working application.
+
+Coding fluency needs a separate practice loop:
+
+- implement each structure in a chosen language
+- solve problems without copying the solution
+- test edge cases and measure the result
+
+A language-specific data structures and algorithms course is the right place for that work.
+
+**Most production teams reuse the foundations.** A programming language's **standard library** is the collection of tested structures and functions shipped with that language.
+
+- Most standard libraries provide dynamic arrays or lists, hash maps, sets, and sorting. Many also provide deques, heaps, priority queues, or binary-search helpers.
+- Additional software packages may provide graph traversal, shortest-path, text-search, and optimization algorithms.
+- Product engineers still write the feature-specific rules. A library cannot decide which login attempts belong in the fraud window, what counts as a booking conflict, which route cost matters, or which discount constraints the business accepts.
+- Engineers implement a foundation from scratch when no suitable library exists, unusual performance constraints demand another design, or they are practising the mechanism in a coding course or interview.
+
+The pseudocode teaches enough of the mechanism to review the choice and spot a broken assumption. Production code should use a maintained library when one fits, then add the product's rules around it.
 
 Systems that span many machines (copying data for safety, keeping temporary copies of hot results, surviving a dead disk) belong to [system design](/learn/engineering/system-design). Here the scope is what data you hold, how you organize it, and what you do to it.
 
@@ -34,13 +59,7 @@ Five factors sit behind every "which approach" argument:
 - **Freshness:** whether the answer must be current or can be slightly out of date
 - **Risk:** how long the approach takes to build, operate, and debug
 
-For instance, let's look at Spotify.
-
-**Spotify search**
-
-- **Situation:** Spotify's catalog kept growing. Checking every track title worked in a demo but became too slow for a real catalog.
-- **Product stake:** search is a path into listening. When search slows down, fewer users reach a song and start playing it.
-- **Technical response:** engineers added an **index**, a separate lookup structure that finds matching tracks without checking the entire catalog, then ranked those matches so the most useful results appeared first.
+For instance, take Spotify search. The catalog kept growing, and checking every track title worked in a demo but became too slow for a real catalog. Search is a path into listening, so when it slows down, fewer users reach a song and start playing it. Engineers added an **index**, a separate lookup structure that finds matching tracks without checking the entire catalog, then ranked those matches so the most useful results appeared first.
 
 ## Complexity: how work grows
 
@@ -73,7 +92,7 @@ For instance, let's look at Spotify.
 
 </TechDepth>
 
-**The question that upgrades your brief:** what is `n` today, what is it in twelve months, and what breaks first at 10×?
+A better brief names `n` today, `n` in twelve months, and what breaks first at 10×.
 
 ## The structures
 
@@ -85,6 +104,14 @@ Computer science uses the phrase **data structure** as an umbrella term, but two
 - A **concrete data structure** defines storage: how the computer arranges the items in memory. Dynamic arrays and linked lists are concrete structures.
 
 That distinction allows one structure to build another. A program can implement stack behavior with a dynamic array or a linked list. Calling a stack a "data structure" is normal shorthand; calling it an abstract data type is more precise.
+
+The structures below fall into five groups. Read the group that matches the feature in front of you rather than working through all of them in order:
+
+- **Everyday collections** hold items in a sequence: array, string, and linked list.
+- **Keyed lookup** finds one record by a name you already hold: hash map and hash set.
+- **Ordered access** decides which item comes out next: stack, queue and deque, and heap.
+- **Hierarchies and networks** store relationships: tree, trie, graph, and union-find.
+- **Space savers** trade exactness or completeness for memory: Bloom filter and LRU cache.
 
 <StructureLookupDiagram />
 
@@ -100,6 +127,31 @@ Imagine a row of numbered lockers. If you know that the item you need is in lock
 - **Find by value:** when the program knows only a value, such as the title `"Data structures and algorithms"`, it may need to inspect each item until it finds a match. In the worst case, it checks all `n` items, so the work is O(n).
 - **Insert in the middle:** when order must remain intact, adding a new item at index 2 requires moving the old item at index 2 to index 3, the old item at index 3 to index 4, and so on. As the array grows, more items may need to move.
 - **Add at the end:** a **dynamic array** can grow when it fills up. Most additions at the end are cheap. Occasionally the program creates a larger block of memory and copies the existing items into it.
+
+<TechDepth>
+
+An implementation tracks both **size**, the number of stored items, and **capacity**, the number of available positions. It preserves one rule: stored items occupy positions `0` through `size - 1`.
+
+```text
+PROCEDURE APPEND(items, size, capacity, newItem)
+  IF size = capacity
+    newCapacity ← MAXIMUM(1, capacity × 2)
+    largerItems ← NEW ARRAY with newCapacity positions
+
+    FOR position FROM 0 TO size - 1
+      largerItems[position] ← items[position]
+
+    items ← largerItems
+    capacity ← newCapacity
+
+  items[size] ← newItem
+  size ← size + 1
+  RETURN items, size, capacity
+```
+
+Suppose `["cart", "checkout"]` has size 2 and capacity 2. Appending `"receipt"` creates four positions, copies the first two values, and stores `"receipt"` at position 2. The next append uses position 3 without another resize. One expensive copy buys room for several cheap appends.
+
+</TechDepth>
 
 Consider a shopping cart. The cart keeps its line items in order so the interface can render the first item, second item, and third item. Reading a known position is easy. Finding the line item for product `ABC-123` still requires a scan unless the program also maintains a separate lookup from product ID to cart item.
 
@@ -124,7 +176,7 @@ That distinction prevents a common performance problem. The array itself is not 
 
 A **string** is an ordered sequence of characters: letters, numbers, spaces, punctuation, or symbols. `"Anadi"` is a string containing five characters. Because those characters sit in order, many string operations use the same techniques as arrays.
 
-**Simple model:** place letter tiles in a row. You can read the tile at a numbered position, compare two rows, remove spaces from either end, or search one row for a smaller sequence of tiles. A string gives a program those operations for text.
+Picture letter tiles in a row. You can read the tile at a numbered position, compare two rows, remove spaces from either end, or search one row for a smaller sequence of tiles. A string gives a program those operations for text.
 
 Common operations include:
 
@@ -147,7 +199,7 @@ The product consequence is concrete: missing normalization can create duplicate 
 
 **Characters are not always one byte.** Unicode is the standard computers use to represent writing systems and symbols. Some visible characters, including many emoji, use multiple underlying code units. Code that assumes one visible character equals one byte can cut text incorrectly or miscount a username.
 
-**Product questions:** should search ignore capital letters? Are accents significant? Should `"résumé"` match `"resume"`? Can a user include emoji in a display name? These are product rules before they are string algorithms.
+Those questions are product rules before they are string algorithms: should search ignore capital letters? Are accents significant? Should `"résumé"` match `"resume"`? Can a user include emoji in a display name?
 
 </TechDepth>
 
@@ -155,13 +207,33 @@ The product consequence is concrete: missing normalization can create duplicate 
 
 A **linked list** stores each item in a separate container called a **node**. Each node holds the value and a link, or pointer, to the next node. A **doubly linked list** adds a second pointer to the previous node.
 
-**Simple model:** picture a scavenger hunt. Each clue tells you where to find the next clue. You cannot jump straight to clue 4,000 because only clue 3,999 contains its location. Starting from the first node and reaching the 4,000th therefore requires O(n) steps.
+Picture a scavenger hunt. Each clue tells you where to find the next clue. You cannot jump straight to clue 4,000 because only clue 3,999 contains its location. Starting from the first node and reaching the 4,000th therefore requires O(n) steps.
 
 The trade-off changes when you already hold the node you need:
 
 - **Insert:** connect the previous node to the new node, then connect the new node to the next one.
 - **Delete:** connect the surrounding nodes to each other, bypassing the deleted node.
 - **Read by position:** start at one end and follow links until you reach that position.
+
+<TechDepth>
+
+The implementation changes links rather than shifting later values. It preserves one rule: following `next` from a node reaches the item that comes after it.
+
+```text
+PROCEDURE INSERT_AFTER(currentNode, newValue)
+  newNode ← NODE containing newValue
+  newNode.next ← currentNode.next
+  currentNode.next ← newNode
+
+PROCEDURE REMOVE_AFTER(currentNode)
+  nodeToRemove ← currentNode.next
+  currentNode.next ← nodeToRemove.next
+  RETURN nodeToRemove.value
+```
+
+Start with `Edit A → Edit B → Edit C`. To insert `Edit X` after `Edit B`, point `Edit X` at `Edit C`, then point `Edit B` at `Edit X`. The result is `A → B → X → C`. Only two links change. The program must already hold the node for `Edit B`; finding that node from the beginning still takes a scan.
+
+</TechDepth>
 
 A design tool's undo history shows the benefit. Each edit can point to the edit before and after it. Undo moves one link backward; redo moves one link forward. The tool does not need to shift every later edit when it adds a new action.
 
@@ -229,6 +301,35 @@ hash("user-9281") → bucket 5
 
 When the application stores the profile, the calculation sends it to bucket 5. When the application requests the profile, the same calculation sends the lookup to bucket 5. The map jumps to that bucket instead of checking buckets 0 through 4. That fixed amount of work gives a hash map O(1) lookup on average.
 
+<TechDepth>
+
+The map stores a short list of entries inside each bucket because different keys can land in the same bucket. Lookup preserves one rule: run the same hash calculation used during storage, then compare keys only inside the selected bucket.
+
+```text
+FUNCTION GET(map, key)
+  bucketNumber ← HASH(key) MODULO map.numberOfBuckets
+
+  FOR EACH entry IN map.buckets[bucketNumber]
+    IF entry.key = key
+      RETURN entry.value
+
+  RETURN NOT_FOUND
+
+PROCEDURE PUT(map, key, value)
+  bucketNumber ← HASH(key) MODULO map.numberOfBuckets
+
+  FOR EACH entry IN map.buckets[bucketNumber]
+    IF entry.key = key
+      entry.value ← value
+      RETURN
+
+  ADD (key, value) TO map.buckets[bucketNumber]
+```
+
+Suppose both `"user-9281"` and `"user-5555"` land in bucket 5. `GET("user-9281")` jumps to bucket 5, compares the one or two keys there, and returns the matching profile. It does not scan every customer. Too many entries in one bucket make lookup slower, which is why the map creates more buckets as it fills.
+
+</TechDepth>
+
 A **hash set** keeps only the keys, without a separate value. It answers a simpler question: "Have we already seen this?" For example, a waitlist can place each normalized email address in a set and reject a duplicate signup.
 
 That difference powers several familiar features:
@@ -264,7 +365,29 @@ A **stack** allows work at one end only. Adding an item is called **push**; remo
 
 Those rules define the behavior, not the storage. A dynamic array can implement a stack by adding and removing items only at its end. The array supplies the storage; the stack supplies the access rule.
 
-**Simple model:** stack trays in a cafeteria. Staff place each clean tray on top. The next customer takes the top tray, so the last tray added is the first one removed.
+Picture stacking trays in a cafeteria. Staff place each clean tray on top. The next customer takes the top tray, so the last tray added is the first one removed.
+
+<TechDepth>
+
+A dynamic array can implement the rule by treating its last item as the top. Push appends; pop reads and removes the last position.
+
+```text
+PROCEDURE PUSH(stack, item)
+  APPEND item TO stack.items
+
+FUNCTION POP(stack)
+  IF stack.items IS EMPTY
+    RETURN EMPTY
+
+  topPosition ← LENGTH(stack.items) - 1
+  item ← stack.items[topPosition]
+  REMOVE item AT topPosition
+  RETURN item
+```
+
+For browser history, pushing `Home`, then `Search`, then `Product` produces `[Home, Search, Product]`. Pop returns `Product`; the remaining top is `Search`. The program never removes `Home` while newer pages remain above it.
+
+</TechDepth>
 
 Browser navigation uses this shape:
 
@@ -290,7 +413,7 @@ A **monotonic stack** keeps its values consistently increasing or decreasing. Wh
 
 A **queue** accepts new items at the back and removes old items from the front. This produces first in, first out order, like customers waiting at a checkout.
 
-**Simple model:** customers join the back of a checkout line, and the cashier serves the person at the front. A new arrival does not normally move ahead of someone who has already waited.
+Customers join the back of a checkout line, and the cashier serves the person at the front. A new arrival does not normally move ahead of someone who has already waited.
 
 A large account export can take several minutes. Making the customer hold the page open until it finishes creates timeouts and repeated clicks. A queue separates acceptance from completion:
 
@@ -302,6 +425,27 @@ A large account export can take several minutes. Making the customer hold the pa
 The customer gets immediate confirmation while the server does expensive work separately. The same pattern handles emails, notifications, video processing, and print jobs.
 
 A **deque**, pronounced "deck," is a double-ended queue. It adds and removes items at either end. One use is a **sliding window**, a moving group such as "events from the last five minutes." As time moves forward, new events enter one end and expired events leave the other.
+
+<TechDepth>
+
+A queue implementation keeps a **front position**, the index of the next item to remove. It does not shift every remaining item after each removal.
+
+```text
+PROCEDURE ENQUEUE(queue, item)
+  APPEND item TO queue.items
+
+FUNCTION DEQUEUE(queue)
+  IF queue.frontPosition = LENGTH(queue.items)
+    RETURN EMPTY
+
+  item ← queue.items[queue.frontPosition]
+  queue.frontPosition ← queue.frontPosition + 1
+  RETURN item
+```
+
+If three export jobs arrive as `[Export A, Export B, Export C]`, the front position starts at `0`. The first dequeue returns `Export A` and moves the front to `1`; the next returns `Export B`. A production queue may reuse empty positions with a circular array, but its arrival-order rule stays the same.
+
+</TechDepth>
 
 **Product decision**
 
@@ -329,7 +473,7 @@ The response depends on the product promise:
 
 A **priority queue** returns the most important item next instead of the oldest item. A **heap** is the tree-shaped data structure commonly used to implement that rule. It keeps only enough order to identify the highest- or lowest-priority item; it does not fully sort everything.
 
-**Simple model:** a hospital triage desk does not always treat the person who arrived first. Staff identify the patient with the most urgent need and treat that patient next. A heap keeps the next highest-priority item available without arranging every waiting item into a complete order.
+A hospital triage desk does not always treat the person who arrived first. Staff identify the patient with the most urgent need and treat that patient next. A heap keeps the next highest-priority item available without arranging every waiting item into a complete order.
 
 Consider a support product holding 100,000 open tickets while displaying only the ten most urgent. Sorting every ticket whenever an agent opens the page repeats work the interface never uses. A heap keeps the next most urgent ticket easy to retrieve:
 
@@ -338,6 +482,44 @@ Consider a support product holding 100,000 open tickets while displaying only th
 - Removing the highest-priority ticket costs O(log n).
 
 Priority queues also run scheduled timers, select trending content, and combine several already-sorted result streams. The product question is whether customers need the full ranking or only the first few results.
+
+<TechDepth>
+
+A **max-heap** stores the greatest priority at array position `0`. For every other position, the parent sits at `FLOOR((position - 1) ÷ 2)`. The implementation preserves one rule: every parent has priority greater than or equal to its children.
+
+```text
+PROCEDURE ADD(heap, ticket)
+  APPEND ticket TO heap
+  position ← LENGTH(heap) - 1
+
+  WHILE position > 0
+    parent ← FLOOR((position - 1) ÷ 2)
+    IF heap[parent].priority ≥ heap[position].priority
+      STOP
+    SWAP heap[parent] WITH heap[position]
+    position ← parent
+
+FUNCTION REMOVE_HIGHEST(heap)
+  IF LENGTH(heap) = 1
+    RETURN REMOVE_LAST(heap)
+
+  highest ← heap[0]
+  heap[0] ← REMOVE_LAST(heap)
+  position ← 0
+
+  WHILE position HAS A CHILD
+    largerChild ← CHILD WITH GREATER PRIORITY
+    IF heap[position].priority ≥ heap[largerChild].priority
+      STOP
+    SWAP heap[position] WITH heap[largerChild]
+    position ← largerChild
+
+  RETURN highest
+```
+
+Suppose ticket priorities are stored as `[90, 70, 50]`. Adding priority `80` first places it at the end: `[90, 70, 50, 80]`. It exceeds its parent `70`, so the heap swaps them and becomes `[90, 80, 50, 70]`. The highest priority remains at position `0`; the rest need not form a complete ranking.
+
+</TechDepth>
 
 **Product decision**
 
@@ -349,7 +531,7 @@ Priority queues also run scheduled timers, select trending content, and combine 
 
 A **tree** represents a hierarchy. The top node is the **root**. A node below another node is its **child**, and the node above it is its **parent**. A node with no children is a **leaf**. **Depth** counts how far a node sits below the root; **fan-out** counts how many children a node has.
 
-**Simple model:** a family tree starts with one person or couple and branches into children, grandchildren, and later generations. Each downward step adds depth. The same branching shape describes folders and subfolders.
+A family tree starts with one person or couple and branches into children, grandchildren, and later generations. Each downward step adds depth. The same branching shape describes folders and subfolders.
 
 A course provides a familiar example: it has sections, each section has lessons, and each lesson may have exercises. That hierarchy is a tree. File folders, threaded comments, product categories, and company reporting lines use the same shape.
 
@@ -381,9 +563,35 @@ The shape creates product constraints:
 
 A **trie**, pronounced "try," is a tree that stores one character along each step of a path. Words sharing a beginning also share the same path. The beginning of a word is called its **prefix**.
 
-**Simple model:** imagine a hallway where each door is labelled with the next letter. To find words beginning with `car`, walk through doors `c`, `a`, and `r`. Every room beyond that point represents a possible continuation, such as `car`, `care`, or `cart`.
+Imagine a hallway where each door is labelled with the next letter. To find words beginning with `car`, walk through doors `c`, `a`, and `r`. Every room beyond that point represents a possible continuation, such as `car`, `care`, or `cart`.
 
 Autocomplete makes the shared path concrete. A list storing `cat`, `car`, and `care` follows one path for `ca`, then branches. After a customer types `car`, the application reaches that path and returns every word below it. Lookup work depends on the number of typed characters rather than the total number of stored words.
+
+<TechDepth>
+
+Each trie node keeps a map from the next character to the next node. A marker records whether a complete word ends there.
+
+```text
+PROCEDURE INSERT(root, word)
+  node ← root
+  FOR EACH character IN word
+    IF node.children DOES NOT CONTAIN character
+      node.children[character] ← NEW TRIE NODE
+    node ← node.children[character]
+  node.endsWord ← TRUE
+
+FUNCTION FIND_PREFIX(root, prefix)
+  node ← root
+  FOR EACH character IN prefix
+    IF node.children DOES NOT CONTAIN character
+      RETURN NOT_FOUND
+    node ← node.children[character]
+  RETURN node
+```
+
+After inserting `car`, `care`, and `cart`, all three words share the nodes `c → a → r`. `FIND_PREFIX("car")` walks three links and returns that final `r` node. The application then collects complete words below it. Adding more words does not lengthen the walk to the prefix.
+
+</TechDepth>
 
 Tries power search suggestions, tag pickers, contact search, and matching lists of blocked or protected terms. The trade-off is memory: shared prefixes save some duplication, but every character node and pointer still occupies space.
 
@@ -397,7 +605,7 @@ Tries power search suggestions, tag pickers, contact search, and matching lists 
 
 A **graph** represents things and the relationships between them. Each thing is a **node**; each relationship is an **edge**. Unlike a tree, a graph allows several parents, two-way relationships, and **cycles**, where following links can return to the starting node.
 
-**Simple model:** a city map is a graph. Intersections are nodes and roads are edges. Several roads can reach one intersection, roads can work in both directions, and following several roads can bring you back to where you started.
+A city map is a graph. Intersections are nodes and roads are edges. Several roads can reach one intersection, roads can work in both directions, and following several roads can bring you back to where you started.
 
 LinkedIn provides a familiar graph. Members are nodes and connections are edges. One member can connect to hundreds of others, two members can share connections, and a chain of connections can loop back to its starting point.
 
@@ -409,6 +617,20 @@ Graphs power:
 - package or task dependencies
 - delivery routes and workflow states
 
+<TechDepth>
+
+An **adjacency list** implements the graph as a map. Each node maps to a list of its neighbours.
+
+```text
+PROCEDURE ADD_TWO_WAY_EDGE(graph, firstNode, secondNode)
+  APPEND secondNode TO graph[firstNode]
+  APPEND firstNode TO graph[secondNode]
+```
+
+If Maya belongs to `Design` and `Design` can open `Roadmap`, the map can hold `Maya → [Design]` and `Design → [Maya, Roadmap]`. Traversal algorithms read one neighbour list at a time. A social product stores existing connections instead of allocating space for every possible pair of members.
+
+</TechDepth>
+
 **Product decision**
 
 - **Used in:** social connections, recommendation relationships, document permissions, dependency planning, fraud rings, delivery routes, and workflows that can branch or loop.
@@ -417,7 +639,7 @@ Graphs power:
 
 <TechDepth>
 
-An **adjacency list** stores, for each node, only the nodes connected to it. It suits a sparse graph where most possible relationships do not exist. An **adjacency matrix** stores a table containing every possible pair. It uses more memory but answers "are these two nodes connected?" directly. A social network usually uses adjacency lists because every member connects to a tiny fraction of all members.
+An **adjacency matrix** stores a table containing every possible pair. It uses more memory than an adjacency list but answers "are these two nodes connected?" directly. A social network usually uses adjacency lists because every member connects to a tiny fraction of all members.
 
 </TechDepth>
 
@@ -428,9 +650,31 @@ An **adjacency list** stores, for each node, only the nodes connected to it. It 
 - **Find:** return the group containing an item.
 - **Union:** merge two groups after learning they belong together.
 
-**Simple model:** people at an event receive coloured wristbands showing their group. Finding a person's group means checking the wristband colour. Combining the blue and green groups means giving them one shared group identity instead of comparing every blue person with every green person.
+People at an event receive coloured wristbands showing their group. Finding a person's group means checking the wristband colour. Combining the blue and green groups means giving them one shared group identity instead of comparing every blue person with every green person.
 
 Identity resolution shows why grouping matters. A customer signs up with a personal email, later uses a work email, and then buys through an Apple private relay address, which forwards messages without revealing the customer's main address. Rules may conclude that all three accounts represent one person. Union-find merges those records into one group without repeatedly comparing every account with every other account.
+
+<TechDepth>
+
+The structure gives each item a parent. A group's representative points to itself. `FIND` follows parent links to that representative; `UNION` joins one representative to another.
+
+```text
+FUNCTION FIND(parent, item)
+  IF parent[item] ≠ item
+    parent[item] ← FIND(parent, parent[item])
+  RETURN parent[item]
+
+PROCEDURE UNION(parent, firstItem, secondItem)
+  firstGroup ← FIND(parent, firstItem)
+  secondGroup ← FIND(parent, secondItem)
+
+  IF firstGroup ≠ secondGroup
+    parent[secondGroup] ← firstGroup
+```
+
+Start with `A → A`, `B → B`, and `C → C`, so each account represents its own group. `UNION(A, B)` changes B's representative to A. `UNION(B, C)` first finds that B belongs to A, then attaches C to A. A later `FIND(C)` returns A. The assignment inside `FIND` shortens future paths, a technique called **path compression**.
+
+</TechDepth>
 
 The same structure groups devices, joins computer-network connections, and detects whether adding a relationship would create a cycle. The product stake is a complete customer history without an O(n²) comparison across millions of records.
 
@@ -447,7 +691,7 @@ A **Bloom filter** is a memory-efficient structure that answers a limited member
 - **Definitely absent:** the item has not appeared.
 - **Probably present:** the item may have appeared, so the application performs a slower, exact check.
 
-**Simple model:** imagine a quick screening card with several boxes. Each known item marks a few boxes. If a new item needs a box that remains unmarked, it is definitely absent. If all its boxes are marked, the marks may belong to that item or may overlap with marks from other items, so the answer is only "probably present."
+Imagine a quick screening card with several boxes. Each known item marks a few boxes. If a new item needs a box that remains unmarked, it is definitely absent. If all its boxes are marked, the marks may belong to that item or may overlap with marks from other items, so the answer is only "probably present."
 
 The second answer can be wrong. A **false positive** occurs when the filter reports "probably present" for an item that is absent. It never produces a false negative for an item added correctly.
 
@@ -470,7 +714,7 @@ A **cache** keeps a temporary copy of data so the application can reuse it inste
 - a hash map that finds a cached value quickly
 - a doubly linked list that records usage order
 
-**Simple model:** a small desk can hold only five documents while a filing cabinet holds hundreds. Keep recently used documents on the desk. When a sixth document arrives, return the document untouched for the longest time to the cabinet. The desk is the cache; the filing cabinet remains the original source.
+A small desk can hold only five documents while a filing cabinet holds hundreds. Keep recently used documents on the desk. When a sixth document arrives, return the document untouched for the longest time to the cabinet. The desk is the cache; the filing cabinet remains the original source.
 
 A phone image gallery makes the trade-off visible. The phone cannot keep every viewed product image in memory. An LRU image cache keeps recently viewed images ready and removes an image the customer has not viewed for a long time. Returning to the previous product feels instant; opening an old product downloads its image again.
 
@@ -486,7 +730,7 @@ The product trade-off has three parts:
 - **Prefer an LRU cache when:** recent use predicts near-future use, repeated computation or download is expensive, and a missed lookup can safely fall back to the original source.
 - **Avoid an LRU cache when:** every item must remain available, stale data could cause a wrong charge or permission decision, or usage recency does not predict what customers will request next.
 
-### Cost table
+### Which operations stay cheap
 
 Use this table after the explanations above. "Known" means the program already holds the required index, key, or node; finding that reference may carry a separate cost.
 
@@ -500,78 +744,327 @@ Use this table after the explanations above. "Known" means the program already h
 | Trie | Find a word or prefix in time proportional to the word's length. | It can consume substantial memory because characters become nodes and links. | The feature searches by prefix, such as autocomplete. |
 | Union-find | Check or merge groups in near-constant time. | It does not list relationships or support arbitrary group deletion well. | The feature repeatedly asks whether two records belong to the same group. |
 
-## The patterns
+## Pattern map: match the requirement to a tool
 
 An **algorithm** is a sequence of steps for solving a problem. A **pattern** is a reusable shape shared by many algorithms. Recognizing the shape keeps an engineer from inventing a new solution for every feature.
 
 <DsaPatternMapDiagram />
 
-The language in a requirement often hints at the useful pattern:
+The tables below are an index. Use them to recognize the shape of a requirement, then follow the linked pattern name to its full explanation. Some links point to data structures above because heaps, hash maps, tries, and union-find are structures that algorithms use. The five groups here reappear as the five families in the next section.
 
-| Requirement signal | What the pattern does | Product example and consequence |
+**Moving through ordered data**
+
+| Pattern and requirement | Worked product example | Product consequence |
 |---|---|---|
-| Sorted data, a pair, or duplicates | **Two pointers** move through one or two ordered lists without restarting the scan. | Merge imported contacts with existing customers without comparing every possible pair. |
-| "During the last N minutes or items" | A **sliding window** keeps only the current range while it moves through the data. | Lock an account after three failed attempts in five minutes without recounting the full login history. |
-| A sorted list or an ordered range of answers | **Binary search** discards half of the remaining possibilities after each comparison. | Find the largest upload size that stays below a response-time limit without testing every possible size. |
-| "Total between these two dates" | A **prefix sum** stores cumulative totals so a range total needs subtraction instead of a new scan. | Answer spending-by-date reports quickly after calculating cumulative spend once. |
-| Bookings, date ranges, or overlaps | **Interval processing** sorts ranges and combines or compares overlaps. | Detect double-booked rooms before confirming the reservation. |
-| "Top K," "next most urgent," or "most popular" | A **heap** keeps the best few items available without sorting the entire collection. | Display ten trending lessons while controlling ranking cost. |
-| Counts, uniqueness, or "have we seen this?" | **Hashing** uses a map or set for keyed lookup. | Count searches with no results and remove duplicate events. |
-| Try combinations while enforcing rules | **Backtracking** abandons a partial choice once it cannot lead to a valid result. | Search possible shifts without completing schedules that already break a rule. |
-| Repeated smaller problems contribute to the best answer | **Dynamic programming** saves intermediate answers and reuses them. | Find a valid discount bundle without recalculating the same combinations. |
-| The best immediate choice safely leads to the final answer | A **greedy algorithm** commits to the best local option. | Select the largest possible set of non-overlapping appointments. |
-| "Can this reach that?" or "fewest relationships" | **Breadth-first or depth-first search** follows graph edges in a controlled order. | Check document access through nested groups or find the fewest social connections. |
-| Tasks have prerequisites | A **topological sort** puts every dependency before the task that needs it. | Stop a migration or onboarding step from running before setup. |
-| Relationships carry distance, time, or price | **Dijkstra's algorithm** finds the path with the lowest total weight. | Estimate a delivery route using travel time rather than number of roads. |
-| "Do these records belong to one group?" | **Union-find** checks and merges groups. | Join duplicate identities while preserving one customer history. |
-| Search by the beginning of a word | A **trie** follows shared character prefixes. | Return autocomplete suggestions before the customer finishes typing. |
-| Store many yes/no settings compactly | **Bit manipulation** uses individual binary digits as flags. | Store several simple permissions in one small value. |
+| **[Two pointers](#two-pointers):** merge two sorted contact lists and identify duplicates. | Point to the first email in each list. Matching emails are duplicates. Otherwise, move only the pointer on the alphabetically earlier email. | The importer reads each list once instead of comparing every uploaded contact with every customer. |
+| **[Sliding window](#sliding-window):** lock an account after three failed logins within five minutes. | Add each new failure to the current five-minute range and remove failures that have become older than five minutes. | The application updates one small range instead of recounting the customer's full login history after each attempt. |
+| **[Prefix sums](#prefix-sums):** answer many spending questions between two dates. | Convert daily spend `[£4, £7, £2]` into cumulative totals `[£4, £11, £13]`. Day two through day three equals `£13 - £4 = £9`. | The dashboard calculates totals once, then answers each date-range request with one subtraction. |
+| **[Intervals](#intervals):** confirm a room booking without creating an overlap. | Represent each booking with start and end times. A new 10:30 to 11:30 booking overlaps the existing 10:00 to 11:00 booking. | The product rejects the conflict before confirmation and can calculate how many rooms are needed at the same time. |
+
+**Ordering, selecting, and remembering**
+
+| Pattern and requirement | Worked product example | Product consequence |
+|---|---|---|
+| **[Sorting](#sorting):** rank or arrange the complete collection. | Order lessons by a defined popularity score or products by price. | Customers receive a stable order, while the team chooses how fresh that order must be. |
+| **[Binary search](#binary-search):** find the largest upload between 1 MB and 100 MB that finishes within two seconds. | Test 50 MB: too slow. Test 25 MB: acceptable. Continue with 37, 31, 34, and 35 MB. The boundary is 34 MB because it passes and 35 MB fails. | The team finds the limit in about seven tests instead of testing 100 sizes. This requires larger uploads to remain at least as slow as smaller ones under comparable conditions. |
+| **[Heap or priority queue](#heap-and-priority-queue):** show the ten products with the highest recommendation scores. | An Amazon-style page scores thousands of candidates. A ten-item heap replaces its lowest-scoring item whenever a better product appears. | The product selects ten recommendations without fully sorting every candidate. Separate ranking logic must still calculate each score. |
+| **[Hashing](#hash-map-and-hash-set):** process each payment event once when network retries occur. | Store each processed event ID in a hash set. Hash the next ID to its bucket and check whether it already exists. | Duplicate detection stays O(1) on average instead of scanning the event history, preventing repeated charges or counts. |
+| **[Greedy choice](#greedy-selection):** fit the largest number of non-overlapping appointments into one room. | Sort by finishing time. Choose the appointment that ends first, then the next one that starts after it. | Each choice leaves room for later appointments. Engineers still need proof that the local rule produces the best final schedule. |
+
+**Exploring combinations**
+
+| Pattern and requirement | Worked product example | Product consequence |
+|---|---|---|
+| **[Recursion](#recursion):** total the size of a folder that contains more folders to unknown depth. | Add the files directly inside the folder, then apply the same instruction to each child folder and add its result. | The code follows the hierarchy without knowing its depth in advance, though deep nesting can exhaust the call stack. |
+| **[Backtracking](#backtracking):** create a valid staff schedule under availability, hour, and overlap rules. | Assign one shift at a time. If Priya receives overlapping shifts, abandon that partial schedule and return to the previous choice. | Early rejection removes impossible branches, though large schedules can still create too many combinations for an instant answer. |
+| **[Dynamic programming](#memoization-and-dynamic-programming):** find the most valuable discount bundle under a fixed budget. | Several bundle paths ask the same smaller question: "What is the best remaining discount with £10?" Store that answer and reuse it. | Checkout avoids recalculating repeated combinations and finds the best permitted result with predictable work. |
+
+**Following relationships and dependencies**
+
+| Pattern and requirement | Worked product example | Product consequence |
+|---|---|---|
+| **[Breadth-first](#breadth-first-search) or [depth-first search](#depth-first-search):** determine whether a member can reach a document through nested groups. | Members, groups, and documents are connected by permission edges. Breadth-first search checks nearby relationships first; depth-first search follows one chain to its end. | The product checks any group depth. Breadth-first search also finds the fewest relationships when each edge has equal cost. |
+| **[Topological sort](#topological-sort):** run setup steps only after their prerequisites. | Account creation must precede data import, and import must precede report generation. | Migration steps run in a valid order. A cycle where A waits for B and B waits for A must be fixed first. |
+| **[Dijkstra's algorithm](#dijkstras-algorithm):** choose the delivery route with the lowest travel time. | One route has two roads totaling 35 minutes; another has four roads totaling 22 minutes. Add travel-time weights instead of counting roads. | The product recommends the fastest known route instead of the route with the fewest turns. |
+| **[Union-find](#union-find-disjoint-set):** decide whether several accounts belong to one customer. | An email match joins A with B. A verified phone later joins B with C, placing all three in one group. | Identity checks stay fast as new evidence arrives without comparing every pair again. |
+
+**Working with text and flags**
+
+| Pattern and requirement | Worked product example | Product consequence |
+|---|---|---|
+| **[Trie](#trie):** return suggestions while a customer types a prefix. | `car`, `care`, and `cart` share the path `c → a → r`. Typing `car` reaches the point containing all three endings. | Work depends on the prefix length rather than scanning every stored word. |
+| **[Direct string matching](#direct-string-matching):** find a short exact phrase in a small text. | Try the protected name at each possible starting character and stop on a complete match. | The implementation stays easy to verify when the text volume is small. |
+| **[Knuth-Morris-Pratt](#knuth-morris-pratt):** scan large text for one exact pattern without restarting after each partial match. | Store how much of the protected name still matches after a mismatch. | The scanner reads the text in O(n) time after building the pattern's fallback table. |
+| **[Rolling hash](#rolling-hash):** compare many fixed-length text windows. | Update a numeric fingerprint as the window moves, then verify characters when fingerprints match. | The scanner avoids rebuilding each window comparison while verification protects against collisions. |
+| **[Bit manipulation](#bit-manipulation):** store stable yes-or-no permissions compactly. | Four binary positions represent read, edit, share, and delete. `1` enables a permission; `0` disables it. | The system stores several flags in little space. Named fields remain easier to debug when permissions change often. |
 
 <FeatureToAlgorithmDiagram />
 
-### Two pointers, sliding windows, prefix sums, and intervals
+## Worked algorithm patterns
 
-These four patterns avoid repeatedly scanning the same array.
+The five families below match the five groups in the map. Each algorithm explains the product shape and decision first. Its **Optional details** panel shows how the algorithm moves through data and why the implementation saves work.
 
-**Two pointers**
+### Moving through ordered data
 
-- **Simple model:** two people each hold an alphabetized guest list. They compare the names under their fingers. Matching names are duplicates; the person pointing to the earlier name moves down one row.
-- **Product example:** a contact importer sorts both uploaded contacts and existing customers by email, then moves one pointer through each list. It scans both lists once instead of comparing every uploaded contact with every customer.
-- **Used in:** duplicate detection, merging imported records, and finding pairs that meet a target.
-- **Prefer it when:** one or two lists are sorted, or pointers can move inward from opposite ends.
-- **Avoid it when:** the data has no useful order or the algorithm must repeatedly move backward.
+These four algorithms all avoid rescanning data the program has already examined. Sorted order or a moving boundary tells each one which items it can skip, which keeps a response time interactive as history, customers, or bookings grow.
 
-**Sliding window**
+#### Two pointers
 
-- **Simple model:** slide a picture frame across a long timeline. The frame shows only the events currently inside it. New events enter on the right; old events leave on the left.
-- **Product example:** a fraud rule tracks failed login attempts from the last five minutes. It adds a new attempt and removes attempts older than five minutes instead of rereading the full history.
+Two pointers avoid restarting a scan when sorted order tells the algorithm which values can no longer match.
+
+A **pointer** is a marker showing the item the algorithm is looking at now. The two-pointer pattern uses two markers. Each marker can sit in a different list, or both can sit at different positions in one list.
+
+Consider a product importing contacts. It must find emails that already belong to an existing customer.
+
+**Uploaded contacts**
+
+```text
+anadi@example.com
+maya@example.com
+ravi@example.com
+```
+
+**Existing customers**
+
+```text
+ben@example.com
+maya@example.com
+zoya@example.com
+```
+
+Both lists are in alphabetical order. Put one pointer at the first email in each list:
+
+<TechDepth>
+
+```text
+FUNCTION FIND_DUPLICATES(uploaded, existing)
+  uploadPosition ← 0
+  existingPosition ← 0
+  duplicates ← EMPTY LIST
+
+  WHILE uploadPosition < LENGTH(uploaded)
+        AND existingPosition < LENGTH(existing)
+    uploadEmail ← uploaded[uploadPosition]
+    existingEmail ← existing[existingPosition]
+
+    IF uploadEmail = existingEmail
+      APPEND uploadEmail TO duplicates
+      uploadPosition ← uploadPosition + 1
+      existingPosition ← existingPosition + 1
+    ELSE IF uploadEmail COMES BEFORE existingEmail
+      uploadPosition ← uploadPosition + 1
+    ELSE
+      existingPosition ← existingPosition + 1
+
+  RETURN duplicates
+```
+
+The implementation preserves one rule: everything before either pointer has already been resolved. Sorted order proves which pointer can move without hiding a future match.
+
+</TechDepth>
+
+| Step | Uploaded pointer | Existing pointer | Decision |
+|---|---|---|---|
+| 1 | `anadi@...` | `ben@...` | `anadi` comes before `ben`, so move only the uploaded pointer. Every remaining existing email comes after `ben`, so none can equal `anadi`. |
+| 2 | `maya@...` | `ben@...` | `ben` comes before `maya`, so move only the existing pointer. |
+| 3 | `maya@...` | `maya@...` | The emails match. Mark `maya@...` as a duplicate, then move both pointers. |
+| 4 | `ravi@...` | `zoya@...` | `ravi` comes before `zoya`, so move the uploaded pointer. The uploaded list is now finished. |
+
+The alphabetical order makes each move safe. Once `anadi` comes before the current existing email `ben`, no later existing email can be `anadi`. The importer never needs to move backward.
+
+With three uploaded contacts and three existing customers:
+
+- Comparing every possible pair can require `3 × 3 = 9` comparisons.
+- Two pointers move through at most `3 + 3 = 6` positions.
+
+At one million contacts in each list, comparing every pair could mean one trillion comparisons. Two pointers need at most about two million moves.
+
+**Where products use it**
+
+- **Duplicate detection:** find contacts, customers, or transactions appearing in both sorted lists.
+- **Merging:** combine two sorted result pages into one sorted result.
+- **Finding a pair:** place one pointer at each end of sorted prices such as `[£10, £20, £35, £50]`. For a £60 target, the first comparison finds `£10 + £50`.
+
+**Product decision**
+
+- **Prefer it when:** the data is already sorted, or sorting it once supports enough later work to justify the cost.
+- **Avoid it when:** the data has no useful order and a comparison does not tell you which items can be discarded. A hash set may answer a one-off duplicate check more directly.
+
+#### Sliding window
+
+Slide a picture frame across a long timeline. The frame shows only the events inside it. New events enter on the right; old events leave on the left.
+
+For instance, a fraud rule locks an account after three failed logins within five minutes. It adds each new failure to the current range and removes failures that have become too old.
+
+<TechDepth>
+
+The implementation stores timestamps in a deque from oldest to newest. It preserves one rule: after cleanup, every timestamp in the deque falls inside the current five-minute window.
+
+```text
+PROCEDURE RECORD_FAILED_LOGIN(recentFailures, currentTime)
+  APPEND currentTime TO BACK OF recentFailures
+  windowStart ← currentTime - 5 MINUTES
+
+  WHILE recentFailures IS NOT EMPTY
+        AND FRONT(recentFailures) < windowStart
+    REMOVE FRONT OF recentFailures
+
+  IF LENGTH(recentFailures) ≥ 3
+    LOCK ACCOUNT
+```
+
+Suppose failures arrive at `10:00`, `10:03`, and `10:06`:
+
+| Current failure | Deque before cleanup | Cleanup | Result |
+|---|---|---|---|
+| 10:00 | `[10:00]` | Nothing is older than 09:55. | One recent failure. |
+| 10:03 | `[10:00, 10:03]` | Nothing is older than 09:58. | Two recent failures. |
+| 10:06 | `[10:00, 10:03, 10:06]` | Remove 10:00 because it is older than 10:01. | Two recent failures, so the account stays open. |
+| 10:07 | `[10:03, 10:06, 10:07]` | Nothing is older than 10:02. | Three recent failures, so the rule locks the account. |
+
+Each failure enters and leaves the deque once, so processing `n` failures takes O(n) work across the full timeline. The rule does not reread account history after each attempt.
+
+</TechDepth>
+
+**Product decision**
+
 - **Used in:** fraud rules, rate limits, activity streaks, and continuous ranges inside text or event history.
 - **Prefer it when:** the requirement says "during the last N minutes," "inside this range," or "longest continuous sequence."
 - **Avoid it when:** the relevant items are scattered rather than contiguous, or each query asks for an unrelated range.
 
-**Prefix sum**
+#### Prefix sums
 
-- **Simple model:** a bank statement prints the running account balance beside every transaction. To calculate activity between two points, subtract the earlier running total from the later one.
-- **Product example:** daily spend `[£4, £7, £2]` produces cumulative totals `[£4, £11, £13]`. Spend from day two through day three is `£13 - £4 = £9`.
+A bank statement prints a running balance beside every transaction. To calculate activity between two points, subtract the running total before the range from the running total at its end.
+
+For instance, daily spend `[£4, £7, £2]` produces cumulative totals `[£4, £11, £13]`. Spend from day two through day three is `£13 - £4 = £9`.
+
+<TechDepth>
+
+The implementation builds an extra array whose first value is zero. It preserves one rule: `prefix[position]` equals the total of all values before that position.
+
+```text
+FUNCTION BUILD_PREFIX_SUMS(values)
+  prefix ← ARRAY containing one value: 0
+
+  FOR EACH value IN values
+    APPEND LAST(prefix) + value TO prefix
+
+  RETURN prefix
+
+FUNCTION RANGE_TOTAL(prefix, startPosition, endPosition)
+  RETURN prefix[endPosition + 1] - prefix[startPosition]
+```
+
+Daily spend `[£4, £7, £2]` creates `[£0, £4, £11, £13]`. Day two through day three uses positions 1 through 2: `prefix[3] - prefix[1] = £13 - £4 = £9`. Building the array costs O(n) once; every later range total costs O(1).
+
+</TechDepth>
+
+**Product decision**
+
 - **Used in:** spend reports, cumulative usage, inventory movement, and analytics over date ranges.
-- **Prefer it when:** the underlying values stay stable while the product asks many total-between-two-points questions.
+- **Prefer it when:** values stay stable while the product asks many total-between-two-points questions.
 - **Avoid it when:** values change constantly, because one early change may require updating every later cumulative total.
 
-**Intervals**
+#### Intervals
 
-- **Simple model:** draw meetings as bars on a calendar. Two bars covering the same time overlap.
-- **Product example:** sorting bookings by start time lets a calendar detect double bookings, merge busy periods, and calculate how many rooms are needed at once.
+Draw meetings as bars on a calendar. Two bars overlap when each starts before the other one ends.
+
+For instance, a calendar compares each proposed booking with existing bookings before confirming it. The same interval representation lets the product merge overlapping busy periods.
+
+<TechDepth>
+
+For a single booking request, compare the proposed range with every existing booking:
+
+```text
+FUNCTION HAS_CONFLICT(existingBookings, proposedBooking)
+  FOR EACH booking IN existingBookings
+    IF proposedBooking.start < booking.end
+       AND booking.start < proposedBooking.end
+      RETURN TRUE
+
+  RETURN FALSE
+```
+
+An existing booking from 10:00 to 11:00 conflicts with a proposed 10:30 to 11:30 booking because `10:30 < 11:00` and `10:00 < 11:30`. A proposed 11:00 to 12:00 booking does not conflict when the product allows one booking to start at the exact time another ends.
+
+Merging many busy periods starts by sorting them by start time. The algorithm preserves one rule: the result contains merged, non-overlapping intervals in start-time order.
+
+```text
+FUNCTION MERGE_INTERVALS(intervals)
+  SORT intervals BY start time
+  merged ← EMPTY LIST
+
+  FOR EACH current IN intervals
+    IF merged IS EMPTY OR LAST(merged).end < current.start
+      APPEND current TO merged
+    ELSE
+      LAST(merged).end ← MAXIMUM(LAST(merged).end, current.end)
+
+  RETURN merged
+```
+
+`[10:00, 11:00]`, `[10:30, 11:30]`, and `[13:00, 14:00]` become `[10:00, 11:30]` and `[13:00, 14:00]`. Sorting costs O(n log n); the merge then scans once in O(n).
+
+</TechDepth>
+
+**Product decision**
+
 - **Used in:** calendars, subscriptions, pricing validity, room allocation, and delivery windows.
-- **Prefer it when:** each item has a start and end, such as bookings, subscriptions, price validity, or delivery windows.
+- **Prefer it when:** each item has a start and end, such as a booking or delivery window.
 - **Avoid it when:** the feature cares about isolated points rather than ranges.
 
-The product stake across all four patterns is preserving an interactive response time as history, customers, or bookings grow.
+### Ordering, selecting, and remembering
 
-### Sorting
+These algorithms decide what order the data should take, or which few items the product needs to show. Two structures already covered do the same job: a [heap](#heap-and-priority-queue) returns the top few items without a full ranking, and a [hash set](#hash-map-and-hash-set) remembers what the program has seen before.
+
+#### Sorting
 
 A **sorting algorithm** rearranges values into an order, such as newest first, lowest price first, or highest score first. A **comparison sort** decides order by comparing pairs of values. Efficient general-purpose comparison sorts usually cost O(n log n).
 
-**Simple model:** arrange books on a shelf by title. Compare two books, place the earlier title first, and repeat until the shelf follows one order. The rule could instead use author, publication date, or height; the chosen rule changes the result.
+Arrange books on a shelf by title. Compare two books, place the earlier title first, and repeat until the shelf follows one order. The rule could instead use author, publication date, or height; the chosen rule changes the result.
+
+<TechDepth>
+
+**Merge sort** provides one concrete implementation. It divides the array until each piece holds one item, then merges sorted pieces. During each merge, the output preserves one rule: it always takes the smaller first unmerged value.
+
+```text
+FUNCTION MERGE_SORT(items)
+  IF LENGTH(items) ≤ 1
+    RETURN items
+
+  middle ← FLOOR(LENGTH(items) ÷ 2)
+  left ← MERGE_SORT(items BEFORE middle)
+  right ← MERGE_SORT(items FROM middle onward)
+  RETURN MERGE(left, right)
+
+FUNCTION MERGE(left, right)
+  result ← EMPTY LIST
+  leftPosition ← 0
+  rightPosition ← 0
+
+  WHILE leftPosition < LENGTH(left)
+        AND rightPosition < LENGTH(right)
+    IF left[leftPosition] ≤ right[rightPosition]
+      APPEND left[leftPosition] TO result
+      leftPosition ← leftPosition + 1
+    ELSE
+      APPEND right[rightPosition] TO result
+      rightPosition ← rightPosition + 1
+
+  WHILE leftPosition < LENGTH(left)
+    APPEND left[leftPosition] TO result
+    leftPosition ← leftPosition + 1
+
+  WHILE rightPosition < LENGTH(right)
+    APPEND right[rightPosition] TO result
+    rightPosition ← rightPosition + 1
+
+  RETURN result
+```
+
+Scores `[42, 17, 31, 8]` split into `[42, 17]` and `[31, 8]`, then into single values. The merges produce `[17, 42]` and `[8, 31]`; the final merge produces `[8, 17, 31, 42]`. Each level processes all `n` items, and there are about `log n` levels, so the work is O(n log n).
+
+</TechDepth>
 
 Take a Learn homepage showing the ten most popular lessons this week. Product first defines **popular**: starts, completions, or a score combining both. Engineering then chooses how often to calculate that order.
 
@@ -584,52 +1077,208 @@ Take a Learn homepage showing the ten most popular lessons this week. Product fi
 
 The product decision is how current the ranking must be, how many items appear, and how much infrastructure cost that surface deserves.
 
-### Searching
+#### Binary search
 
-**Searching** means locating one or more matching items. The right approach depends on the kind of match the customer expects.
+**Binary search** finds a value in sorted data by comparing with the middle and discarding half of the remaining possibilities. It can also find a boundary inside an ordered range of possible answers.
 
-**Simple model:** finding a name in an unsorted pile of cards means checking cards one by one. Finding the same name in an alphabetized phone directory lets you open near the middle and discard half of the remaining pages after each comparison.
-
-Lesson search shows why that promise matters. It could support exact titles, the beginning of a title, spelling mistakes, synonyms, or results based on meaning rather than matching words. Each promise needs different machinery.
-
-| Approach | What it does | Suitable when | Limitation |
-|---|---|---|---|
-| Linear scan | Check each title until a match appears. | The catalog contains only dozens of lessons. | Work grows with every item and repeats for every search. |
-| Binary search | Compare with the middle of a sorted list and discard half after each step. | Data is sorted and the customer expects an exact value. | It does not handle spelling mistakes or relevance ranking by itself. |
-| Database index | Maintain a separate lookup structure for a field such as a page identifier or email address. | The application repeatedly searches the same field. | The index consumes storage and adds work whenever records change. |
-| Full-text search | Build a word-to-document lookup, then rank matching documents. | Customers expect partial text, relevance, or language-aware matching. | The team must operate a larger search system and own its ranking rules. |
-
-Before choosing technology, state:
-
-- how many items customers will search
-- whether spelling mistakes should still match
-- whether exact, prefix, or meaning-based results are required
-- how quickly new content must appear in results
-- whether search is central to activation or a rarely used convenience
+Finding a name in an unsorted pile of cards means checking cards one by one. Finding the same name in an alphabetized phone directory lets you open near the middle. If the target comes later alphabetically, you can discard the entire first half.
 
 <TechDepth>
 
-**Binary search needs sorted data.** Each comparison halves the remaining range, giving O(log n) work. **Binary search on the answer** searches an ordered range of possible answers rather than stored items. Capacity planning can use it to find the largest page size or smallest worker count that still meets a response-time target.
+Binary search keeps two array positions around the remaining search area. It preserves one rule: if the target exists, it lies between `low` and `high`.
 
-**Full-text search** builds an **inverted index**, a map from each term to the documents containing it. A ranking formula then orders matches. Recency, popularity, personalization, and exact-match weighting are product choices expressed as numbers.
+```text
+FUNCTION BINARY_SEARCH(sortedItems, target)
+  low ← 0
+  high ← LENGTH(sortedItems) - 1
+
+  WHILE low ≤ high
+    middle ← FLOOR((low + high) ÷ 2)
+
+    IF sortedItems[middle] = target
+      RETURN middle
+    ELSE IF sortedItems[middle] < target
+      low ← middle + 1
+    ELSE
+      high ← middle - 1
+
+  RETURN NOT_FOUND
+```
+
+Searching `[10, 20, 35, 50, 80]` for `50` first checks `35` at the middle. Since `50` is greater, the algorithm moves `low` past `35` and discards the first three positions. The next middle value is `50`, so it returns that position.
 
 </TechDepth>
 
-### Recursion, memoization, dynamic programming
+For instance, suppose uploads must finish within two seconds. The team wants the largest supported size between 1 MB and 100 MB:
+
+| Test | Remaining sizes | Result | What remains |
+|---|---|---|---|
+| 1 | 1 to 100 MB | 50 MB takes 3 seconds, so it is too slow. | Keep 1 to 49 MB. |
+| 2 | 1 to 49 MB | 25 MB takes 1.5 seconds, so it passes. | Keep 25 MB as the current answer and search 26 to 49 MB. |
+| 3 | 26 to 49 MB | 37 MB takes 2.2 seconds, so it is too slow. | Keep 26 to 36 MB. |
+| 4 | 26 to 36 MB | 31 MB takes 1.8 seconds, so it passes. | Search 32 to 36 MB. |
+| 5 | 32 to 36 MB | 34 MB takes 2 seconds, so it passes. | Search 35 to 36 MB. |
+| 6 | 35 to 36 MB | 35 MB takes 2.1 seconds, so it is too slow. | The largest passing size is 34 MB. |
+
+<TechDepth>
+
+The boundary version changes the response to a passing test. Instead of returning that size at once, it saves the size and searches the larger half for a better passing answer.
+
+```text
+FUNCTION LARGEST_PASSING_SIZE(smallest, largest)
+  answer ← NONE
+  low ← smallest
+  high ← largest
+
+  WHILE low ≤ high
+    middle ← FLOOR((low + high) ÷ 2)
+
+    IF UPLOAD_AT_SIZE(middle) MEETS TIME LIMIT
+      answer ← middle
+      low ← middle + 1
+    ELSE
+      high ← middle - 1
+
+  RETURN answer
+```
+
+</TechDepth>
+
+The search takes about seven tests for 100 possible sizes because each test removes half of the remaining range.
+
+**Product decision**
+
+- **Prefer binary search when:** the data is sorted, or the possible answers form a boundary where everything below passes and everything above fails.
+- **Avoid binary search when:** results have no dependable order. Response-time tests also need repeated measurements because traffic and network conditions create noise.
+
+#### Greedy selection
+
+A **greedy algorithm** chooses the best available option now and does not revisit the choice. This approach is faster and simpler than exploring combinations, but it is correct only when the problem has the right mathematical structure.
+
+Choose the option that looks best at each step, cross it off, and never revisit it. This saves the work of comparing complete combinations, but an attractive choice now can block a better result later.
+
+A meeting scheduler is one case where the greedy choice works. Repeatedly choosing the meeting that finishes earliest leaves the most room for later meetings and maximizes the number that fit. The same strategy does not solve every pricing or resource problem.
+
+<TechDepth>
+
+```text
+FUNCTION SELECT_MOST_MEETINGS(meetings)
+  SORT meetings BY finish time
+  selected ← EMPTY LIST
+  lastFinish ← START OF DAY
+
+  FOR EACH meeting IN meetings
+    IF meeting.start ≥ lastFinish
+      APPEND meeting TO selected
+      lastFinish ← meeting.finish
+
+  RETURN selected
+```
+
+Given meetings `A: 09:00-10:00`, `B: 09:30-11:30`, and `C: 10:00-11:00`, finish-time order is A, C, B. The algorithm chooses A, then C because C starts when A finishes. It rejects B because B overlaps the selected schedule. Choosing B first would fit only one meeting; the earliest-finish rule fits two.
+
+</TechDepth>
+
+An engineer saying "greedy works here" should be able to explain why the local choice cannot block a better final answer. Passing a few examples is not enough when the output controls money, eligibility, or capacity.
+
+**Product decision**
+
+- **Used in:** selecting non-overlapping meetings, compressing files by assigning shorter codes to common symbols, and making fast allocation choices where engineers have proven the greedy rule.
+- **Prefer a greedy algorithm when:** the local choice has a clear proof, speed matters, and revisiting prior choices would add cost without improving the final answer.
+- **Avoid a greedy algorithm when:** discounts, capacity, or dependencies interact in ways where today's best-looking choice can block tomorrow's better combination.
+
+### Exploring combinations
+
+The algorithms below build an answer out of smaller decisions. They matter when the product asks for the best combination or a valid one, and the number of possible combinations is too large to check exhaustively.
+
+#### Recursion
 
 **Recursion** solves a problem by calling the same procedure on a smaller version of that problem. It fits data that repeats its own shape, such as a folder containing more folders. Every unfinished call uses the **call stack**, the program's record of procedures that still need to finish.
 
-**Simple model:** open a box containing smaller boxes. To count every object, use the same instruction on each box: count the loose objects, open every smaller box, and add its count. The instruction repeats until it reaches a box containing no more boxes.
+Open a box containing smaller boxes. To count every object, use the same instruction on each box: count the loose objects, open every smaller box, and add its count. The instruction repeats until it reaches a box containing no more boxes.
 
 Calculating a folder's size provides a recursive example. The calculation adds its files plus the sizes of every child folder. The same procedure calculates each child, so the code follows the tree naturally.
 
+<TechDepth>
+
+```text
+FUNCTION FOLDER_SIZE(folder)
+  total ← SUM OF sizes of files directly inside folder
+
+  FOR EACH childFolder IN folder.childFolders
+    total ← total + FOLDER_SIZE(childFolder)
+
+  RETURN total
+```
+
+Suppose `Projects` contains a 5 MB file and a child folder named `Archive` containing 3 MB and 2 MB files. `FOLDER_SIZE(Archive)` returns 5 MB. The unfinished `Projects` call then adds its own 5 MB and returns 10 MB. The **base case** occurs when a folder has no child folders; its loop performs no recursive calls.
+
+</TechDepth>
+
+**Product decision**
+
+- **Prefer recursion when:** the data repeats a nested shape, such as folders, comments, or organisational units, and the maximum depth is controlled.
+- **Avoid plain recursion when:** the input can contain many nested levels, several paths repeat the same work, or the call stack could run out of room.
+
+#### Memoization and dynamic programming
+
 Recursion becomes expensive when several paths ask for the same smaller answer. **Memoization** stores each completed answer so a repeated request becomes a lookup. **Dynamic programming** plans the required smaller answers and builds the final answer from them. A **bottom-up** version fills a table from the smallest case to the largest instead of making recursive calls.
 
-**Memoization model:** write each solved answer on a sticky note. When the same question appears again, read the note instead of solving it again.
+Memoization is the sticky-note version: write each solved answer down, and when the same question appears again, read the note instead of solving it again.
 
-**Dynamic-programming model:** complete a worksheet from the smallest known answers upward. Each new row uses answers already written above it, so the work and its order are predictable.
+Dynamic programming is the worksheet version: complete it from the smallest known answers upward. Each new row uses answers already written above it, so the work and its order are predictable.
 
 <RecursionToDpDiagram />
+
+<TechDepth>
+
+Consider a checkout choosing each discount offer at most once under a £10 budget. Each offer has a cost to the business and a customer value. A top-down memoized implementation asks whether to skip or take the current offer:
+
+```text
+FUNCTION BEST_VALUE(offers, position, remainingBudget, memo)
+  IF position = LENGTH(offers)
+    RETURN 0
+
+  key ← (position, remainingBudget)
+  IF memo CONTAINS key
+    RETURN memo[key]
+
+  skipValue ← BEST_VALUE(offers, position + 1, remainingBudget, memo)
+  takeValue ← 0
+
+  IF offers[position].cost ≤ remainingBudget
+    takeValue ← offers[position].value
+                + BEST_VALUE(
+                    offers,
+                    position + 1,
+                    remainingBudget - offers[position].cost,
+                    memo
+                  )
+
+  memo[key] ← MAXIMUM(skipValue, takeValue)
+  RETURN memo[key]
+```
+
+The key stores both the next offer and the remaining budget because those two values define the smaller question. If several choice paths reach `(offer 3, £4 remaining)`, the function computes that answer once.
+
+A bottom-up implementation stores the best value for every budget from £0 through £10:
+
+```text
+FUNCTION BEST_VALUE_BOTTOM_UP(offers, budget)
+  best ← ARRAY OF budget + 1 ZEROS
+
+  FOR EACH offer IN offers
+    FOR available FROM budget DOWN TO offer.cost
+      withoutOffer ← best[available]
+      withOffer ← best[available - offer.cost] + offer.value
+      best[available] ← MAXIMUM(withoutOffer, withOffer)
+
+  RETURN best[budget]
+```
+
+Suppose one offer costs £6 and creates £8 of customer value, while another costs £4 and creates £5. After the first offer, `best[10]` is £8. Processing the second offer compares £8 with `best[6] + £5 = £13`, so the final answer combines both offers. The loop moves backward through budgets so it cannot reuse the same offer twice.
+
+</TechDepth>
 
 Common dynamic-programming families include:
 
@@ -643,8 +1292,6 @@ The phrase "exponential without memoization" means repeated work grows so quickl
 
 **Product decision**
 
-- **Prefer recursion when:** the data repeats a nested shape, such as folders, comments, or organisational units, and the maximum depth is controlled.
-- **Avoid plain recursion when:** the input can become deeply nested, several paths repeat the same work, or the call stack could run out of room.
 - **Prefer dynamic programming when:** the feature asks for the best result and repeatedly encounters the same smaller questions.
 - **Avoid dynamic programming when:** smaller questions do not repeat or storing every intermediate answer would consume more memory than the outcome deserves.
 
@@ -657,13 +1304,41 @@ Dynamic programming fits when two properties hold:
 
 </TechDepth>
 
-### Backtracking
+#### Backtracking
 
 **Backtracking** builds one possible answer step by step. As soon as a partial answer breaks a rule, the algorithm abandons that branch and returns to the last choice point. That early exit is called **pruning** because it cuts away part of the search tree.
 
-**Simple model:** solve a maze with a pencil. Follow one path until it reaches a dead end, return to the last junction, and try the next path. Marking the dead end prevents you from exploring an impossible route further.
+Solve a maze with a pencil. Follow one path until it reaches a dead end, return to the last junction, and try the next path. Marking the dead end prevents you from exploring an impossible route further.
 
 A shift scheduler makes pruning useful. It assigns employees one at a time. If a partial schedule already gives someone overlapping shifts or exceeds their permitted hours, no completed version of that branch can work. The algorithm stops exploring it.
+
+<TechDepth>
+
+The implementation keeps a partial schedule and removes its last choice when that choice leads nowhere. It preserves one rule: every assignment already in the partial schedule satisfies all constraints.
+
+```text
+FUNCTION BUILD_SCHEDULE(shifts, position, partialSchedule)
+  IF position = LENGTH(shifts)
+    RETURN COPY OF partialSchedule
+
+  currentShift ← shifts[position]
+
+  FOR EACH employee IN currentShift.eligibleEmployees
+    IF ASSIGNING employee WOULD NOT BREAK A RULE
+      ADD (currentShift, employee) TO partialSchedule
+
+      result ← BUILD_SCHEDULE(shifts, position + 1, partialSchedule)
+      IF result EXISTS
+        RETURN result
+
+      REMOVE LAST ASSIGNMENT FROM partialSchedule
+
+  RETURN NO_VALID_SCHEDULE
+```
+
+Suppose Priya and Mateo can cover morning and afternoon, but one person cannot cover both. The scheduler first assigns morning to Priya. If it later assigns afternoon to Priya, the rule fails before another recursive call. It tries Mateo instead. Removing the failed choice is the backtracking step.
+
+</TechDepth>
 
 Backtracking powers seat assignment, valid coupon combinations, and configuration tools with interacting constraints. The number of combinations can still grow exponentially. Product can reduce that cost by limiting party size, limiting how many promotions may combine, or accepting a good-enough answer after a time limit.
 
@@ -673,58 +1348,303 @@ Backtracking powers seat assignment, valid coupon combinations, and configuratio
 - **Prefer backtracking when:** the input is small enough to explore, rules can reject bad partial answers early, and the product needs a valid combination rather than a formula.
 - **Avoid backtracking when:** the number of choices is large and unbounded or the customer needs a guaranteed instant answer. Reduce the choices, use an approximation, or move the work into a background job.
 
-### Greedy algorithms
+### Following relationships and dependencies
 
-A **greedy algorithm** chooses the best available option now and does not revisit the choice. This approach is faster and simpler than exploring combinations, but it is correct only when the problem has the right mathematical structure.
+**Graph traversal** means visiting connected nodes in a deliberate order. All four algorithms below walk a [graph](#graph), and the requirement decides which one fits: the fewest relationships, any reachable path, a valid prerequisite order, or the lowest total cost. [Union-find](#union-find-disjoint-set) answers a fifth question, whether two items already share a group, without walking a path at all.
 
-**Simple model:** choose the option that looks best at each step, cross it off, and never revisit it. This saves the work of comparing complete combinations, but an attractive choice now can block a better result later.
+#### Breadth-first search
 
-A meeting scheduler is one case where the greedy choice works. Repeatedly choosing the meeting that finishes earliest leaves the most room for later meetings and maximizes the number that fit. The same strategy does not solve every pricing or resource problem.
+**Breadth-first search (BFS)** explores every node one edge away, then every node two edges away, and so on. Picture ripples spreading from a pebble. A queue preserves that layer-by-layer order.
 
-An engineer saying "greedy works here" should be able to explain why the local choice cannot block a better final answer. Passing a few examples is not enough when the output controls money, eligibility, or capacity.
+<TechDepth>
 
-**Product decision**
+```text
+FUNCTION SHORTEST_HOPS(graph, start, target)
+  queue ← QUEUE containing (start, 0)
+  visited ← SET containing start
 
-- **Used in:** selecting non-overlapping meetings, compressing files by assigning shorter codes to common symbols, and making fast allocation choices where engineers have proven the greedy rule.
-- **Prefer a greedy algorithm when:** the local choice has a clear proof, speed matters, and revisiting prior choices would add cost without improving the final answer.
-- **Avoid a greedy algorithm when:** discounts, capacity, or dependencies interact in ways where today's best-looking choice can block tomorrow's better combination.
+  WHILE queue IS NOT EMPTY
+    node, distance ← DEQUEUE(queue)
+    IF node = target
+      RETURN distance
 
-### Graph traversal
+    FOR EACH neighbour IN graph[node]
+      IF neighbour IS NOT IN visited
+        ADD neighbour TO visited
+        ENQUEUE (neighbour, distance + 1) INTO queue
 
-**Graph traversal** means visiting connected nodes in a deliberate order.
+  RETURN NOT_REACHABLE
+```
 
-- **BFS simple model:** drop a pebble into water. The first ripple reaches every nearby point before the next ripple reaches points farther away.
-- **DFS simple model:** explore a maze by following one corridor to its end before returning to the last junction.
+For instance, a Google Drive permission graph may connect `Maya → Design group → Roadmap`. BFS starts with Maya at distance 0, then visits the Design group at distance 1 and Roadmap at distance 2. Marking nodes as visited prevents a membership cycle from trapping the search.
 
-The algorithms turn those models into traversal rules:
+</TechDepth>
 
-- **Breadth-first search (BFS):** explore all nodes one edge away, then two edges away, and so on. It finds the path with the fewest edges when every edge has equal cost.
-- **Depth-first search (DFS):** follow one path as far as possible before returning to try another. It helps explore all reachable nodes and detect cycles.
-- **Topological sort:** order a graph with one-way dependencies so each prerequisite appears first. It works only when those dependencies contain no cycle.
-- **Dijkstra's algorithm:** find the lowest-total-cost path when edges carry weights of zero or greater, such as travel time or price.
+#### Depth-first search
 
-For instance, consider Google Drive. A permission check can start from a member, follow group-membership edges, and ask whether any path reaches a group allowed to open the document. A route estimator provides the weighted version: it follows roads carrying travel-time weights and seeks the path with the lowest total time.
+**Depth-first search (DFS)** follows one path to its end before returning to the latest choice point. A call stack or explicit stack preserves the unfinished paths.
 
-The product requirement selects the traversal. "Fewest introductions" calls for BFS; "lowest travel time" needs a weighted-path algorithm; "run setup before migration" needs topological ordering.
+<TechDepth>
+
+```text
+FUNCTION CAN_REACH(graph, node, target, visited)
+  IF node = target
+    RETURN TRUE
+
+  ADD node TO visited
+
+  FOR EACH neighbour IN graph[node]
+    IF neighbour IS NOT IN visited
+      IF CAN_REACH(graph, neighbour, target, visited)
+        RETURN TRUE
+
+  RETURN FALSE
+```
+
+If Maya belongs to Design, Design belongs to Product, and Product can open Roadmap, DFS follows that chain until it reaches Roadmap. If the chain ends, the call returns and tries Design's next connection. DFS proves reachability, but it does not guarantee the fewest relationships.
+
+</TechDepth>
+
+#### Topological sort
+
+**Topological sort** orders one-way dependencies so every prerequisite appears before the work that needs it. **In-degree** counts how many unfinished prerequisites point into a node.
+
+<TechDepth>
+
+```text
+FUNCTION DEPENDENCY_ORDER(graph)
+  inDegree ← MAP with 0 for every node
+
+  FOR EACH node IN graph
+    FOR EACH dependent IN graph[node]
+      inDegree[dependent] ← inDegree[dependent] + 1
+
+  ready ← QUEUE containing every node with inDegree 0
+  order ← EMPTY LIST
+
+  WHILE ready IS NOT EMPTY
+    node ← DEQUEUE(ready)
+    APPEND node TO order
+
+    FOR EACH dependent IN graph[node]
+      inDegree[dependent] ← inDegree[dependent] - 1
+      IF inDegree[dependent] = 0
+        ENQUEUE dependent INTO ready
+
+  IF LENGTH(order) < NUMBER OF NODES
+    RETURN CYCLE_FOUND
+  RETURN order
+```
+
+For account migration, `Create account → Import data → Generate report`. Only account creation starts with zero prerequisites. Completing it makes import ready; completing import makes report generation ready. If import waits for report while report waits for import, no node becomes ready and the algorithm reports a cycle.
+
+</TechDepth>
+
+#### Dijkstra's algorithm
+
+**Dijkstra's algorithm** finds the lowest-total-cost path when every edge weight is zero or greater. It stores the best known cost to each node and uses a min-heap to process the cheapest unfinished route next.
+
+<TechDepth>
+
+```text
+FUNCTION LOWEST_COST(graph, start, target)
+  distance ← MAP with INFINITY for every node
+  distance[start] ← 0
+  pending ← MIN_HEAP containing (0, start)
+
+  WHILE pending IS NOT EMPTY
+    currentCost, node ← REMOVE_LOWEST(pending)
+    IF currentCost > distance[node]
+      CONTINUE
+    IF node = target
+      RETURN currentCost
+
+    FOR EACH edge FROM node
+      newCost ← currentCost + edge.weight
+      IF newCost < distance[edge.destination]
+        distance[edge.destination] ← newCost
+        ADD (newCost, edge.destination) TO pending
+
+  RETURN NOT_REACHABLE
+```
+
+Suppose a warehouse reaches road A in 10 minutes or road B in 4. B reaches A in 3 more minutes, and A reaches the customer in 5. Dijkstra first records A at 10 and B at 4. Processing B improves A to 7; processing A reaches the customer at 12. The route with more roads wins because its total time is lower.
+
+</TechDepth>
+
+The product requirement selects the traversal. "Fewest introductions" calls for BFS; "can any permission path reach this document?" can use DFS; "run setup before migration" needs topological ordering; "lowest travel time" needs Dijkstra's algorithm.
 
 **Product decision**
 
 - **Used in:** document permissions, social connections, delivery routes, workflow dependencies, recommendations, and fraud-ring investigation.
 - **Prefer BFS when:** every relationship has equal cost and the feature needs the fewest hops.
 - **Prefer DFS when:** the feature must explore a complete branch, detect a cycle, or visit every reachable item.
-- **Avoid basic BFS or DFS when:** relationships carry different costs and the feature needs the cheapest total route. Use a weighted-path algorithm such as Dijkstra's.
+- **Prefer topological sort when:** work has one-way prerequisites and the product needs a valid execution order.
+- **Prefer Dijkstra's algorithm when:** relationships have non-negative costs and the product needs the lowest total cost; basic BFS or DFS cannot account for those weights.
 
-### Strings and bits
+### Working with text and flags
+
+The first three algorithms here find an exact phrase inside a longer text; they differ in how much repeated comparison they avoid. The fourth is unrelated to text and stores several yes-or-no settings inside one number. A [trie](#trie) covers the remaining text case, matching by prefix while a customer types.
 
 **String matching** finds one sequence of characters inside another. Checking each possible starting position character by character can cost O(n × m), where `n` is the long text length and `m` is the search phrase length.
 
-**Simple model for string matching:** slide a transparent stencil containing the target word across a page. At each position, check whether every letter lines up. A smarter method uses what already matched to decide how far the stencil can move after a mismatch.
+For matching text, slide a transparent stencil containing the target word across a page. At each position, check whether every letter lines up. A smarter method uses what already matched to decide how far the stencil can move after a mismatch.
 
-Brand monitoring shows string matching at scale. The product may scan millions of posts for protected names. **Knuth-Morris-Pratt (KMP)** avoids restarting from the next character after every mismatch. A **rolling hash** converts each window of text into a compact numeric fingerprint that updates as the window moves. These techniques reduce repeated comparisons when volume makes a simple scan too expensive.
+#### Direct string matching
+
+Direct matching tries the pattern at each possible starting position. It suits short text where a small, easy-to-check implementation matters more than avoiding every repeated comparison.
+
+<TechDepth>
+
+A direct implementation uses one loop for starting positions and another for characters:
+
+```text
+FUNCTION FIND_TEXT(text, pattern)
+  IF pattern IS EMPTY
+    RETURN 0
+
+  FOR start FROM 0 TO LENGTH(text) - LENGTH(pattern)
+    matched ← TRUE
+
+    FOR offset FROM 0 TO LENGTH(pattern) - 1
+      IF text[start + offset] ≠ pattern[offset]
+        matched ← FALSE
+        STOP INNER LOOP
+
+    IF matched
+      RETURN start
+
+  RETURN NOT_FOUND
+```
+
+Searching `"catalog"` for `"log"` tests starts at `c`, `a`, `t`, and `a` before the characters at `l`, `o`, and `g` all match. This implementation is easy to verify and works well for short text. Repeated partial matches can make it compare the same characters many times.
+
+</TechDepth>
+
+#### Knuth-Morris-Pratt
+
+**Knuth-Morris-Pratt (KMP)** records how much of the pattern remains useful after a mismatch. A **fallback table** stores, for every pattern position, the length of the longest beginning of the pattern that also matches its ending up to that point.
+
+<TechDepth>
+
+For the pattern `"abab"`, the fallback table is `[0, 0, 1, 2]`:
+
+- after `"aba"`, the ending `"a"` matches the beginning `"a"`, so the stored length is 1
+- after `"abab"`, the ending `"ab"` matches the beginning `"ab"`, so the stored length is 2
+
+```text
+FUNCTION BUILD_FALLBACK(pattern)
+  fallback ← ARRAY OF LENGTH(pattern) ZEROS
+  matched ← 0
+
+  FOR position FROM 1 TO LENGTH(pattern) - 1
+    WHILE matched > 0 AND pattern[position] ≠ pattern[matched]
+      matched ← fallback[matched - 1]
+
+    IF pattern[position] = pattern[matched]
+      matched ← matched + 1
+
+    fallback[position] ← matched
+
+  RETURN fallback
+
+FUNCTION KMP_FIND(text, pattern)
+  IF pattern IS EMPTY
+    RETURN 0
+
+  fallback ← BUILD_FALLBACK(pattern)
+  matched ← 0
+
+  FOR position FROM 0 TO LENGTH(text) - 1
+    WHILE matched > 0 AND text[position] ≠ pattern[matched]
+      matched ← fallback[matched - 1]
+
+    IF text[position] = pattern[matched]
+      matched ← matched + 1
+
+    IF matched = LENGTH(pattern)
+      RETURN position - LENGTH(pattern) + 1
+
+  RETURN NOT_FOUND
+```
+
+Searching `"abacabab"` for `"abab"` first matches `"aba"` and then meets `c` instead of `b`. The fallback table says one matched `a` still helps, so the search keeps that progress instead of restarting from the next text position. Building the table and scanning the text take O(m + n) work.
+
+</TechDepth>
+
+#### Rolling hash
+
+A **rolling hash** turns each fixed-length text window into a numeric fingerprint. Moving the window updates that fingerprint instead of recalculating it from every character.
+
+<TechDepth>
+
+`NUMBER(character)` gives each character a number. `MODULO` keeps the fingerprint within a fixed range by taking the remainder after division.
+
+```text
+FUNCTION ROLLING_HASH_FIND(text, pattern)
+  IF pattern IS EMPTY
+    RETURN 0
+  IF LENGTH(pattern) > LENGTH(text)
+    RETURN NOT_FOUND
+
+  windowLength ← LENGTH(pattern)
+  base ← 257
+  modulus ← A LARGE PRIME NUMBER
+  highestPlace ← base RAISED TO (windowLength - 1), MODULO modulus
+  patternHash ← 0
+  windowHash ← 0
+
+  FOR offset FROM 0 TO windowLength - 1
+    patternHash ← (patternHash × base + NUMBER(pattern[offset]))
+                  MODULO modulus
+    windowHash ← (windowHash × base + NUMBER(text[offset]))
+                 MODULO modulus
+
+  FOR start FROM 0 TO LENGTH(text) - windowLength
+    IF windowHash = patternHash
+       AND text window at start = pattern
+      RETURN start
+
+    IF another window exists
+      leadingValue ← NUMBER(text[start]) × highestPlace
+      windowHash ← (windowHash - leadingValue) MODULO modulus
+      windowHash ← (windowHash × base
+                    + NUMBER(text[start + windowLength]))
+                   MODULO modulus
+
+  RETURN NOT_FOUND
+```
+
+For `"catalog"` and a three-character pattern, the windows are `"cat"`, `"ata"`, `"tal"`, `"alo"`, and `"log"`. Each move reuses the previous fingerprint. Two different windows can share a fingerprint, a **hash collision**, so the algorithm confirms the characters before returning a match.
+
+</TechDepth>
+
+Brand monitoring can use KMP or rolling hashes to scan millions of posts for exact protected names. KMP gives one pattern a dependable linear scan. Rolling hashes help compare many windows or several patterns, with character verification protecting correctness.
+
+#### Bit manipulation
 
 **Bit manipulation** works directly with binary digits, where each **bit** is `0` or `1`. A **bitmask** assigns a meaning to each position, such as read, edit, share, or delete permission. Several yes/no settings then fit inside one number.
 
-**Simple model for bits:** place a row of light switches on a panel. Each switch represents one permission. Up means allowed (`1`); down means denied (`0`). Reading the panel reveals several yes/no settings at once.
+For bits, picture a row of light switches on a panel. Each switch represents one permission. Up means allowed (`1`); down means denied (`0`). Reading the panel reveals several yes/no settings at once.
+
+Assign `read = 1`, `edit = 2`, `share = 4`, and `delete = 8`. A customer with read and share permissions has `flags = 1 + 4 = 5`, written as binary `0101`.
+
+<TechDepth>
+
+```text
+FUNCTION HAS_PERMISSION(flags, permissionBit)
+  RETURN (flags BITWISE_AND permissionBit) ≠ 0
+
+FUNCTION GRANT_PERMISSION(flags, permissionBit)
+  RETURN flags BITWISE_OR permissionBit
+
+FUNCTION REVOKE_PERMISSION(flags, permissionBit)
+  RETURN flags BITWISE_AND (BITWISE_NOT permissionBit)
+```
+
+`HAS_PERMISSION(5, 4)` returns true because both numbers have the share position switched on. Granting edit changes `0101` to `0111`, or 7. Revoking share changes `0111` to `0011`, or 3. Each operation changes or checks one named switch without inspecting the others.
+
+</TechDepth>
 
 Compact storage can help at large volume, but a bitmask is harder to inspect than named fields. Prefer clear names unless storage volume or an interface close to the computer hardware makes the compact form valuable.
 
@@ -778,14 +1698,7 @@ Martin Kleppmann's *Designing Data-Intensive Applications* explains four useful 
 | B-tree | Store sorted keys in fixed-size disk blocks called **pages**, arranged as a balanced tree. | Mixed reading and writing, including queries for values between two boundaries, in many table-based relational databases. | Updating pages creates writes at different disk locations and needs recovery protection if the machine crashes. |
 | Column-oriented storage | Store values from the same column together instead of keeping each complete row together. | Analytics that scans a few fields across millions of events, such as total revenue by country. | Reconstructing one complete record can require reading from several column locations. |
 
-For another example, consider payment retries.
-
-**Stripe-style idempotency keys**
-
-- **Situation:** a phone loses its connection after sending a payment request. The customer retries because the product did not show a result.
-- **Product risk:** if the server treats the retry as a new purchase, it charges the customer twice.
-- **Technical response:** the client sends an **idempotency key**, a unique label identifying that payment attempt. The server stores the result under that key. A retry with the same key returns the original result instead of creating another charge.
-- **Data-structure role:** an index makes the key lookup fast enough to run before every payment action.
+For another example, consider payment retries the way Stripe-style systems handle them. A phone loses its connection after sending a payment request, and the customer retries because the product did not show a result. If the server treats that retry as a new purchase, it charges the customer twice. The client therefore sends an **idempotency key**, a unique label identifying that payment attempt. The server stores the result under that key. A retry with the same key returns the original result instead of creating another charge. An index makes the key lookup fast enough to run before every payment action.
 
 <TechDepth>
 
@@ -799,7 +1712,38 @@ For another example, consider payment retries.
 
 </TechDepth>
 
-## Correctness is a product surface
+## Choosing search machinery
+
+**Searching** means locating one or more matching items. The algorithms and indexes above each handle part of the job, so a search requirement becomes a choice between four levels of machinery.
+
+Lesson search shows why the promise matters. It could support exact titles, the beginning of a title, spelling mistakes, synonyms, or results based on meaning rather than matching words. Each promise needs different machinery.
+
+| Approach | What it does | Suitable when | Limitation |
+|---|---|---|---|
+| Linear scan | Check each title until a match appears. | The catalog contains only dozens of lessons. | Work grows with every item and repeats for every search. |
+| Binary search | Compare with the middle of a sorted list and discard half after each step. | Data is sorted and the customer expects an exact value. | It does not handle spelling mistakes or relevance ranking by itself. |
+| Database index | Maintain a separate lookup structure for a field such as a page identifier or email address. | The application repeatedly searches the same field. | The index consumes storage and adds work whenever records change. |
+| Full-text search | Build a word-to-document lookup, then rank matching documents. | Customers expect partial text, relevance, or language-aware matching. | The team must operate a larger search system and own its ranking rules. |
+
+Before choosing technology, state:
+
+- how many items customers will search
+- whether spelling mistakes should still match
+- whether exact, prefix, or meaning-based results are required
+- how quickly new content must appear in results
+- whether search is central to activation or a rarely used convenience
+
+<TechDepth>
+
+**Full-text search** builds an **inverted index**, a map from each term to the documents containing it. A ranking formula then orders matches. Recency, popularity, personalization, and exact-match weighting are product choices expressed as numbers.
+
+</TechDepth>
+
+## Taking this into the room
+
+The remaining sections turn the material into working habits: what to specify, what to spend, how to brief engineering, what this site already does, and how to practise.
+
+### Correctness is a product surface
 
 An **edge case** is a valid but unusual input near the boundary of normal use. Algorithms often look correct on average examples and fail at those boundaries.
 
@@ -816,7 +1760,7 @@ Text adds another set of boundaries: capital letters, surrounding spaces, accent
 
 These are product decisions. Writing them into the specification prevents an engineer from guessing and a customer from discovering the guess through lost data, a wrong charge, or a support ticket.
 
-## Cost, and what "good enough" means
+### Cost, and what "good enough" means
 
 The fastest technical design is not automatically the best product decision. A small catalog may not justify a dedicated search system. "Good enough" means the simplest approach that meets the current customer promise and has a named threshold for replacement.
 
@@ -836,7 +1780,7 @@ A useful search brief makes each trade-off explicit:
 
 "Make it faster" omits the information engineering needs to choose an approach.
 
-## Briefing eng
+### Brief engineering with seven answers
 
 A product brief for algorithmic work should answer seven questions:
 
@@ -848,7 +1792,7 @@ A product brief for algorithmic work should answer seven questions:
 6. **Appetite:** how many engineering days is this outcome worth before the team reduces scope?
 7. **Fallback:** what does the customer see if the faster or more accurate path is unavailable?
 
-## Specimen: this Learn site
+### Specimen: this Learn site
 
 The Learn product provides a final example. It already uses several structures even though the traffic is small:
 
@@ -864,25 +1808,32 @@ The Learn product provides a final example. It already uses several structures e
 
 Current traffic and catalog size make simple implementations appropriate. The brief should still name the threshold that would justify a more complex structure, such as search response time exceeding 300 milliseconds after the catalog reaches 50,000 lessons.
 
-## Practising this
+## Exercise
 
-Engineers can build fluency without solving problems at random:
+Fluency means turning "make it faster" into a measurable trade-off. Start with the version that matches how you work, then keep repeating it on new features.
+
+Pick one feature in an app you use daily and write down five answers:
+
+1. Name the user job and the one metric it moves.  
+2. Estimate `n` to the nearest order of magnitude.  
+3. Name the structure and the pattern likely sitting underneath.  
+4. Write the p95 bar, the freshness rule, and the appetite you would give eng.  
+5. Name one edge case you would put in the spec today.
+
+If you write code, build pattern recognition deliberately rather than solving problems at random:
 
 1. Choose one pattern from the requirement table.
 2. Solve four or five problems using that pattern.
 3. Explain how you recognized it, which structure you chose, and its time and space cost.
-4. Repeat with a different pattern only after the first shape feels recognizable.
+4. Move to a different pattern only after the first shape feels recognizable.
 
-PMs can practise without writing code:
+## Check
 
-1. Pick a feature used during the day.
-2. Name the customer job and estimate `n`.
-3. Identify the likely structure and pattern.
-4. Explain what breaks at 10× and what response time would be acceptable.
+> For feature ___, `n` is about ___, and the structure underneath is probably ___. If we take the slow path, ___ moves. I would ask for ___ and accept ___ as good enough for this appetite.
 
-Fluency means turning "make it faster" into a measurable trade-off.
+<InlineLessonQuiz slug="engineering/cs-fundamentals" />
 
-## Where to go deeper
+## References
 
 No single lesson should replace deliberate practice or a full reference. Choose the next source according to the missing skill:
 
@@ -895,21 +1846,5 @@ No single lesson should replace deliberate practice or a full reference. Choose 
 | Learn formal proofs and complexity analysis | Cormen, Leiserson, Rivest, and Stein, *Introduction to Algorithms* | Mathematical analysis and a broader reference for advanced algorithms. |
 | Understand storage engines and data encoding | Martin Kleppmann, *Designing Data-Intensive Applications*, chapters 3 and 4 | Hash indexes, LSM trees, B-trees, column storage, and data-format trade-offs. |
 | Understand systems spread across machines | [System design](/learn/engineering/system-design) | Keeping a service available, copying and splitting data across machines, moving slow work off the customer request, and handling failures. |
-
-## Exercise
-
-Pick one feature in an app you use daily.
-
-1. Name the user job and the one metric it moves.  
-2. Estimate `n` to the nearest order of magnitude.  
-3. Name the structure and the pattern likely sitting underneath.  
-4. Write the p95 bar, the freshness rule, and the appetite you would give eng.  
-5. Name one edge case you would put in the spec today.
-
-## Check
-
-> For feature ___, `n` is about ___, and the structure underneath is probably ___. If we take the slow path, ___ moves. I would ask for ___ and accept ___ as good enough for this appetite.
-
-<InlineLessonQuiz slug="engineering/cs-fundamentals" />
 
 Previous: [Engineering with AI](/learn/engineering/engineering-with-ai). Next: [System design](/learn/engineering/system-design).

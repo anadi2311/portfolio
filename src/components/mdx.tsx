@@ -46,9 +46,19 @@ import {
   StructureLookupDiagram,
 } from "@/components/lesson-diagrams/CsFundamentalsDiagrams";
 import {
+  ArchitectureStylesDiagram,
+  BatchVsStreamDiagram,
   DdiaThreeConcernsDiagram,
   LatencyPercentilesDiagram,
+  ReplicationVsPartitionDiagram,
+  SloErrorBudgetDiagram,
 } from "@/components/lesson-diagrams/SystemDesignDiagrams";
+import { ApiStylesDiagram } from "@/components/lesson-diagrams/ApiDiagrams";
+import {
+  BrowserLayersDiagram,
+  MotionPipelineDiagram,
+  ReactComponentTreeDiagram,
+} from "@/components/lesson-diagrams/FrontendDiagrams";
 import { Key } from "@/components/Key";
 import { TechDepth } from "@/components/TechDepth";
 
@@ -91,6 +101,14 @@ export function getMDXComponents(components?: MDXComponents) {
     LsmVsBtreeDiagram,
     DdiaThreeConcernsDiagram,
     LatencyPercentilesDiagram,
+    ArchitectureStylesDiagram,
+    ReplicationVsPartitionDiagram,
+    BatchVsStreamDiagram,
+    SloErrorBudgetDiagram,
+    ApiStylesDiagram,
+    BrowserLayersDiagram,
+    ReactComponentTreeDiagram,
+    MotionPipelineDiagram,
     TechDepth,
     ...components,
   } satisfies MDXComponents;

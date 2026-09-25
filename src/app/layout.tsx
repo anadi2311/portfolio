@@ -1,14 +1,13 @@
-import type { Metadata } from "next";
-import { Geist_Mono, Poppins } from "next/font/google";
+import type { Metadata, Viewport } from "next";
+import { Geist_Mono, Instrument_Serif, Inter } from "next/font/google";
 import { RootProvider } from "fumadocs-ui/provider/next";
 import "./globals.css";
-import { SiteFooter } from "@/components/SiteFooter";
-import { SiteHeader } from "@/components/SiteHeader";
+import { SiteChrome } from "@/components/SiteChrome";
 
-const poppins = Poppins({
-  variable: "--font-poppins",
-  subsets: ["latin", "devanagari"],
-  weight: ["400", "500", "600", "700"],
+const inter = Inter({
+  variable: "--font-inter",
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
   display: "swap",
 });
 
@@ -17,10 +16,24 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const instrument = Instrument_Serif({
+  variable: "--font-instrument",
+  subsets: ["latin"],
+  weight: ["400"],
+  style: ["normal", "italic"],
+  display: "swap",
+});
+
 export const metadata: Metadata = {
   title: "Anadi Pandharkar",
   description:
     "Product management, design, full-stack and platform engineering. Free lessons on a live product.",
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
@@ -28,16 +41,18 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html
       lang="en"
       suppressHydrationWarning
-      className={`${poppins.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${inter.variable} ${geistMono.variable} ${instrument.variable} h-full antialiased`}
     >
       <body className="flex min-h-screen flex-col bg-background font-sans text-foreground">
         <RootProvider
-          theme={{ enabled: false }}
+          theme={{
+            enabled: true,
+            defaultTheme: "light",
+            attribute: "class",
+          }}
           search={{ enabled: false }}
         >
-          <SiteHeader />
-          {children}
-          <SiteFooter />
+          <SiteChrome>{children}</SiteChrome>
         </RootProvider>
       </body>
     </html>

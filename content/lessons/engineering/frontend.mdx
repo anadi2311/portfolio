@@ -1,0 +1,636 @@
+---
+title: "Frontend: how apps are built"
+summary: "How screens move from flow to Figma to React, how to read a UI codebase, and how motion and 3D budgets show up in cost and craft."
+audience: Both
+status: published
+order: 5
+---
+
+The **frontend** is everything a person sees and touches in the browser (or a mobile WebView): structure, style, behavior, network calls, and reusable **components**. A PM needs enough literacy to brief and review. A product engineer who ships a landing people remember also needs to read a UI repo, stand up a first page, and pick a motion budget.
+
+[The stack for the app](/learn/engineering/why-this-stack) named tool families. This lesson is the surface those tools paint. [Vision, brand, and Figma](/learn/product/design-vision-branding) owns the brief and the tokens. Here that brief meets how eng builds, animates, and reuses UI.
+
+**Who this is for**
+
+- **PMs** who brief design and eng, or review UI PRs.
+- **Product engineers** who compose screens: read the repo, ship a page, choose a motion budget.
+- **Engineers** who already write React and need product vocabulary for flows, states, and craft.
+
+<Key>Frontend is the product the user can point at.</Key> Backend and APIs matter when something must be saved or fetched. Trust is still won or lost on the page.
+
+## What the browser is doing
+
+Three layers show up in almost every web UI.
+
+- **Structure (HTML).** Headings, buttons, links, forms, images. Skeleton and accessibility tree (what screen readers walk).
+- **Look (CSS).** Type, color, space, layout, breakpoints. Design **tokens** (named values like `color-bg` or `space-4`) keep brand consistent across components. See [design vision](/learn/product/design-vision-branding).
+- **Behavior (JavaScript).** Click, type, scroll, submit: open a modal, validate a field, fetch data, play motion.
+
+**React** (and Vue, Svelte, and friends) is how many teams *author* behavior, and often structure, as components so the same header is not pasted into fifty files. The browser still receives HTML, CSS, and JS.
+
+**Server vs browser rendering.** Some HTML is produced on a server before it reaches the phone (**SSR**, or static generation at build time). Some UI appears only after JavaScript runs (**client rendering**). Content and SEO-heavy pages lean server-first. Interactive widgets lean client-side. On this site, lesson bodies live in git; the shell is Next.js. The cinematic home is a **client component** because video, the light/dark drag split, and the rotating word need browser APIs. Ask: what stays readable if JS is slow or broken?
+
+Session **cookies** belong with identity (auth lesson), not layout craft.
+
+<BrowserLayersDiagram />
+
+## From requirements to a screen
+
+Frontend work starts before Figma.
+
+1. **Job and scoreboard.** Who this is for, and what success looks like (signup, lesson finish, waitlist join).
+2. **User flow.** Steps; branches for error and empty.
+3. **UX.** What they need to understand and feel at each step.
+4. **UI.** Layout, type, color, components, motion.
+5. **Acceptance.** "Can complete waitlist on a phone without an account" beats "use the blue button."
+
+For instance, take a waitlist. The flow is land → read one promise → enter email → see confirmation or error. UX says the catalog stays free if they skip. UI is a short form, clear error text, no trap modal. Eng implements those states as components. [APIs](/learn/engineering/apis) define what "save email" returns. You own whether a 429 looks like a dead page or a human sentence.
+
+Much of a lesson page is **read-only content**. No custom API is required for the words. When the UI must create, update, or load live data, the frontend sends an **HTTP request**. Show loading while it runs; a recoverable error on failure; the new truth on success.
+
+Ask in the room: what are the empty, loading, success, and error states? Which screens survive a slow or down API? Is this click allowed to feel slow (export) or must it feel instant (typing)?
+
+## React enough to read the code
+
+Literacy for a PR, not a bootcamp. Skip the samples if you only need the product spine; come back when a diff lands on your desk.
+
+<ReactComponentTreeDiagram />
+
+### Components
+
+A **component** is a reusable piece of UI with a name: `Button`, `SiteHeader`, `LessonQuiz`. In React it is usually a function that returns markup. Teams split a product into a tree (page → section → card → button). Reading a codebase means finding which component owns the pixel you care about.
+
+### Props and children
+
+**Props** are inputs into a component: `label="Join waitlist"`, `disabled={true}`. The parent decides; the child renders.
+
+**Children** are nested content between a component's tags: text inside a button, or a card body inside a layout.
+
+When a PM asks to "change the primary button," eng looks for one `Button` with `variant="primary"`, not fifty one-off styles. That is why design systems exist.
+
+### State and hooks
+
+**State** is data that can change while the page is open: menu open, typed email, waiting on the server.
+
+**Hooks** plug into state and lifecycle inside a component. The two you will see most:
+
+- **`useState`**: hold a value and update it.
+- **`useEffect`**: run a side effect after render (fetch, subscribe, timer, sync outside React). The specimen below walks a real `useEffect` + cleanup on this home page.
+
+You do not memorize the Hook API. You recognize: *this component remembers something* (state) or *this component talks to the outside world after paint* (effect).
+
+### Imports and the app shell
+
+```text
+import { Button } from "@/components/Button";
+
+<Button label="Join waitlist" />
+```
+
+Routes pick pages; pages import molecules; molecules import atoms. Changing an atom can fix or break every screen that uses it. That is blast radius in UI form.
+
+### How to read a frontend codebase
+
+1. **Find the route map.** Next.js: `app/` or `pages/`. Vite: `src/App` and the router config.
+2. **Search the visible string.** Land in a component; read its `import` list.
+3. **Walk imports upward.** Page → section → shared `Button`. The page composes the story; the leaf is often the shared atom.
+4. **Find styles.** Tailwind in JSX, `*.module.css`, or tokens in `globals.css` / theme config.
+5. **Open DevTools.** Elements for the winning CSS. React DevTools for the component tree.
+6. **Check for Storybook.** `*.stories.tsx` means you can click states without the whole product.
+
+Ignore `node_modules` and generated `.next` folders on the first pass.
+
+On a PR, ask: which route changed, which shared component changed (blast radius), and which state or effect now runs on load?
+
+### Chrome DevTools tabs on this product
+
+| Tab | What you use it for | Practice on this site | Deeper lesson |
+|---|---|---|---|
+| **Elements** | Structure, CSS that wins, box model, device toolbar | Pathway card or lesson heading at 390px | This lesson |
+| **Console** | JS errors and warnings | Reload `/`; look for red when something feels broken | This lesson; [engineering with AI](/learn/engineering/engineering-with-ai) when a model broke a build |
+| **Sources** | Breakpoints in JS | Pause in a client component on a click | This lesson (lite) |
+| **Network** | HTTP status, timing, payload, cache | Load a lesson; filter XHR/fetch vs documents | [APIs](/learn/engineering/apis) |
+| **Application** | Cookies, storage, cache | Confirm v1 Learn has no session cookie | Auth when login ships |
+| **Performance** | Long tasks, FPS, blocked paint | Record a reload of `/` with the video hero | This lesson (budget) |
+| **Lighthouse** | Perf, a11y, SEO floors | Run on `/` and a lesson URL | This lesson + [web.dev](https://web.dev/) |
+| **Security** | Certificate and HTTPS | Confirm `https` on a deployed preview | Platform / deploy |
+
+Before you argue about “slow,” open Network and Performance on a mid-phone throttle. Before “logged in,” open Application → Cookies. Before “the button looks wrong,” open Elements at 390px width.
+
+### Getting started yourself
+
+1. **HTML + CSS for one static screen.** Heading, paragraph, button, image. No framework.
+2. **One behavior in JavaScript.** Toggle a class, validate email, or show success.
+3. **A React app.** [Vite](https://vitejs.dev/) + React, or [Next.js](https://nextjs.org/) for routes and SSR like this site. One `Button` with a `label` prop.
+4. **Style with a system.** Tailwind or CSS modules plus a tiny token set. Copy tokens from [design vision](/learn/product/design-vision-branding).
+5. **Compose.** `components/` for atoms, `app/` or `pages/` for routes.
+6. **AI as a junior pair.** Brief, tokens, refusals. One section at a time. Read every line. Same rule as [engineering with AI](/learn/engineering/engineering-with-ai).
+
+A weekend that teaches the job: rebuild one admired first viewport, add one CSS or Framer fade, write phone acceptance, ship a preview URL.
+
+<TechDepth>
+
+**JSX** is the HTML-like syntax inside React files. Treat it as markup with `{expressions}`.
+
+**Client vs server components** (Next.js): some components only run on the server; some need browser APIs and must be client components. The split is where code is allowed to run, not whether the user sees UI.
+
+**Keys in lists** (`key={id}`) help React match list items across updates. If QA says "the wrong row flashed," ask whether the list has stable ids.
+
+</TechDepth>
+
+## Design systems, Figma, and AI
+
+Brad Frost's **atomic design** names the ladder:
+
+| Level | Meaning | Example |
+|---|---|---|
+| **Atom** | Smallest usable piece | Button, text input, icon |
+| **Molecule** | Simple combination | Search field = input + button |
+| **Organism** | Larger chunk of UI | Site header = logo + nav + CTA |
+| **Template / page** | Layout with real content | Learn lesson layout; home |
+
+<TokenToUiDiagram />
+
+A **design system** is tokens plus components in agreed states (default, hover, disabled, error). One-off landing pieces are fine for experiments. If the same one-off appears three times, it belongs in the system.
+
+**Storybook** lets eng and PMs open one component and click states without standing up the whole app. Ticket against `Button / disabled`, not a screenshot of one page.
+
+**Figma** is where layout, type, color, and states get agreed. Eng maps Figma components to code components, often with shared names and tokens. [Vision, brand, and Figma](/learn/product/design-vision-branding) teaches that vocabulary. Without it, AI prompts collapse into “make it premium.”
+
+AI can scaffold HTML, React, motion, and hero video. It cannot invent your product feeling. Steal the *method* below, not the exact words.
+
+Name four things before any prompt: **feeling**, **first action**, **surfaces** (phone, tablet, desktop), **refusals** (no second Explore Learn CTA, no purple glow stack, no hover-only critical action).
+
+### Weak prompt, generic page
+
+> Make a modern dark SaaS landing page with a cool video background, glass nav, and big typography. Make it look premium like Apple. Add some animations.
+
+You usually get a navy or purple gradient that could be any startup, “Begin Journey” copy with no job, autoplay with no reduced-motion path, nav that ignores your IA, hover-scale CTAs that fail on phones, and no acceptance at 390px. The brief never named the job. Treat the output as a disposable sketch.
+
+### Strong prompt for this home
+
+One production-shaped example. Adapt the nouns. Do not paste it unchanged into every chat.
+
+```text
+Build the home for a free PM + tech Learn site. Feeling: the visitor is lost
+in tech jargon; the page should feel foggy and searching at first, then offer
+two clear pathways. Job of the first viewport: stop wandering, then choose
+Product management or Product engineering.
+
+Stack: Next.js App Router, React client component for the hero, TypeScript,
+Tailwind where useful, custom CSS for the cinematic layer. Fonts: Inter for
+UI; Instrument Serif only for display accents on this page.
+
+Layers (bottom to top):
+1) Full-bleed video (color above the drag split; B&W + dark scrim below),
+   object-fit cover, autoplay muted playsInline, playbackRate 0.75, play once.
+2) Dark scrim only on the dark half so white type stays readable.
+3) UI: brand lockup (name + avatar → About), glass nav, drag sun/moon split,
+   headline “Stop [rotating word].” / “Learn with intent.”;
+   after ~7s show two pathway cards; social icons in the footer.
+
+Rotating word: 3D cuboid faces meandering. / bewildering. / wondering. /
+wandering. Drive rotateX with GSAP. Prefer reduced-motion: static “wandering.”
+and show pathways immediately.
+
+Responsive:
+- <900px: nav as full-width row under wordmark; pathways stack then 2-col
+  from 768px.
+- Safe-area insets for notch / home indicator.
+- Acceptance: on 390px width both CTAs tappable, no horizontal scroll.
+
+Refusals: no second Explore Learn button; no purple glow; no card grid above
+the fold before pathways; no transform-based fade on a parent of the 3D
+cuboid (it flattens preserve-3d); dark glass must stay readable (near-opaque
+fill, not clear glass).
+
+Ship checklist: Lighthouse floor on mid phone; prefers-reduced-motion path;
+video is decoration, pathways are the product.
+```
+
+The strong prompt names feeling, job, layers, breakpoints, motion ownership, and kill switches. A model can still miss. You still read every line and verify on a phone.
+
+### Video and interaction beats
+
+Hero video tools (Higgsfield, ElevenLabs, and similar) need the same discipline: camera and motion, palette, subject, length, and what must *not* appear. Then grade the file: does it support the feeling, or fight the type? On this site the video is atmosphere; the pathways do the conversion job.
+
+Name one primary interaction beat in the prompt:
+
+| Beat | Write in the prompt | Example |
+|---|---|---|
+| **Timed reveal** | “After N seconds show X; reduced-motion shows X immediately” | Pathways after the walk |
+| **Cursor / pointer** | “Parallax only on fine pointers; disable on touch” | Optional desktop parallax |
+| **Scroll story** | “Scroll drives opacity of Y; CTA always visible” | Narrative landings |
+| **Responsive stack** | “At 390px stack; at 768px two columns” | This home’s nav + pathways |
+| **Gesture toy** | “Drag only above the fold; does not steal iOS scroll” | Experiential boards; this home’s light/dark split line |
+
+Ask: which components already exist? What is new? What is a one-off with a kill date?
+
+## Surfaces, craft, and cost
+
+**Responsive** design adapts layout to width. Hover is missing on most phones. "Works on mobile" is not acceptance. "Can join waitlist with one hand on a 390px-wide screen" is closer.
+
+Header, footer, and a content column are the easy part. Kits get you there in days. Taste is the first viewport feeling like *this* brand: type, color, space, and motion from [design vision](/learn/product/design-vision-branding); one distinctive idea; clear refusals.
+
+**Product decision**
+
+- **Used in:** every product with a UI.
+- **Prefer a kit + tokens when:** you need speed and consistency across many screens.
+- **Invest in custom craft when:** the landing or core loop *is* the differentiator and a template would erase you.
+
+Sequence when you build alone: job of the first viewport → three references and two refusals → tokens and `Button` first → one hero idea → motion budget in writing → ship, measure, cut.
+
+### Illustration and still graphics
+
+Still work does most of the brand lift. Motion only amplifies what the still already says.
+
+| Job | Tool | Export |
+|---|---|---|
+| UI layout, prototypes | **Figma** | Specs, assets, Dev Mode / Code Connect |
+| Logo, icons, flat vectors | **Illustrator** or Figma | SVG (UI icons) or PNG @2× |
+| Photo polish, composites | **Photoshop** or Affinity | WebP/PNG/JPEG at sized widths |
+| Lesson diagrams | Figma (hand-drawn theme) | PNG @2× into `public/` |
+| 3D stills for a hero | **Blender** (free) | Rendered image or short video loop |
+
+SVG keeps icons sharp. Raster needs sized widths (and often `srcset`) so phones do not download a desktop billboard. AI image tools are useful for moodboards. For a shipping logo or icon set, draw in Figma or hire craft.
+
+### Motion pipeline
+
+| Intent | Authoring | In the browser | Cost on phones |
+|---|---|---|---|
+| Button press, section fade | Figma for intent | **CSS** or **Framer Motion** / Motion | Low |
+| Self-drawing illustration, loops | **After Effects** | **Lottie** | Medium |
+| Widget that reacts to hover/scroll | **Rive** or **Spline** | Embed runtime; wire inputs | Medium |
+| Full 3D scene | **Blender** + eng | **Three.js** on **WebGL** (or React Three Fiber) | High; plan a still/video fallback |
+| Scroll-jacked storytelling | Storyboard in Figma | Scroll libs + CSS/Framer, or canvas/WebGL | High if overdone |
+
+**WebGL** is the browser's low-level 3D path. **Three.js** is a popular library on top.
+
+Default to CSS or Framer Motion for UI. Use Lottie when a loop already exists. Use Rive when motion must respond without a tiny game. Use Three.js only when 3D *is* the product story, you have time for performance, and some users get a poster.
+
+Ship checklist: purpose (enter, feedback, or continuity), max weight on 4G, `prefers-reduced-motion`, fallback that still completes the job.
+
+<MotionPipelineDiagram />
+
+### How Lottie works
+
+**Lottie** is a motion format: a designer builds the animation in After Effects (or Lottie Creator), exports a JSON description of shapes, paths, and keyframes, and a **player** in the app redraws those vectors on each frame. You are not shipping a video. You are shipping instructions plus a small runtime.
+
+Think of sheet music versus a recording. The JSON is the score. The player is the musician. Change the tempo or scrub to a frame without re-exporting a movie.
+
+On this Learn chrome, the theme control is a free [Dark Mode Button](https://lottiefiles.com/free-animation/dark-mode-button-nrQ5WkuReW) by Mohammad Turk (Lottie Simple License). Click it in the docs header: the sun/moon pill animates while Fumadocs switches light and dark via `next-themes`.
+
+Two files live under `public/lottie/`:
+
+| File | Size (approx.) | Role |
+|---|---|---|
+| `dark-mode-button.json` | ~59 KB | Raw Lottie JSON (readable; what AE exports) |
+| `dark-mode-button.lottie` | ~6 KB | **dotLottie** zip (JSON + manifest, compressed). What the site loads |
+
+Same animation. The `.lottie` package is what you put on the critical path when you care about weight. Keep the JSON in the repo when you want students (or design review) to open the structure.
+
+What the React code does:
+
+1. Load the `.lottie` with `@lottiefiles/dotlottie-react` (canvas player).
+2. On mount, seek to the **light** frame (start) or the **dark** frame (about mid-timeline). This asset is authored day → night → day; the last frame is sunny again, so dark mode stops mid-clip.
+3. On click, play only the first half of the timeline (forward into night, reverse back to day), then pin that end frame. Respect `prefers-reduced-motion` (theme still flips; motion stays still).
+4. Size the control as a **wide pill**, not a circle. The art is a horizontal day/night capsule; a round crop clips to the pale orb and reads as a sun even when the player is on the night frame.
+
+Fumadocs’ default theme control lives in the sidebar foot. This site turns that off and mounts `LearnThemeToggle` in the Learn layout instead: a fixed control at the top-right of the page. The button itself is `LottieThemeSwitch` in `src/components/LottieThemeSwitch.tsx`.
+
+**Product decision**
+
+- **Where products use it:** empty states, success checkmarks, theme toggles, onboarding mascots that loop once.
+- **Prefer Lottie when:** motion design already lives in After Effects, you need crisp vectors at any size, and interaction is mostly play / reverse / seek.
+- **Avoid when:** CSS can do the job (opacity, color, simple transform), or the control must branch on many inputs (then look at Rive).
+
+Ask in the room: is this motion feedback or decoration? What is the max KB for the toggle on 4G? What does reduced-motion show?
+
+<TechDepth>
+
+```tsx
+// Skeleton of src/components/LottieThemeSwitch.tsx
+// Clip is day → night → day; dark stops mid-timeline (~frame 220), not at the end.
+// Render as a wide pill (not a circle) — circular crop makes the moon look like a sun.
+const LIGHT = 0;
+const DARK = 220;
+const [dotLottie, setDotLottie] = useState<DotLottie | null>(null);
+
+useEffect(() => {
+  if (!dotLottie || animating) return;
+  dotLottie.setSegment(LIGHT, DARK);
+  dotLottie.setFrame(isDark ? DARK : LIGHT);
+}, [dotLottie, isDark]);
+
+function onToggle() {
+  const next = isDark ? "light" : "dark";
+  if (dotLottie && !reducedMotion) {
+    dotLottie.setSegment(LIGHT, DARK);
+    if (next === "dark") {
+      dotLottie.setMode("forward");
+      dotLottie.setFrame(LIGHT);
+    } else {
+      dotLottie.setMode("reverse");
+      dotLottie.setFrame(DARK);
+    }
+    dotLottie.play();
+  }
+  setTheme(next);
+}
+
+<DotLottieReact
+  src="/lottie/dark-mode-button.lottie"
+  layout={{ fit: "contain", align: [0.5, 0.5] }}
+  style={{ width: 64, height: 32 }}
+  autoplay={false}
+  loop={false}
+/>
+```
+
+`src/app/learn/layout.tsx` mounts `<LearnThemeToggle />` (fixed top-right). That wraps `LottieThemeSwitch`. Fumadocs’ built-in `themeSwitch` slot stays disabled so the control does not also appear in the sidebar foot.
+
+Open `dark-mode-button.json` and skim `layers`: each layer is a shape or group with transform keyframes (`ks`), in/out frames (`ip` / `op`), and a frame rate (`fr`). The player interpolates between keys. You rarely edit this by hand; you re-export from AE when design changes. For looping day/night clips, agree which frame means “dark stays” before you wire the theme.
+
+</TechDepth>
+
+### What landings cost to run
+
+Hosting on Vercel or Cloudflare is often free or a few dollars a month until traffic is real. The bill that matters earlier is **build time**, **asset weight** (CDN egress and the user's mobile data), and **device cost** (battery, jank, bounce). Numbers below are order-of-magnitude bands for a marketing landing, not a finance model.
+
+| Landing type | Typical asset weight (first viewport) | Build / craft time | Hosting & egress (low–mid traffic) | Cost the user feels |
+|---|---|---|---|---|
+| **Static / CSS / Framer Motion** | Tens to a few hundred KB (HTML, CSS, fonts, one image) | Days if the system exists | Negligible on free/pro tiers | Low |
+| **Lottie or short muted video** | ~0.5–5 MB video, or **tens of KB** for a tight Lottie (this Learn toggle: ~6 KB `.lottie`) | Extra design + eng day(s) | Egress rises with plays; still cheap until scale | Medium on 4G for video; Lottie UI chrome is usually fine |
+| **Rive / Spline widget** | Runtime + file; often hundreds of KB to a few MB | Interactive design time | Similar to Lottie if you cache well | Medium; watch main-thread work |
+| **WebGL / Three.js hero** | glTF + textures often **several MB to tens of MB** unless you ruthlessly compress | Week+ for scene, lighting, fallback, QA | Egress and GPU time; hosting still small vs eng hours | High on phones; always ship a still/video fallback |
+
+What moves money:
+
+- **Eng and design hours** dominate until you have serious traffic. A WebGL hero that takes a week can cost more than a year of CDN for a small site.
+- **Egress** shows up when a heavy video or 3D file plays on every visit. Compress, lazy-load below the fold, and cache at the edge.
+- **Paid assets or contractors** (stock 3D, motion design) are optional line items; free Blender + your own time is the solo path.
+- **Device cost** is product cost: a stuttery hero that tanks conversion is more expensive than the invoice.
+
+This site’s home uses muted video, a light/dark drag split, and a small GSAP cuboid, not a full Three.js scene. That was a budget choice: atmosphere without a 3D runtime. A Blender → glTF → Three.js build diary (with measured weights) is planned as a [blog](/blogs) post; the bands above are what you use in a brief today.
+
+Ask: what is the motion *for*? What is the max load on 4G? What is the fallback if the heavy path fails?
+
+### Experiential patterns
+
+Some products are calm CRUD UIs. Some *are* the experience: drag, scribble, orbit, scroll story. Pick **one** pattern. A waitlist form does not need any of them.
+
+| Pattern | What the user does | Typical stack | When it earns the cost |
+|---|---|---|---|
+| **Scribble / sketch** | Hand-drawn strokes, notebook type | SVG, canvas, CSS, Figma assets | Brand *is* craft (this Learn diagram language) |
+| **Drag the world** | Pan/zoom a board, throw cards | Pointer events + transforms | Playful onboarding with a clear exit to the product |
+| **Scroll as director** | Scroll drives camera and text | Scroll-linked CSS/Framer; sometimes canvas/WebGL | Narrative *is* the conversion path |
+| **Real-time 3D** | Orbit a model, walk a scene | Blender → **glTF** → Three.js / R3F on WebGL | Hardware, fashion, games when photos are not enough |
+
+Assembly: shell and CTA first → assets from Figma/Rive/Blender → pointer or scroll updates state → fallback for reduced motion and WebGL fail → cut the toy if it lowers conversion or tanks Lighthouse. AI can scaffold handlers and boilerplate; you own scoreboard, hit areas, and acceptance. Same rule as [engineering with AI](/learn/engineering/engineering-with-ai).
+
+## Briefing an innovative frontend
+
+A brief that produces distinctive UI names:
+
+- **Audience and job** on the first screen
+- **Three references** and **two refusals**
+- **Surfaces** (phone required)
+- **Motion budget** and **cost band** (CSS / Lottie / Rive / WebGL)
+- **Interaction pattern** if experiential (pick one)
+- **System rule** (reuse atoms; list allowed one-offs)
+- **Acceptance** (time to first action, readable without JS, Lighthouse floor, toy does not block CTA)
+
+"Make it cool" is not a brief. "First viewport is one idea, no WebGL, CTA always visible on phone, reduced-motion gets a static board" is a brief.
+
+## Specimen: the cinematic home
+
+Open `/`. The first viewport is one composition: video, a short headline with a rotating word, a light/dark drag split, pathway cards, and social icons. Files: `src/components/cinematic/` and `src/app/page.tsx`.
+
+### What the page is made of
+
+| Layer | Job | File cue |
+|---|---|---|
+| Video | Atmosphere; color above the split, B&W below; 0.75× | `.cin-video--color` / `--bw` + `/public/cinematic/hero-loop-v4.mp4` |
+| Scrim | Darkens the dark half so white type stays readable | `.cin-video-scrim` |
+| UI | Brand → About, nav, pathways, social footer | Header + pathways + `.cin-social` |
+| Drag split | Light above / dark below | `.cin-split` sun/moon knob |
+
+```tsx
+// src/app/page.tsx
+import { CinematicLanding } from "@/components/cinematic/CinematicLanding";
+import "@/components/cinematic/cinematic.css";
+
+export default function Home() {
+  return <CinematicLanding />;
+}
+```
+
+`CinematicLanding` starts with `"use client"`: timers, video sync, drag split, GSAP. Lesson MDX can stay mostly server-rendered. This landing cannot.
+
+### Breakpoints that change the job
+
+| Width | What changes | Why |
+|---|---|---|
+| Phone (under ~900px) | Nav is a full-width glass row under the wordmark | Thumb reach; centered desktop pill does not fit |
+| Tablet (~768px+) | Pathway cards sit side by side | Two equal offers scan as a choice |
+| Desktop (~900px+) | Nav centers in the top bar; mobile row hides | Space for the pill nav |
+| Short phone height | Lock strip hides; type tightens | Avoid colliding with the fold |
+
+```css
+@media (min-width: 768px) {
+  .cin-pathways-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (min-width: 900px) {
+  .cin-nav-mobile {
+    display: none;
+  }
+  .cin-nav-desktop {
+    display: flex;
+  }
+}
+```
+
+**Safe-area** padding (`env(safe-area-inset-*)`) keeps type off the notch and home indicator. The browser re-evaluates these `@media` rules when width crosses 768px or 900px. Product read: each cut changes the job of the chrome (thumb nav vs centered pill; stacked cards vs side-by-side), not only the font size. Acceptance: on a 390px-wide phone, both pathway CTAs are tappable without horizontal scroll.
+
+### State that times the story
+
+The landing remembers two product moments in React state:
+
+1. **Pathways open** after seven seconds (or immediately under reduced motion).
+2. **Cuboid turn** advances so “Stop ___.” cycles through lost-motion words.
+
+```tsx
+const [pathwaysOpen, setPathwaysOpen] = useState(false);
+
+useEffect(() => {
+  const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (reduced) {
+    setPathwaysOpen(true);
+    return;
+  }
+  const timer = window.setTimeout(() => setPathwaysOpen(true), 7000);
+  return () => window.clearTimeout(timer);
+}, []);
+```
+
+Read it top to bottom the way a PR review would:
+
+| Line / piece | What it means |
+|---|---|
+| `useState(false)` | `pathwaysOpen` starts `false` (cards hidden). `setPathwaysOpen` is how you flip it. Re-render when it changes. |
+| `useEffect(() => { ... }, [])` | After the first paint, run this function. Empty `[]` = **once on mount**, not on every re-render. |
+| `matchMedia("(prefers-reduced-motion: reduce)").matches` | Ask the OS/browser if the user asked for less motion. `true` or `false`. |
+| `if (reduced) { setPathwaysOpen(true); return; }` | Accessibility wins: show pathways now. `return` skips the timer. |
+| `setTimeout(..., 7000)` | Otherwise wait **7 seconds**, then open pathways (fog → choice). |
+| `return () => clearTimeout(timer)` | **Cleanup.** If the user navigates away before 7s, cancel the timer so it cannot call `setState` on an unmounted page. |
+
+When `pathwaysOpen` is `true`, the root gets the CSS class `is-pathways`: compact headline, pathway cards visible. The timed story is optional; the preference and the cleanup are not.
+
+Ask in the room: does any critical CTA require waiting for the timer? What is the reduced-motion path?
+
+### The word cuboid
+
+**Stop** plus a small **3D cuboid** whose faces read `meandering.`, `bewildering.`, `wondering.`, `wandering.` GSAP rotates the prism on the X axis. A parent `transform` fade flattens nested 3D; fade the headline with **opacity** instead, and keep `transform-style: preserve-3d` on the prism.
+
+```tsx
+gsap.to(prism, {
+  rotateX: nextTurn * -90,
+  duration: 0.95,
+  ease: "power2.inOut",
+  force3D: true,
+});
+```
+
+| Piece | What it means |
+|---|---|
+| `gsap.to(prism, { ... })` | Animate `prism` toward these values (GSAP owns the frame loop). |
+| `rotateX: nextTurn * -90` | Each turn flips one face: 0°, −90°, −180°, −270°. |
+| `duration` / `ease` | How long the flip takes and how it accelerates. |
+| `force3D: true` | Prefer a GPU-friendly transform path. |
+
+The words name wandering without a path. Pathways are the answer. Cut motion that does not serve that joke.
+
+### Drag line: light above, dark below
+
+A horizontal **split line** on `/` is a pointer-driven beat (not a timer, not GSAP). Light theme sits above the line; dark cinematic below. Both sides share the same clip; the light half shows the video in **original color**, the dark half a B&W copy plus black scrims. Drag the knob (sun / moon) up or down. Keyboard: arrow keys when the slider is focused.
+
+```tsx
+const [split, setSplit] = useState(0.42); // 0–1 of viewport height
+
+const lightClip = `inset(0 0 calc(100% - ${splitPct}) 0)`;
+const darkClip = `inset(${splitPct} 0 0 0)`;
+
+// On pointer move while captured:
+setSplit(clamp((clientY - top) / height, 0.02, 0.98));
+```
+
+| Piece | What it means |
+|---|---|
+| `split` state | Where the horizon sits (fraction of the viewport). |
+| Overflow masks + `--cin-split-px` | Pixel Y keeps B&W, scrims, and UI on the same horizon (clip-path + glass used to bleed). |
+| Shared FlipBoardWord above panes | `overflow: hidden` on pane masks flattens 3D; one cuboid sits outside the masks. |
+| `setPointerCapture` | Drag keeps tracking even if the pointer leaves the knob. |
+| Knob on the right | Same column as the about avatar; line still runs full width through the nav. |
+| `touch-action: none` on the handle | Page scroll does not steal the gesture while dragging the line. |
+| `role="slider"` + arrows | Keyboard and screen-reader path without requiring drag. |
+
+This stays **home-only**. Learn uses a simple Fumadocs **sun / moon** theme toggle for reading. Do not ship a drag horizon on lesson pages.
+
+Ask: does the handle steal vertical scroll on a phone? Which pane receives clicks in the visible region?
+
+### What a PM checks on this page
+
+- First viewport job in one sentence (stop wandering → pick a track).
+- Phone: nav, cuboid, and both CTAs without horizontal scroll.
+- Reduced motion: pathways appear without waiting; cuboid does not spin.
+- Video fail or slow network: type and CTAs still work.
+- No second Explore Learn button fighting the pathway CTAs.
+- Drag line: light/dark split works; scroll still works beside the handle; Learn keeps a separate sun/moon toggle.
+
+## Common mistakes
+
+| Mistake | What is actually going wrong |
+|---|---|
+| Briefing pixels without states | Eng ships the happy path; QA finds empty and error |
+| Screenshot AI with no system | A third visual language beside Figma and code |
+| WebGL hero on a content MVP | Battery and load bought status, not the job |
+| "Make the button nicer" across twenty files | No shared `Button`; the system never formed |
+| Hover-only critical action | Phone users cannot complete the job |
+| Opening `node_modules` before the route map | Dependencies before ownership of pixels |
+| Starting with Three.js before a static first viewport | Demo without system, tokens, or job |
+| AI "make it like a game" with no budget | Demo fights scroll, a11y, and the CTA |
+| `transform` fade on a parent of a CSS 3D toy | Nested `preserve-3d` flattens; cuboid never rotates |
+| “Works on mobile” without a width | Breaks at 390px while looking fine on a laptop |
+| “Premium like Apple” with no feeling or refusals | Generic dark SaaS hero |
+
+## Exercise
+
+1. Open `/` at ~390px and on desktop. Write what changes in the nav and the pathway grid.
+2. Open `CinematicLanding.tsx` and `cinematic.css`. Find the seven-second timer and the `@media (min-width: 768px)` pathway rule.
+3. Name which pieces require `"use client"` and which can stay server-rendered.
+4. Write the first-viewport job in one sentence; list two refusals this landing chose.
+5. Write a bad one-line AI prompt, then a strong one that names feeling, layers, one interaction beat, and phone acceptance. Read any output before shipping.
+6. Optional: rotating word, timed reveal of two cards, phone stack breakpoint, `prefers-reduced-motion` respected.
+
+## Check
+
+> Frontend is ___. On this home page, `"use client"` is required because ___. A weak AI prompt names ___; a strong one names ___, ___, and ___. Landing cost bands compare ___, not only the hosting invoice. Lottie is ___ plus a ___; this Learn theme control loads a ~___ KB `.lottie` file. Cookies belong in the ___ lesson, not in layout craft.
+
+<InlineLessonQuiz slug="engineering/frontend" />
+
+## References
+
+Prefer official docs when APIs change. Use books and videos for fundamentals and taste.
+
+### Books and long-form
+
+| Learning goal | Start here | What it adds beyond this lesson |
+|---|---|---|
+| Brand, tokens, Figma literacy | [Vision, brand, and Figma](/learn/product/design-vision-branding) | Brief and system before pixels |
+| Atomic design | Brad Frost, [Atomic Design](https://atomicdesign.bradfrost.com/) | Atoms → pages naming |
+| UI craft without heavy theory | *Refactoring UI* (Schoger & Wathan) | Hierarchy, space, color |
+| Interaction fundamentals | Norman, *The Design of Everyday Things* | Affordances and feedback |
+| HTML and CSS from zero | Duckett, *HTML and CSS: Design and Build Websites* | First two layers, visual map |
+| JavaScript deeply | Haverbeke, [*Eloquent JavaScript*](https://eloquentjavascript.net/) (free) | Language without a framework |
+| JavaScript mental models | Simpson, *You Don’t Know JS Yet* | Scope, closures, async |
+| Accessibility | *Inclusive Components* (Heydon Pickering); [WCAG](https://www.w3.org/WAI/standards-guidelines/wcag/) | States and semantics |
+| React mental model | [React docs: Learn React](https://react.dev/learn) | Components, props, state |
+| Hooks | [React: Hooks](https://react.dev/reference/react/hooks) | `useState` / `useEffect` |
+| Vite starter | [Vite Guide](https://vitejs.dev/guide/) | Fast SPA without a full framework |
+| Next.js App Router | [Next.js docs](https://nextjs.org/docs) | Routes, SSR/static |
+| Storybook | [Storybook](https://storybook.js.org/docs) | Component states in isolation |
+| CSS motion | MDN, [CSS animations](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_animations) | Motion without libraries |
+| UI motion in React | [Motion (Framer)](https://motion.dev/) | Declarative animation |
+| After Effects → web | [Lottie](https://airbnb.design/lottie/); [dotLottie](https://dotlottie.io/) | JSON / compressed package + player |
+| Theme toggle specimen | [Dark Mode Button (LottieFiles)](https://lottiefiles.com/free-animation/dark-mode-button-nrQ5WkuReW) | Free asset on this Learn chrome |
+| Interactive motion | [Rive](https://rive.app/) | State machines without a game engine |
+| React + 3D | [React Three Fiber](https://docs.pmnd.rs/react-three-fiber) | Three.js in React |
+| WebGL / 3D | [Three.js](https://threejs.org/) | Real-time 3D cost |
+| 3D authoring | [Blender](https://www.blender.org/) | Model and export glTF |
+| glTF | [Khronos glTF](https://www.khronos.org/gltf/) | Usual model file for the web |
+| Performance budgets | [web.dev](https://web.dev/) | Why heavy heroes fail on phones |
+| Taste references | [Awwwards](https://www.awwwards.com/) | Study structure, not assets |
+| APIs the UI calls | [APIs](/learn/engineering/apis) | Requests, errors, idempotency |
+| Stack families | [The stack for the app](/learn/engineering/why-this-stack) | Where React/Next sits |
+
+### YouTube for coding practice
+
+Watch with a repo open. Rebuild; do not binge as a substitute for one shipped viewport.
+
+| Learning goal | Channel | How to use it |
+|---|---|---|
+| Modern CSS layout | [Kevin Powell](https://www.youtube.com/@KevinPowell) | Rebuild one layout per video |
+| Practical React | [Web Dev Simplified](https://www.youtube.com/@WebDevSimplified) | Short builds; then React docs |
+| Quick concept maps | [Fireship](https://www.youtube.com/@Fireship) | Orientation only |
+| Full project walkthroughs | [Traversy Media](https://www.youtube.com/@TraversyMedia) | Follow once; rebuild without the video |
+| Structured playlists | [The Net Ninja](https://www.youtube.com/@NetNinja) | Course-shaped sequences |
+| Browser and performance | [Chrome for Developers](https://www.youtube.com/@ChromeDevs) | DevTools, Core Web Vitals |
+| Next.js from the source | [Vercel / Next.js](https://www.youtube.com/@Vercel) | Align with App Router docs |
+| Visual CSS and React craft | [Josh W Comeau](https://www.youtube.com/@JoshComeau) | Animation intuition; read the essays too |
+
+Cold start: Duckett or MDN HTML/CSS → Eloquent JavaScript (functions, DOM) → Kevin Powell layouts → React docs Learn React → one Vite or Next first viewport. Use AI only after you can read the file it generated.
+
+Previous: [The stack for the app](/learn/engineering/why-this-stack). Next: [APIs](/learn/engineering/apis).

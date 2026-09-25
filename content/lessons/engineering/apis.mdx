@@ -1,0 +1,202 @@
+---
+title: "APIs and how services talk"
+summary: "An API is a contract other software consumes. REST, gRPC and protobuf, GraphQL, and webhooks are styles of that contract. Tech PMs own breaking changes, errors, retries, and who the caller is."
+audience: Both
+status: published
+order: 6
+---
+
+A button click is a person talking to your product. An **API** (application programming interface) is software talking to your product: the mobile app, a partner's billing system, another team's service. The user never sees the JSON. They feel the latency, the missing field, and the charge that ran twice.
+
+[System design](/learn/engineering/system-design) decided whether work lives in one program or many. Those pieces, and outside callers, still have to agree on a message. The style (REST, gRPC, GraphQL, webhooks) is a purchase. You pick it from the caller and the failure, not from what looks modern on a slide.
+
+**Who this is for**
+
+- **Tech PMs and platform PMs**, whose roadmap *is* the contract: versions, deprecations, error shapes, quotas. Other engineers are the customer.
+- **PMs on any product** who sit in API reviews and need to say who calls this, what a retry must not do, and what a breaking change costs the app team.
+- **Engineers** who already know the verbs and need the product brief that makes a style defensible.
+
+<Key>The API is a product other software consumes.</Key> A pretty URL with a surprise breaking change is still a bad product.
+
+## The contract
+
+Picture a restaurant. The **menu** lists dishes you can order, in words both the diner and the kitchen share. The **waiter** carries the order in and the plate out. If the kitchen renames "waitlist join" to "leadCaptureV3" overnight, regulars cannot order. The menu was the product.
+
+An API is that menu plus the waiter's rules: what you may ask for, what comes back, what an error looks like, and how long you wait. **JSON** (JavaScript Object Notation) is a common way to write the order as labelled text a human can read in a log. **HTTP** (Hypertext Transfer Protocol) is the set of request and response rules the web already uses: a method (GET to read, POST to create), a path, headers, a body.
+
+The kitchen can change recipes. It cannot change the dish names on a published menu without telling the diners, running both names for a while, and naming a date the old name dies. That sequence is **versioning** and **deprecation**, the same reverse launch [system design](/learn/engineering/system-design) already named for platform products.
+
+For instance, take Stripe's payments API. Partners retry a charge when the network drops. Stripe asks for an **idempotency key**, a client-chosen token that means "this is the same attempt." Two POSTs with the same key charge once. That key is product craft in the contract, not a database trick the PM can skip.
+
+Ask in the room: who calls this, from where (browser, phone, another service, a partner cron)? What must never happen twice? Which fields may we add without paging every caller?
+
+## What a tech PM owns
+
+Engineering picks libraries and status codes. You own the promise the caller builds a business on.
+
+- **The caller.** A first-party Next.js page, an iOS app on a train, a bank's nightly batch, and an internal ML service want different shapes, freshness, and error detail. Name the caller before you name the style.
+- **Breaking changes.** Removing a field, renaming a path, or changing "amount" from dollars to cents will crash someone else's release. Adding an optional field is the cheap move. A breaking change is a feature every consuming team has to schedule.
+- **Errors.** Support and the calling app need a stable code and a sentence a human can act on. A stack trace in the browser is an incident. A silent 200 with `{ "ok": false }` tells monitors the call worked.
+- **Retries and idempotency.** Networks drop. Callers retry. Money, waitlist joins, and "send this email" need a rule for duplicates. Reads can be retried without that rule. Writes cannot.
+- **Latency and payload size.** p95 of the endpoint the app calls, not of a health check. Mobile on a slow radio cares about bytes. Internal services on a fast network care about p99 and connection reuse.
+- **Auth on the wire.** Who is allowed to call, and how they prove it. [Auth and identity](/learn/engineering/auth-identity) is the mechanism. This review still has to say whether a leaked key can empty a tenant.
+
+Good tech PMs measure themselves by time-to-first-successful-call, tickets caused by breaking changes, and whether a partner can ship against the docs. Bad tech PMs measure themselves by the number of endpoints on the wiki.
+
+<TechDepth>
+
+**HTTP status codes** the room will use: 200 success, 201 created, 400 the request was malformed, 401 missing or bad proof of identity, 403 identity is fine and this action is forbidden, 404 the thing is not there, 409 conflict (a duplicate write is a common cause), 429 rate limit, 500 the server failed. Do not invent a new meaning for 200.
+
+**OpenAPI** (still called Swagger in many rooms) is a machine-readable menu for HTTP APIs. It is how you generate docs and client stubs without a `.proto` file.
+
+**Pagination** is how you return a long list in pages so one call cannot dump a million rows. Cursor or keyset pagination survives inserts better than `page=2` when the list is moving. Ask what "the next page" means if a new row arrived.
+
+</TechDepth>
+
+## Ways to talk
+
+Four styles cover almost every review. Hold one job: join the waitlist, then tell email and analytics. Each style can ship that job. They differ in who sets the shape, how readable the wire is, and whether the caller is a browser.
+
+<ApiStylesDiagram />
+
+### REST
+
+**REST** (Representational State Transfer) treats the product as **resources**, nouns you can read or change: `/waitlist`, `/lessons/system-design`, `/users/42/highlights`. You use HTTP methods as the verbs. The body is JSON in most public APIs. The browser, `curl`, and every log tool can show the conversation.
+
+The gain is honesty for public and partner APIs, and for this site's own pages talking to a server. A PM can open the Network tab and see the waitlist POST. The cost is **chatty** round trips (list lessons, then each lesson's author, then each author) and a payload that includes fields the mobile app will ignore.
+
+You will hear **RESTful** used as a compliment and as a religion. The product test is whether the nouns match the caller's job, not whether every header in an academic paper is present.
+
+**Product decision**
+
+- **Used in:** public APIs, partner integrations, browser apps, anything you must debug from a log.
+- **Prefer REST when:** the caller is a browser or a partner, the resources are obvious, and human-readable JSON is worth the bytes.
+- **Avoid REST when:** two services call each other thousands of times a second and you already share a schema compiler, or the client must ask for a custom slice of a large graph in one round trip.
+
+### gRPC and protobuf
+
+A **remote procedure call (RPC)** is asking another machine to run a named function: `JoinWaitlist(email)`. **gRPC** is Google's RPC system that runs on HTTP/2, the newer HTTP that can multiplex many calls on one connection. The arguments and return values are **Protocol Buffers (protobuf)** in the common setup: a schema in a `.proto` file, compiled into code, packed into compact bytes instead of JSON text.
+
+JSON is a postcard anyone can read. Protobuf is a packed crate with a packing list. Both sides generate code from the same `.proto`. If you add a field and give it a new number, old clients can ignore it. If you reuse a field number, you corrupt the crate. The numbers are the contract.
+
+The gain is smaller payloads, strict types, and optional **streaming** (a flow of messages, not one request and one response). The cost is that you cannot paste the body into Slack and read it, browsers need a translation layer (**gRPC-Web**), and every caller must have the generated stubs. Public partner APIs that want a weekend integration stay on JSON.
+
+Protobuf also shows up without gRPC: some Kafka payloads, some mobile caches, some file formats. gRPC is the function call. Protobuf is the packing.
+
+<TechDepth>
+
+A `.proto` message is a list of fields with a type, a name, and a number (`string email = 1`). Never renumber. Mark fields optional when callers must keep working without them.
+
+gRPC status codes are a separate list from HTTP (OK, INVALID_ARGUMENT, NOT_FOUND, ALREADY_EXISTS, RESOURCE_EXHAUSTED, UNAVAILABLE). Map them to user-visible errors on purpose. Do not leak UNAVAILABLE as a blank spinner.
+
+HTTP/2 matters because many small RPCs can share one connection. That helps tail latency between services. It does not remove the need for an SLO.
+
+</TechDepth>
+
+**Product decision**
+
+- **Used in:** service-to-service calls inside a company, some mobile apps that already ship generated clients, streaming telemetry.
+- **Prefer gRPC when:** both ends are under your control, payload size or strict schema is the constraint, and you can operate generated code.
+- **Avoid gRPC when:** the caller is a partner with a script, a browser without a gateway, or a team that must read the wire in an incident without a decoder.
+
+### GraphQL
+
+**GraphQL** is a query language for an API: the client says which fields it wants, in one round trip. One endpoint, many shapes. The mobile app asks for lesson title and read time. The admin view asks for title, author, and waitlist count. The server resolves each field.
+
+The gain is fewer round trips and less leftover JSON on a slow radio. The cost is a **graph** the server must protect: a nested query can explode into thousands of database reads (the **N+1** problem: one query per nested item). Caching is harder than REST's "this URL is this resource." Auth has to be per field, not only per path.
+
+For instance, GitHub's public API offers GraphQL so a dashboard can pull issue title, author, and comment count without three REST tours. Shopify's Storefront API uses it so a custom theme can ask for the product fields that theme renders.
+
+**Product decision**
+
+- **Used in:** many clients, one backend, especially mobile plus web plus a partner who wants a slice.
+- **Prefer GraphQL when:** overfetching is a real latency or battery problem, and you can staff query cost limits.
+- **Avoid GraphQL when:** you have one web client, simple resources, or no one to police expensive queries.
+
+### Webhooks
+
+A **webhook** reverses the call. Your system POSTs to a URL the partner registered when something happens: waitlist joined, payment succeeded, highlight saved. The partner does not poll every five seconds.
+
+Picture a doorbell. You do not knock on the kitchen every minute to ask if the plate is ready. The kitchen rings when it is.
+
+The gain is lower load and a partner who can react while the event still matters. The cost is delivery: their URL will be down, slow, or return 500. You retry with backoff. They must treat the POST as idempotent. You sign the payload so a stranger cannot fake a payment. You keep a delivery log because their support will swear they never got it.
+
+Stripe's webhooks are the usual specimen: the dashboard confirms the charge. The webhook tells *your* server so you can unlock the lesson without the browser sitting on the thank-you page.
+
+**Product decision**
+
+- **Used in:** partner integrations, async side effects, "tell me when X happens."
+- **Prefer webhooks when:** the consumer can accept delay measured in seconds and can expose a URL.
+- **Avoid webhooks when:** the user is blocked on the result in the same request, or you cannot retry and sign.
+
+Ask in the room: who sets the shape, the client or the server? Must a human read the wire during an incident? Is this a pull (they call us) or a push (we call them)?
+
+## Running the API review
+
+Seven questions, in this order.
+
+1. Who is the caller, and what job are they in the middle of?
+2. What is the p95 bar, and how large may the payload be?
+3. What must not happen twice if they retry?
+4. What does a failure look like to their user and to our support?
+5. Which fields are we allowed to add, and what would be a breaking change?
+6. How do they authenticate, and what can a leaked credential do?
+7. Which style are we buying, and why not the simpler one?
+
+If the answer to 7 is "gRPC because we heard it is faster," go back to 1.
+
+## Specimen: this Learn site
+
+| Concern | Honest v1 shape |
+|---|---|
+| Style | Pages over HTTP. Forms and future JSON routes. REST-shaped if we add a waitlist or highlights API. No gRPC, no GraphQL, no public partner API |
+| Contract | There is no published partner menu yet. Internal routes can change until a second client exists (iOS, a partner, or the highlights account page) |
+| Protobuf | None. JSON is the right packing until a second language or a byte budget appears |
+| Webhooks | None. A future "waitlist joined, send mail" job is a queue on this server first, a webhook only if an outside system must be told |
+| What a tech PM would freeze | Error text on a failed waitlist write; idempotent join (same email, one row); no breaking change once a mobile client ships |
+
+This site does not need gRPC to teach APIs. It needs one honest JSON contract when a second caller appears, and a lesson that names the other styles so you can refuse them on purpose.
+
+## Common mistakes
+
+| Mistake | What is actually going wrong |
+|---|---|
+| gRPC for a partner's intern with a script | You bought a schema compiler they cannot run on Friday |
+| GraphQL for one web page | Overfetching was never the problem; you now own N+1 |
+| REST dump of the whole database on `/export` | Missing pagination; one customer will pull the site down |
+| Breaking change with a Slack heads-up | Deprecation is a product launch. Slack is not a version |
+| Webhook with no signature and no retry | Fraud and "we never got it" tickets |
+| 200 OK plus `{ "error": "nope" }` | Callers and monitors treat 200 as success |
+| Protobuf field numbers reused | Old and new binaries silently misread the crate |
+
+## Exercise
+
+Pick one feature that already crosses a process boundary (waitlist join, bookmark save, "email us when this lesson ships"):
+
+1. Name the caller (browser, future iOS, partner, internal worker).
+2. Write the success payload in JSON, including one optional field you might add next quarter.
+3. Write the failure the caller must handle (duplicate email, network drop, 429).
+4. Say whether a retry is safe, and what token makes it safe.
+5. Pick REST, gRPC, GraphQL, or webhooks, and name the force that justifies it (caller type, payload, pull vs push).
+6. Circle one field you must never rename without a deprecation date.
+
+## Check
+
+> Caller ___. Job ___. Style ___, because ___. Retry rule ___. Breaking change we refuse: ___. Error the caller shows: ___.
+
+<InlineLessonQuiz slug="engineering/apis" />
+
+## References
+
+| Learning goal | Start here | What it adds beyond this lesson |
+|---|---|---|
+| HTTP as a contract | MDN, [HTTP](https://developer.mozilla.org/en-US/docs/Web/HTTP) | Methods, status codes, headers, in the words the browser uses. |
+| REST as a style | Roy Fielding's dissertation is the source; [MDN REST](https://developer.mozilla.org/en-US/docs/Glossary/REST) is the readable gloss | Resources and verbs without the interview-trivia version. |
+| gRPC and protobuf | [gRPC](https://grpc.io/docs/what-is-grpc/introduction/), [Protocol Buffers](https://protobuf.dev/overview/) | Schemas, generated stubs, streaming, language support. |
+| GraphQL | [graphql.org](https://graphql.org/learn/) | Queries, types, and why the client names the fields. |
+| Idempotent payments | Stripe, [Idempotent requests](https://docs.stripe.com/api/idempotent_requests) | The product rule for retries, in a live API. |
+| Webhooks that survive | Stripe, [Webhooks](https://docs.stripe.com/webhooks) | Signatures, retries, and the dashboard as a delivery log. |
+| Platform deprecation | [System design](/learn/engineering/system-design) | SLOs, rate limits, paved roads. This lesson is the wire. |
+| Who may call | [Auth and identity](/learn/engineering/auth-identity) | Tokens, TLS, identity. |
+
+Previous: [Frontend](/learn/engineering/frontend). Next: [Auth and identity](/learn/engineering/auth-identity).

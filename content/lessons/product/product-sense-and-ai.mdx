@@ -28,7 +28,11 @@ He calls that bundle **product sense**: correct macro and micro product decision
 
 **Taste** is the part of product sense people name when they cannot explain why one good option beat another.
 
-## Product taste
+## How taste gets trained
+
+Nobody is born with it, and no amount of reading produces it. Taste comes from three things a calendar can hold: a working definition of what you are judging, repeated contact with software that actually runs, and hours spent watching real people use the product.
+
+### What taste means for a PM
 
 In design chatter, "taste" often means pretty UI. For PMs, taste is **trained judgment about what should exist, what should not, and why the gap matters.**
 
@@ -38,7 +42,29 @@ Saquib J on [product taste as trained judgment](https://saquibj.com/ai-product-m
 
 Shreyas Doshi's taste work asks: can you explain *why* this version fits this product, this user, this moment? If the answer is "the model said so," you have not finished.
 
-## Do not rubber-stamp the model
+### Evaluating working software in volume
+
+Aakash Gupta's [Taste at speed](https://www.news.aakashg.com/p/taste-at-speed) makes the case that when prototypes are cheap, the PM skill is evaluating **working software**, killing most of it, and shipping the survivors.
+
+Fifteen prototype evaluations a week trains judgment faster than one monthly spec review. Keep the hypothesis from Lesson 1. Test it in clickable form earlier.
+
+Engineers learning PM: you already debug systems. Taste is debugging whether people should want the thing. PMs learning tech: you do not need to out-code the team. You need to care whether the thing should exist.
+
+### Exposure hours with real users
+
+Lenny's AI-era writing keeps returning to **exposure hours**: talk to users, read support tickets, sit on a sales call, watch someone fail at onboarding.
+
+Judgment follows contact with reality. A team that has not spoken to a customer in months will run its understanding on model summaries. The summaries will be fluent and still wrong.
+
+Some companies put new hires on support for week one so builders meet users before they ship. AI adds another layer between you and reality unless you stay close to the front line.
+
+Your job is not to type faster. It is to **decide better** and **prove you decided** with evidence the model did not invent.
+
+## Keeping the decision yours
+
+Two failure modes wait on either side of a capable model. One is letting it decide for you. The other is treating a demo as a shipped outcome.
+
+### Do not rubber-stamp the model
 
 Lincoln names a failure mode: the model proposes options, frames trade-offs, recommends one, and drafts the rationale. You approve. The slide looks fine. You added no independent thought.
 
@@ -56,17 +82,22 @@ Keep yourself honest:
 
 AI makes it easier to look busy on the way to the wrong scoreboard. The scoreboard still decides.
 
-## Evaluate working software faster
+### Good PM and bad PM with AI
 
-Aakash Gupta's [Taste at speed](https://www.news.aakashg.com/p/taste-at-speed): when prototypes are cheap, the PM skill is evaluating **working software**, killing most of it, shipping the survivors.
+| Good PM | Bad PM |
+|---|---|
+| Uses AI to widen insight, then validates with users | Delegates the why to the model |
+| Kills a cool demo that fails the hypothesis | Ships "AI-powered" for the slide |
+| Owns the scoreboard outcome, including misses | Blames the model, the data, or "the market" |
+| Forms a view before prompting | Prompts first, decides never |
 
-Fifteen prototype evaluations a week trains judgment faster than one monthly spec review. Keep the hypothesis from Lesson 1. Test it in clickable form earlier.
-
-Engineers learning PM: you already debug systems. Taste is debugging whether people should want the thing. PMs learning tech: you do not need to out-code the team. You need to care whether the thing should exist.
+Horowitz's split still holds: tasks vs job. Tasks got faster. The job did not shrink.
 
 ## When the product itself is AI
 
-The section above is about **you** using AI to do PM work. A separate problem appears when the **product** is AI: chatbots, copilots, agents, generated content.
+Everything above is about **you** using AI to do PM work. A different problem appears when the **product** is AI: chatbots, copilots, agents, generated content. Two things need to be settled before launch, and neither is a model choice. You need to know how the thing fails, and you need a scoreboard that a demo cannot fake.
+
+### Failure modes and minimum viable quality
 
 Models are probabilistic. They hallucinate, drift, and fail in corners demos skip. Marily Nika, in [Building AI product sense, part 2](https://www.lennysnewsletter.com/p/building-ai-product-sense-part-2) on Lenny's Newsletter:
 
@@ -76,17 +107,7 @@ Models are probabilistic. They hallucinate, drift, and fail in corners demos ski
 
 You must tell a product bug from a model limitation. Users will not. Support will not. Know before the demo is public.
 
-## Exposure hours
-
-Lenny's AI-era writing keeps returning to **exposure hours**: talk to users, read support tickets, sit on a sales call, watch someone fail at onboarding.
-
-Judgment follows contact with reality. A team that has not spoken to a customer in months will run its understanding on model summaries. The summaries will be fluent and still wrong.
-
-Some companies put new hires on support for week one so builders meet users before they ship. AI adds another layer between you and reality unless you stay close to the front line.
-
-Your job is not to type faster. It is to **decide better** and **prove you decided** with evidence the model did not invent.
-
-## Scoreboard for AI bets
+### A scoreboard for an AI bet
 
 "We need AI" is not a success metric. Tie the bet to Lesson 1's scoreboard:
 
@@ -104,17 +125,6 @@ Suppose 100 agents try the copilot, 60 accept at least one draft, and 45 resolve
 If you cannot fill the kill signal column, you are shipping a demo, not running a product bet.
 
 Before customers have time to return, call time saved and task completion leading evidence. Call the metric retention only after the same eligible customers have had a real opportunity to repeat the job. [Experiments](/learn/product/experiments) defines primary, diagnostic, and guardrail metrics; [Product analytics and GTM](/learn/product/product-analytics-gtm) explains retention cohorts.
-
-## Good PM vs bad PM with AI
-
-| Good PM | Bad PM |
-|---|---|
-| Uses AI to widen insight, then validates with users | Delegates the why to the model |
-| Kills a cool demo that fails the hypothesis | Ships "AI-powered" for the slide |
-| Owns the scoreboard outcome, including misses | Blames the model, the data, or "the market" |
-| Forms a view before prompting | Prompts first, decides never |
-
-Horowitz's split still holds: tasks vs job. Tasks got faster. The job did not shrink.
 
 ## Interfaces now, and next
 

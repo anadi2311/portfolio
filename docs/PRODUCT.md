@@ -54,8 +54,9 @@ Order matters: demand signal before the free tech curriculum.
 - More PM spine + more free tech lessons
 - Better instrumentation; waitlist follow-up / one-question WTP probe
 - PLG loops measured (activation into free tech)
+- **Candidate, not this week:** accounts plus lesson highlights so notes persist across devices. Reading stays free without login. Spec in [LATER.md](LATER.md).
 
-**Later (demand-gated):** paid tech packaging, login if needed, certificates/cohorts.
+**Later (demand-gated):** paid tech packaging, certificates/cohorts.
 
 ## Home (v1 IA)
 
@@ -124,7 +125,7 @@ PM spine totals ~10+ hours (planned). Lessons live under `content/lessons/produc
 | 1 | `engineering/engineering-with-ai` | Engineering with AI: how to stay relevant |
 | 2 | `engineering/cs-fundamentals` | Data structures and algorithms, with product stakes |
 | 3 | `engineering/system-design` | System design: reliability, scale, and how pieces fit |
-| 4 | `engineering/why-this-stack` | Why we picked this stack |
+| 4 | `engineering/why-this-stack` | The stack for the app |
 | 5 | `engineering/frontend` | Frontend: how apps are built |
 | 6 | `engineering/apis` | APIs and how services talk |
 | 7 | `engineering/auth-identity` | Auth, SSL/TLS, and identity |
@@ -137,7 +138,9 @@ PM spine totals ~10+ hours (planned). Lessons live under `content/lessons/produc
 | 14 | `engineering/terraform` | Terraform and infrastructure as code |
 | 15 | `engineering/helm-git-cicd` | Helm, Git, and CI/CD |
 
-**Then** the tech rail: engineer with AI, data structures and algorithms tied to outcomes, system design (Kleppmann's reliability / scalability / maintainability), then why this stack (Next.js, Fumadocs), frontend, APIs, data, hosting. Auth is later when packaging needs it.
+**MVP curriculum boundary:** The tech rail builds enough technical judgment to make product decisions and work with engineers. The data structures and algorithms lesson teaches readers to recognize problem shapes, understand engineering choices, and connect those choices to product outcomes. Optional panels use language-neutral pseudocode and hand-worked traces to explain each mechanism without blocking the product narrative. A dedicated coding course would teach language-specific syntax, production implementation, coding-problem strategies, and repeated practice. Demand must earn that later expansion.
+
+**Then** the tech rail: engineer with AI, data structures and algorithms tied to outcomes, system design (Kleppmann's three concerns, then architecture, data copies, pipelines, and SLOs as the decision map), then the stack for the app (Next.js, Fumadocs; dual scoreboard), frontend, APIs, data, hosting. Auth is later when packaging needs it.
 
 ## Branding vision (PM brief, not pixels yet)
 
@@ -154,7 +157,7 @@ PMs do not pick hex codes first. They write the vision designers execute.
 3. **Readable first** — type and spacing over illustration
 4. **Open pieces, then tweak** — how real product design often starts (Fumadocs, a typeface); Lesson 11 covers how that shows up in Figma
 
-Type on the site is **Poppins** (Latin + Devanagari). Lesson 11 teaches the brand/Figma literacy; a later **obol-packages-style** component repo + Storybook (taught to PMs) lives in [LATER.md](LATER.md).
+Type on Learn and site chrome is **Inter**. The cinematic home still uses **Instrument Serif** for display accents on that page only.
 
 ## Open
 

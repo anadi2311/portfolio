@@ -1,0 +1,1173 @@
+/* Wanderful-style cinematic home — Portfolio content */
+
+.cin-root {
+  --cin-fg: #fff;
+  position: relative;
+  flex: 1;
+  width: 100%;
+  min-height: 100dvh;
+  background: #000;
+  color: var(--cin-fg);
+  font-family: var(--font-inter), system-ui, sans-serif;
+  /* clip avoids the overflow-x:hidden → overflow-y:auto trap that kills 3D */
+  overflow-x: clip;
+}
+
+.cin-video-stage {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.cin-video-parallax {
+  position: absolute;
+  inset: -4%;
+  width: 108%;
+  height: 108%;
+  left: -4%;
+  top: -4%;
+  transform-origin: center center;
+  will-change: transform;
+}
+
+.cin-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transform: scale(1.02);
+  transform-origin: center center;
+}
+
+.cin-video--color {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* Punch through soft haze in the footage */
+  filter: contrast(1.15) saturate(1.12) brightness(1.06);
+  transform: scale(1.02);
+  transform-origin: center center;
+}
+
+/* Video stays raw — no scrim / mist overlays */
+
+.cin-top {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  /* Clear the fixed brand lockup so the name is not on the dark nav pill */
+  padding:
+    max(3.75rem, calc(env(safe-area-inset-top) + 2.75rem))
+    max(1rem, env(safe-area-inset-right))
+    0
+    max(1rem, env(safe-area-inset-left));
+}
+
+.cin-top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  position: relative;
+}
+
+.cin-top-bar--nav-only {
+  justify-content: center;
+}
+
+.cin-brand {
+  position: fixed;
+  top: max(0.85rem, env(safe-area-inset-top));
+  left: max(1rem, env(safe-area-inset-left));
+  z-index: 55;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  max-width: min(70vw, 18rem);
+  text-decoration: none;
+  color: inherit;
+  pointer-events: auto;
+}
+
+.cin-brand .cin-wordmark {
+  font-family: var(--font-instrument), Georgia, serif;
+  font-size: 15px;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  color: #fff;
+  text-decoration: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+  text-shadow: 0 1px 14px rgba(0, 0, 0, 0.75);
+}
+
+/* Prefer readable white type over the video; dark type only when clearly on the light band */
+.cin-brand.is-light .cin-wordmark {
+  color: #111;
+  text-shadow:
+    0 0 1px rgba(255, 255, 255, 0.95),
+    0 1px 12px rgba(255, 255, 255, 0.9);
+}
+
+.cin-brand .cin-about {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 9999px;
+  padding: 3px;
+  flex-shrink: 0;
+  background: rgba(8, 8, 8, 0.72);
+  background-blend-mode: luminosity;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.12),
+    0 8px 24px rgba(0, 0, 0, 0.35);
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.cin-brand.is-light .cin-about {
+  background: rgba(255, 255, 255, 0.88);
+  border-color: rgba(0, 0, 0, 0.12);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.9),
+    0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+.cin-brand:hover .cin-about {
+  transform: scale(1.05);
+}
+
+.cin-wordmark {
+  font-family: var(--font-instrument), Georgia, serif;
+  font-size: 15px;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  color: #fff;
+  text-decoration: none;
+  white-space: nowrap;
+  min-width: 0;
+}
+
+.cin-glass {
+  background: rgba(8, 8, 8, 0.78);
+  background-blend-mode: normal;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.12),
+    0 18px 48px rgba(0, 0, 0, 0.45);
+  position: relative;
+  overflow: hidden;
+}
+
+.cin-glass::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1.2px;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.35) 0%,
+    rgba(255, 255, 255, 0.08) 22%,
+    rgba(255, 255, 255, 0) 45%,
+    rgba(255, 255, 255, 0) 60%,
+    rgba(255, 255, 255, 0.06) 82%,
+    rgba(255, 255, 255, 0.22) 100%
+  );
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+.cin-nav {
+  align-items: center;
+  gap: 0.15rem;
+  border-radius: 9999px;
+  padding: 0.35rem;
+}
+
+.cin-nav-desktop {
+  display: none;
+}
+
+.cin-nav-mobile {
+  display: flex;
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  overscroll-behavior-x: contain;
+}
+
+.cin-nav-mobile::-webkit-scrollbar {
+  display: none;
+}
+
+.cin-nav-mobile .cin-nav-link {
+  flex: 1 0 auto;
+  text-align: center;
+  padding: 0.45rem 0.85rem;
+}
+
+.cin-nav-link {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: none;
+  color: rgba(255, 255, 255, 0.88);
+  text-decoration: none;
+  padding: 0.375rem 1rem;
+  border-radius: 9999px;
+  transition: color 0.2s ease, background 0.2s ease;
+}
+
+.cin-nav-link:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.cin-about {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 9999px;
+  padding: 3px;
+  text-decoration: none;
+  flex-shrink: 0;
+}
+
+.cin-about-img {
+  width: 100%;
+  height: 100%;
+  border-radius: 9999px;
+  object-fit: cover;
+  display: block;
+}
+
+.cin-headline {
+  position: fixed;
+  top: 7.5rem;
+  left: 0;
+  right: 0;
+  z-index: 30;
+  text-align: center;
+  padding: 0 max(1rem, env(safe-area-inset-right)) 0 max(1rem, env(safe-area-inset-left));
+  pointer-events: none;
+  /* Opacity only — a transform here flattens nested preserve-3d */
+  animation: cin-fade-in 1s ease-out both;
+  overflow: visible;
+}
+
+.cin-headline--shared.is-light .cin-line-a {
+  color: #171717;
+}
+
+.cin-headline--shared.is-light .cin-line-b {
+  color: rgba(23, 23, 23, 0.45);
+}
+
+.cin-headline--shared.is-light .cin-cube-face {
+  color: #171717;
+  background: #f4f2ea;
+  border: 1px solid rgba(0, 0, 0, 0.14);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+}
+
+.cin-headline h1 {
+  margin: 0;
+  font-family: var(--font-inter), system-ui, sans-serif;
+  font-weight: 400;
+  font-size: clamp(1.75rem, 7.5vw, 4.5rem);
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.12em;
+  overflow: visible;
+}
+
+.cin-line-a {
+  color: #fff;
+  display: inline-flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.28em;
+  line-height: 1.2;
+  overflow: visible;
+}
+
+.cin-line-b {
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.cin-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* 3D cuboid — GSAP drives rotateX on .cin-cube-prism */
+.cin-cube-wrap {
+  display: inline-grid;
+  vertical-align: middle;
+  --cube-z: 0.64em;
+  height: 1.28em;
+  line-height: 1;
+  width: max-content;
+}
+
+.cin-cube-measure {
+  grid-area: 1 / 1;
+  visibility: hidden;
+  white-space: nowrap;
+  padding: 0 0.18em;
+  pointer-events: none;
+  line-height: 1.28em;
+}
+
+.cin-cube-static {
+  display: inline-block;
+  line-height: 1.2;
+  vertical-align: middle;
+}
+
+.cin-cube-scene {
+  grid-area: 1 / 1;
+  display: block;
+  width: 100%;
+  height: 100%;
+  perspective: 1000px;
+  perspective-origin: 50% 50%;
+  overflow: visible;
+  transform-style: preserve-3d;
+}
+
+.cin-cube-depth {
+  display: block;
+  width: 100%;
+  height: 100%;
+  transform: translateZ(calc(var(--cube-z) * -1));
+  transform-style: preserve-3d;
+}
+
+.cin-cube-prism {
+  display: block;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+}
+
+.cin-cube-face {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 0.18em;
+  box-sizing: border-box;
+  white-space: nowrap;
+  line-height: 1.15;
+  color: #fff;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  background: #111;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 0.14em;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+
+.cin-bottom {
+  position: fixed;
+  bottom: max(1.25rem, env(safe-area-inset-bottom));
+  left: 0;
+  right: 0;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 0 max(1rem, env(safe-area-inset-right)) 0 max(1rem, env(safe-area-inset-left));
+  animation: cin-fade-rise 1s ease-out 0.3s both;
+  transition: opacity 0.5s ease, transform 0.5s ease, visibility 0.5s;
+}
+
+.cin-bottom.is-hidden {
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(0.75rem);
+  pointer-events: none;
+  /* Completed fade-rise fill was forcing opacity: 1 over this rule */
+  animation: none;
+}
+
+.cin-bottom-copy {
+  max-width: 36rem;
+  margin: 0;
+  text-align: center;
+  font-size: clamp(0.875rem, 2.8vw, 0.95rem);
+  line-height: 1.55;
+  font-weight: 400;
+  text-wrap: pretty;
+}
+
+.cin-copy-strong {
+  color: #fff;
+}
+
+.cin-copy-soft {
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.cin-secure {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  margin: 0;
+  max-width: 100%;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.7);
+  text-align: center;
+}
+
+.cin-pathways {
+  position: fixed;
+  inset: 0;
+  z-index: 25;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.85rem;
+  padding:
+    7.75rem
+    max(0.85rem, env(safe-area-inset-right))
+    max(7.5rem, calc(env(safe-area-inset-bottom) + 6.25rem))
+    max(0.85rem, env(safe-area-inset-left));
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  opacity: 0;
+  transform: translateY(1.25rem);
+  pointer-events: none;
+  transition: opacity 1s ease, transform 1s ease;
+}
+
+.cin-pathways.is-open {
+  opacity: 1;
+  transform: translateY(0);
+  /* Keep the full-bleed shell inert so fixed social icons stay clickable */
+  pointer-events: none;
+}
+
+.cin-pathways.is-open .cin-pathways-grid {
+  pointer-events: auto;
+}
+
+.cin-pathways-grid {
+  display: grid;
+  gap: 0.85rem;
+  width: min(100%, 920px);
+  padding: 0.15rem;
+  padding-bottom: 1rem;
+}
+
+.cin-pathway {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  border-radius: 1.15rem;
+  padding: 1.25rem 1.15rem 1.2rem;
+  color: #f4f4f5;
+  transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .cin-pathway:hover {
+    transform: translateY(-2px);
+    background: rgba(8, 8, 8, 0.82);
+    border-color: rgba(255, 255, 255, 0.22);
+  }
+}
+
+.cin-pathway-head {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.cin-pathway h2 {
+  margin: 0;
+  font-family: var(--font-instrument), Georgia, serif;
+  font-size: clamp(1.35rem, 4vw, 1.9rem);
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  color: #fff;
+}
+
+.cin-pathway-price {
+  margin: 0;
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.cin-pathway-block {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.cin-pathway-kicker {
+  margin: 0;
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.cin-pathway ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.cin-pathway li {
+  display: flex;
+  gap: 0.5rem;
+  font-size: clamp(0.82rem, 2.5vw, 0.92rem);
+  line-height: 1.45;
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.cin-pathway li span {
+  flex-shrink: 0;
+  margin-top: 0.05rem;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.cin-pathway-audience {
+  margin: 0;
+  font-size: clamp(0.85rem, 2.6vw, 0.95rem);
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.cin-pathway-cta {
+  margin-top: auto;
+  display: inline-flex;
+  width: fit-content;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  padding: 0.7rem 1.35rem;
+  min-height: 44px;
+  background: #fff;
+  color: #0a0a0a;
+  font-size: 0.9rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .cin-pathway-cta:hover {
+    background: #e4e4e7;
+    transform: scale(1.02);
+  }
+}
+
+.cin-root.is-pathways .cin-headline {
+  top: 6.75rem;
+  opacity: 0.85;
+  visibility: visible;
+  z-index: 26;
+  transition: opacity 0.8s ease, top 0.5s ease, visibility 0.8s;
+}
+
+.cin-root.is-pathways .cin-headline h1 {
+  font-size: clamp(1.05rem, 2.2vw, 1.4rem);
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.35em;
+  line-height: 1.3;
+}
+
+.cin-root.is-pathways .cin-cube-wrap {
+  --cube-z: 0.56em;
+  height: 1.12em;
+}
+
+.cin-root.is-pathways .cin-cube-measure {
+  line-height: 1.12em;
+  padding: 0 0.14em;
+}
+
+.cin-root.is-pathways .cin-cube-face {
+  padding: 0 0.14em;
+  border-radius: 0.1em;
+  font-size: 0.95em;
+}
+
+.cin-root.is-pathways .cin-pathways {
+  justify-content: flex-start;
+  padding-top: 9.75rem;
+}
+
+/* Tablet */
+@media (min-width: 640px) {
+  .cin-top {
+    padding:
+      max(4rem, calc(env(safe-area-inset-top) + 3rem))
+      max(1.5rem, env(safe-area-inset-right))
+      0
+      max(1.5rem, env(safe-area-inset-left));
+    gap: 0.75rem;
+  }
+
+  .cin-brand {
+    top: max(1.35rem, env(safe-area-inset-top));
+    left: max(1.5rem, env(safe-area-inset-left));
+    gap: 0.65rem;
+  }
+
+  .cin-brand .cin-wordmark {
+    font-size: 16px;
+  }
+
+  .cin-brand .cin-about {
+    width: 44px;
+    height: 44px;
+  }
+
+  .cin-headline {
+    top: 8.25rem;
+  }
+
+  .cin-bottom {
+    bottom: max(2rem, env(safe-area-inset-bottom));
+    gap: 1.25rem;
+  }
+
+  .cin-secure {
+    font-size: 11px;
+    letter-spacing: 0.14em;
+  }
+
+  .cin-pathways {
+    padding-top: 8.5rem;
+    gap: 1.1rem;
+  }
+
+  .cin-pathway {
+    gap: 1.2rem;
+    border-radius: 1.25rem;
+    padding: 1.5rem 1.4rem 1.4rem;
+  }
+
+  .cin-root.is-pathways .cin-headline {
+    top: 7.5rem;
+  }
+
+  .cin-root.is-pathways .cin-pathways {
+    padding-top: 10.5rem;
+  }
+}
+
+/* Tablet landscape / large tablet — two pathway columns */
+@media (min-width: 768px) {
+  .cin-pathways-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 1.15rem;
+    padding-bottom: 0.25rem;
+  }
+
+  .cin-headline {
+    top: 8.75rem;
+  }
+
+  .cin-root.is-pathways .cin-headline {
+    top: 7.75rem;
+  }
+
+  .cin-root.is-pathways .cin-pathways {
+    padding-top: 10.75rem;
+  }
+}
+
+/* Desktop — centered glass nav in the top bar */
+@media (min-width: 900px) {
+  .cin-top {
+    padding:
+      max(4.25rem, calc(env(safe-area-inset-top) + 3.25rem))
+      max(2.5rem, env(safe-area-inset-right))
+      0
+      max(2.5rem, env(safe-area-inset-left));
+  }
+
+  .cin-nav-mobile {
+    display: none;
+  }
+
+  .cin-nav-desktop {
+    display: flex;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .cin-brand {
+    top: max(2rem, env(safe-area-inset-top));
+    left: max(2.5rem, env(safe-area-inset-left));
+  }
+
+  .cin-brand .cin-wordmark {
+    font-size: 17px;
+  }
+
+  .cin-headline {
+    top: 120px;
+  }
+
+  .cin-root.is-pathways .cin-headline {
+    /* Single-row desktop nav — tagline sits just under it */
+    top: 5.75rem;
+  }
+
+  .cin-root.is-pathways .cin-pathways {
+    padding-top: 8.75rem;
+    gap: 1rem;
+  }
+
+  .cin-pathways-grid {
+    gap: 1.35rem;
+  }
+
+  .cin-pathway {
+    gap: 1.35rem;
+    border-radius: 1.35rem;
+    padding: 1.75rem 1.65rem 1.65rem;
+  }
+}
+
+/* Short phones — keep hero copy readable without colliding */
+@media (max-height: 700px) and (max-width: 899px) {
+  .cin-headline {
+    top: 6.75rem;
+  }
+
+  .cin-headline h1 {
+    font-size: clamp(1.5rem, 6.5vw, 2.25rem);
+  }
+
+  .cin-bottom-copy {
+    font-size: 0.82rem;
+    line-height: 1.5;
+  }
+
+  .cin-secure {
+    display: none;
+  }
+
+  .cin-root.is-pathways .cin-headline {
+    top: 6.25rem;
+  }
+
+  .cin-root.is-pathways .cin-headline h1 {
+    font-size: 1rem;
+  }
+
+  .cin-root.is-pathways .cin-pathways {
+    padding-top: 8.5rem;
+    justify-content: flex-start;
+  }
+}
+
+@keyframes cin-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes cin-fade-rise {
+  from {
+    opacity: 0;
+    transform: translateY(1.5rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cin-headline,
+  .cin-bottom {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+
+  .cin-bottom.is-hidden {
+    opacity: 0;
+    visibility: hidden;
+    animation: none;
+  }
+
+  .cin-pathways,
+  .cin-pathways.is-open {
+    transition: none;
+    opacity: 1;
+    transform: none;
+  }
+
+  .cin-video-parallax {
+    transform: none !important;
+  }
+
+  .cin-root.is-pathways .cin-headline {
+    opacity: 0.85;
+    visibility: visible;
+  }
+}
+
+/* Hide site chrome on cinematic home — page owns the frame */
+body:has(.cin-root) {
+  background: #000;
+}
+
+body:has(.cin-root) header:not(.cin-top),
+body:has(.cin-root) footer:not(.cin-social) {
+  display: none;
+}
+
+/* Light / dark split — pixel masks (avoids clip-path + glass bleed) */
+.cin-bw-mask {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: var(--cin-split-px, 42%);
+  bottom: 0;
+  z-index: 1;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.cin-video--bw {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 100dvh;
+  top: calc(-1 * var(--cin-split-px, 42%));
+  object-fit: cover;
+  transform: scale(1.02);
+  transform-origin: center center;
+  filter: grayscale(1) contrast(1.18) brightness(1.05);
+}
+
+.cin-pane-mask {
+  position: fixed;
+  left: 0;
+  right: 0;
+  z-index: 20;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.cin-pane-mask--light {
+  top: 0;
+  height: var(--cin-split-px, 42%);
+}
+
+.cin-pane-mask--dark {
+  top: var(--cin-split-px, 42%);
+  bottom: 0;
+}
+
+.cin-pane-fill {
+  position: absolute;
+  left: 0;
+  right: 0;
+  width: 100%;
+  height: 100dvh;
+}
+
+.cin-pane-mask--light .cin-pane-fill {
+  top: 0;
+}
+
+.cin-pane-mask--dark .cin-pane-fill {
+  top: calc(-1 * var(--cin-split-px, 42%));
+}
+
+.cin-pane-mask .cin-top,
+.cin-pane-mask .cin-pathways.is-open .cin-pathways-grid,
+.cin-pane-mask .cin-pathway-cta,
+.cin-pane-mask a {
+  pointer-events: auto;
+}
+
+.cin-pane {
+  position: absolute;
+  inset: 0;
+}
+
+.cin-pane--light {
+  --cin-fg: #171717;
+  color: var(--cin-fg);
+}
+
+.cin-pane--light .cin-glass {
+  background: rgba(255, 255, 255, 0.88);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.85),
+    0 18px 48px rgba(0, 0, 0, 0.08);
+}
+
+.cin-pane--light .cin-glass::before {
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.9) 0%,
+    rgba(255, 255, 255, 0.2) 35%,
+    rgba(0, 0, 0, 0.04) 100%
+  );
+}
+
+.cin-pane--light .cin-nav-link {
+  color: rgba(23, 23, 23, 0.78);
+}
+
+.cin-pane--light .cin-nav-link:hover {
+  color: #171717;
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.cin-pane--light .cin-pathway.cin-glass {
+  background: rgba(252, 250, 245, 0.94);
+  border-color: rgba(0, 0, 0, 0.12);
+  color: #171717;
+}
+
+.cin-pane--light .cin-pathway h2 {
+  color: #171717;
+}
+
+.cin-pane--light .cin-pathway-price,
+.cin-pane--light .cin-pathway-kicker,
+.cin-pane--light .cin-pathway-audience,
+.cin-pane--light .cin-pathway li,
+.cin-pane--light .cin-pathway li span {
+  color: rgba(23, 23, 23, 0.72);
+}
+
+.cin-pane--light .cin-pathway-kicker {
+  color: rgba(23, 23, 23, 0.48);
+}
+
+.cin-pane--light .cin-pathway-cta {
+  background: #171717;
+  color: #f7f7f5;
+}
+
+.cin-pane--light .cin-pathway-cta:hover {
+  background: #000;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .cin-pane--light .cin-pathway:hover {
+    background: rgba(255, 255, 255, 0.98);
+    border-color: rgba(0, 0, 0, 0.16);
+  }
+}
+
+.cin-pane--dark .cin-pathway.cin-glass {
+  background: rgba(8, 8, 8, 0.9);
+  border-color: rgba(255, 255, 255, 0.16);
+  color: #f4f4f5;
+}
+
+.cin-pane--dark .cin-pathway h2 {
+  color: #fff;
+}
+
+.cin-pane--dark .cin-pathway-price,
+.cin-pane--dark .cin-pathway-kicker,
+.cin-pane--dark .cin-pathway-audience,
+.cin-pane--dark .cin-pathway li {
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.cin-pane--dark .cin-pathway-kicker,
+.cin-pane--dark .cin-pathway li span {
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.cin-pane--light .cin-copy-strong {
+  color: #171717;
+}
+
+.cin-pane--light .cin-copy-soft {
+  color: rgba(23, 23, 23, 0.62);
+}
+
+.cin-pane--light .cin-secure {
+  color: rgba(23, 23, 23, 0.55);
+}
+
+.cin-social {
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: max(1.5rem, env(safe-area-inset-bottom));
+  z-index: 9999;
+  display: flex !important;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.45rem 0.55rem;
+  border-radius: 9999px;
+  background: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.16);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
+  pointer-events: auto;
+}
+
+.cin-social-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 9999px;
+  color: #171717;
+  background: transparent;
+  border: none;
+  text-decoration: none;
+  transition: transform 0.15s ease, background 0.15s ease, color 0.15s ease;
+}
+
+.cin-social-link:hover {
+  transform: translateY(-1px);
+  background: rgba(0, 0, 0, 0.06);
+  color: #171717;
+}
+
+.cin-social.is-light {
+  background: #fff;
+  border-color: rgba(0, 0, 0, 0.16);
+}
+
+@media (min-width: 640px) {
+  .cin-social-link {
+    width: 48px;
+    height: 48px;
+  }
+}
+
+.cin-split {
+  position: fixed;
+  left: 0;
+  right: 0;
+  z-index: 10001;
+  height: 56px;
+  margin-top: -28px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: max(1rem, env(safe-area-inset-right));
+  cursor: ns-resize;
+  touch-action: none;
+  outline: none;
+}
+
+/* Social must not steal the drag when the knob reaches the bottom */
+body.cin-dragging-split .cin-social {
+  pointer-events: none;
+}
+
+.cin-split:focus-visible .cin-split-knob {
+  box-shadow:
+    0 0 0 2px #fff,
+    0 0 0 4px #171717,
+    0 8px 24px rgba(0, 0, 0, 0.35);
+}
+
+/* No visible horizon line — knob only */
+.cin-split-line {
+  display: none;
+}
+
+.cin-split-knob {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.3rem;
+  height: 40px;
+  min-width: 40px;
+  padding: 0 0.55rem;
+  border-radius: 9999px;
+  background: rgba(12, 12, 11, 0.88);
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  color: #fff;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.4);
+  pointer-events: none;
+  flex-shrink: 0;
+}
+
+.cin-split-sun {
+  color: #f5e6a8;
+}
+
+.cin-split-moon {
+  color: #c8d4e8;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cin-split-knob {
+    transition: none;
+  }
+}
